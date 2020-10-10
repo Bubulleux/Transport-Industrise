@@ -4,57 +4,52 @@ using UnityEngine;
 
 public static class TerxtureGennerator
 {
-    public enum TexturRenderType
+    public static Texture2D[,] GeneratTexture(Parcel[,] parcels)
     {
-        blackAndWhite,
-        hsv,
-        region
-    }
-    public static Texture2D GenerTexture(float[,] noise, TexturRenderType typeOfRender, region[] regions)
-    {
-        int width = noise.GetLength(0);
-        int height = noise.GetLength(1);
+        int width = parcels.GetLength(0) / 50;
+        int height = parcels.GetLength(1) / 50;
+        Texture2D[,] chunks = new Texture2D[width, height];
 
-        Color[] colors = new Color[width * height];
         for (int y = 0; y < height; y++)
         {
             for (int x = 0; x < width; x++)
             {
-                if (typeOfRender == TexturRenderType.blackAndWhite)
+                chunks[x, y] = GenerateTextureChunck(x, y, parcels);
+            }
+        }
+        return chunks;
+    }
+
+    public static Texture2D GenerateTextureChunck(int chunkX, int chunkY, Parcel[,] parcels)
+    {
+        Texture2D texture = new Texture2D(50, 50);
+        Color[] colors = new Color[50 * 50];
+        for (int _y = 0; _y < 50; _y++)
+        {
+            for (int _x = 0; _x < 50; _x++)
+            {
+                int x = chunkX * 50 + _x;
+                int y = chunkY * 50 + _y;
+
+                if (parcels[x, y].seeTerrain)
                 {
-                    colors[y * width + x] = Color.Lerp(Color.black, Color.white, noise[x, y]);
-                }
-                else if (typeOfRender == TexturRenderType.hsv)
-                {
-                    colors[y * width + x] = Color.HSVToRGB(noise[x, y], 1f, 1f);
-                }
-                else if (typeOfRender == TexturRenderType.region)
-                {
-                    for (int i = 0; i < regions.Length; i++)
+                    Color color = Color.black;
+                    if (parcels[x, y].construction != null && parcels[x, y].construction.GetType() == typeof(Road))
                     {
-                        if(noise[x, y] <= regions[i].maxHeight)
-                        {
-                            colors[y * width + x] = regions[i].color;
-                            break;
-                        }
+                        color = Color.black;
                     }
+                    else
+                    {
+                        color = Color.green;
+                    }
+                    colors[_y * 50 + _x] = color;
                 }
             }
         }
-        Texture2D texture = new Texture2D(width, height);
-
-        //Debug.Log(colors[1] + "  " + colors[100]);
         texture.SetPixels(colors);
         texture.filterMode = FilterMode.Point;
         texture.wrapMode = TextureWrapMode.Clamp;
         texture.Apply();
         return texture;
-    }
-    [System.Serializable]
-    public  struct region
-    {
-        public string name;
-        public float maxHeight;
-        public Color color;
     }
 }

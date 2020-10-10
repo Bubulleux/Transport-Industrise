@@ -7,3 +7,7 @@ public class Road
 {
 
 }
+public class Building
+{
+
+}

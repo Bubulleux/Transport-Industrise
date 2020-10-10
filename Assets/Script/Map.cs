@@ -11,14 +11,38 @@ public class Map : MonoBehaviour
 {
     public static Map instence;
     public GameObject roadPrefab;
+    public GameObject buildingPrefab;
     public Parcel[,] parcels;
     //public float[,] mapHeight;
     public AnimationCurve heightCurv;
     public AnimationCurve limitWaterCurv;
     public Mesh[,] mapMeshs;
+    public Texture2D[,] mapTexture;
     public GameObject[,] gfxsMap = new GameObject[20, 20];
     public GameObject gfxMapPrefab;
     public List<City> citys = new List<City>();
+
+    private bool[,] chunkNeedUpdate = new bool[20, 20];
+
+    public static readonly Vector2Int[] parcelAround = 
+    {
+        new Vector2Int(0, 1),
+        new Vector2Int(1, 0),
+        new Vector2Int(0, -1),
+        new Vector2Int(-1, 0)
+    };
+
+    public static readonly Vector2Int[] parcelAroundCorner =
+   {
+        new Vector2Int(0, 1),
+        new Vector2Int(1, 1),
+        new Vector2Int(1, 0),
+        new Vector2Int(1, -1),
+        new Vector2Int(0, -1),
+        new Vector2Int(-1, -1),
+        new Vector2Int(-1, 0),
+        new Vector2Int(-1, 1)
+    };
 
     private void Awake()
     {
@@ -35,6 +59,22 @@ public class Map : MonoBehaviour
     {
         
     }
+    private void FixedUpdate()
+    {
+        for (int y = 0; y < 20; y++)
+        {
+            for (int x = 0; x < 20; x++)
+            {
+                if (chunkNeedUpdate[x, y])
+                {
+                    mapMeshs[x, y] = MeshGenerator.GenerateChunck(x, y, parcels);
+                    mapTexture[x, y] = TerxtureGennerator.GenerateTextureChunck(x, y, parcels);
+                    SetMesh();
+                    chunkNeedUpdate[x, y] = false;
+                }
+            }
+        }
+    }
 
     public void GenerateMap()
     {
@@ -49,11 +89,12 @@ public class Map : MonoBehaviour
             }
         }
         mapMeshs = MeshGenerator.MeshGenerat(parcels);
+        mapTexture = TerxtureGennerator.GeneratTexture(parcels);
         for (int y = 0; y < mapMeshs.GetLength(1); y++)
         {
             for (int x = 0; x < mapMeshs.GetLength(0); x++)
             {
-                gfxsMap[x, y] = Instantiate(gfxMapPrefab, Vector3.zero, Quaternion.identity, GameObject.Find("Chunks").transform) ;
+                gfxsMap[x, y] = Instantiate(gfxMapPrefab, Vector3.zero, Quaternion.identity, GameObject.Find("Chunks").transform);
             }
         }
 
@@ -66,17 +107,40 @@ public class Map : MonoBehaviour
     }
     public void UpdateChunk(int x, int y)
     {
-        mapMeshs[x, y] = MeshGenerator.GenerateChunck(x, y, parcels);
-        SetMesh();
+        chunkNeedUpdate[x, y] = true;
     }
 
     public bool AddRoad(Vector2Int pos)
     {
         if (parcels[pos.x, pos.y].construction == null)
         {
-            Instantiate(roadPrefab, new Vector3(pos.x, parcels[pos.x, pos.y].corner[0], pos.y), Quaternion.identity, transform);
+            for (int j = 0; j < parcelAroundCorner.Length; j++)
+            {
+                if (parcelAroundCorner[j].x == 0 || parcelAroundCorner[j].y == 0)
+                {
+                    continue;
+                }
+                int _countRoad = 0;
+                for (int h = -1; h <= 1; h++)
+                {
+                    int _j = (j + h) % parcelAroundCorner.Length;
+                    if (_j == -1)
+                    {
+                        _j = parcelAroundCorner.Length - 1;
+                    }
+                    if (parcels[parcelAroundCorner[_j].x + pos.x, parcelAroundCorner[_j].y + pos.y].construction != null && parcels[parcelAroundCorner[_j].x + pos.x, parcelAroundCorner[_j].y + pos.y].construction.GetType() == typeof(Road))
+                    {
+                        _countRoad++;
+                    }
+                    if (_countRoad == 3)
+                    {
+                        return false;
+                    }
+                }
+            }
+            //Instantiate(roadPrefab, new Vector3(pos.x, parcels[pos.x, pos.y].corner[0], pos.y), Quaternion.identity, transform);
             parcels[pos.x, pos.y].construction = new Road();
-            parcels[pos.x, pos.y].seeTerrain = false;
+            //parcels[pos.x, pos.y].seeTerrain = false;
             UpdateChunk(Mathf.FloorToInt(pos.x / 50), Mathf.FloorToInt(pos.y / 50));
             //if (mapHeight[pos.x, pos.y] != mapHeight[pos.x, pos.y + 1] || mapHeight[pos.x + 1 , pos.y] != mapHeight[pos.x + 1 , pos.y + 1] || mapHeight[pos.x, pos.y] != mapHeight[pos.x + 1, pos.y])
             //{
@@ -84,6 +148,22 @@ public class Map : MonoBehaviour
             //    mapHeight[pos.x + 1, pos.y + 1] = mapHeight[pos.x, pos.y];
             //    mapHeight[pos.x + 1, pos.y] = mapHeight[pos.x, pos.y];
             //}
+            return true;
+
+        }
+        return false;
+    }
+    public bool AddBuilding(Vector2Int pos, float height)
+    {
+        if (parcels[pos.x, pos.y].construction == null)
+        {
+            
+            GameObject _go = Instantiate(buildingPrefab, new Vector3(pos.x, parcels[pos.x, pos.y].corner[0], pos.y), Quaternion.identity, transform);
+            _go.transform.GetChild(0).localPosition = new Vector3(0.5f, height / 2, 0.5f);
+            _go.transform.GetChild(0).localScale = new Vector3(1f, height, 1f);
+            parcels[pos.x, pos.y].construction = new Building();
+            parcels[pos.x, pos.y].seeTerrain = false;
+            UpdateChunk(Mathf.FloorToInt(pos.x / 50), Mathf.FloorToInt(pos.y / 50));
             return true;
 
         }
@@ -98,12 +178,11 @@ public class Map : MonoBehaviour
                 return false;
             }
         }
-        City city = new City();
+        Transform _go = new GameObject().transform;
+        _go.position = new Vector3(x, 0f, y);
+        _go.parent = GameObject.Find("Citys").transform;
+        City city = new City(_go);
         city.name = "City " + citys.Count;
-        GameObject _go = new GameObject(city.name);
-        city.parent = _go.transform;
-        city.parent.position = new Vector3(x, 0f, y);
-        city.parent.parent = GameObject.Find("Citys").transform;
         city.inhabitantsNumber = Random.Range(100, 1999);
         citys.Add(city);
         return true;
@@ -117,9 +196,11 @@ public class Map : MonoBehaviour
             {
                 gfxsMap[x, y].GetComponent<MeshFilter>().mesh = mapMeshs[x, y];
                 gfxsMap[x, y].GetComponent<MeshCollider>().sharedMesh = mapMeshs[x, y];
+                gfxsMap[x, y].GetComponent<Renderer>().sharedMaterial = new Material(Shader.Find("Specular"));
+                gfxsMap[x, y].GetComponent<Renderer>().sharedMaterial.mainTexture = mapTexture[x, y];
             }
         }
-        Debug.Log("Mesh Set");
+        //Debug.Log("Mesh Set");
     }
 }
 

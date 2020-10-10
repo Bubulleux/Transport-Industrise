@@ -31,6 +31,7 @@ public static class MeshGenerator
             {
                 int x = chunkX * 50 + _x;
                 int y = chunkY * 50 + _y;
+                
                 if (parcels[x, y].seeTerrain)
                 {
                     Vector3[] cornerPos = new Vector3[]
@@ -39,7 +40,7 @@ public static class MeshGenerator
                         new Vector3(parcels[x, y].pos.x + 1, parcels[x, y].corner[1], parcels[x, y].pos.y),
                         new Vector3(parcels[x, y].pos.x, parcels[x, y].corner[2], parcels[x, y].pos.y + 1),
                         new Vector3(parcels[x, y].pos.x + 1, parcels[x, y].corner[3], parcels[x, y].pos.y + 1)
-                    };
+                    };  
                     chunk.AddTriangles(new Vector3[] { cornerPos[2], cornerPos[3], cornerPos[0] });
                     chunk.AddTriangles(new Vector3[] { cornerPos[3], cornerPos[1], cornerPos[0] });
                 }
@@ -64,7 +65,7 @@ public class MeshData
         for (int i = 0; i < 3; i++)
         {
             verticies.Add(corner[i]);
-            uvs.Add(new Vector2(corner[i].x, corner[i].z));
+            uvs.Add(new Vector2(corner[i].x / 50f, corner[i].z / 50f));
             triangles.Add(verticies.Count - 1);
         }
     }
