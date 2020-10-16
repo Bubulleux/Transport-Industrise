@@ -75,11 +75,14 @@ public class MeshData
         Vector3[] verticesArray = new Vector3[verticies.Count];
         Vector2[] uvsArray = new Vector2[verticies.Count];
         int[] triangleArray = new int[triangles.Count];
+        string txt = "";
         for (int i = 0; i < verticies.Count; i++)
         {
             verticesArray[i] = verticies[i];
             uvsArray[i] = uvs[i];
+            txt = txt + "   " + uvs[i];
         }
+        Debug.Log(txt);
         for (int i = 0; i < triangles.Count; i++)
         {
             triangleArray[i] = triangles[i];

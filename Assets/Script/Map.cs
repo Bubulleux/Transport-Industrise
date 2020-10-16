@@ -196,7 +196,7 @@ public class Map : MonoBehaviour
             {
                 gfxsMap[x, y].GetComponent<MeshFilter>().mesh = mapMeshs[x, y];
                 gfxsMap[x, y].GetComponent<MeshCollider>().sharedMesh = mapMeshs[x, y];
-                gfxsMap[x, y].GetComponent<Renderer>().sharedMaterial = new Material(Shader.Find("Specular"));
+                gfxsMap[x, y].GetComponent<Renderer>().sharedMaterial = new Material(Shader.Find("Standard"));
                 gfxsMap[x, y].GetComponent<Renderer>().sharedMaterial.mainTexture = mapTexture[x, y];
             }
         }

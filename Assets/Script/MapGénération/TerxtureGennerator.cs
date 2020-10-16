@@ -33,7 +33,7 @@ public static class TerxtureGennerator
 
                 if (parcels[x, y].seeTerrain)
                 {
-                    Color color = Color.black;
+                    Color color;
                     if (parcels[x, y].construction != null && parcels[x, y].construction.GetType() == typeof(Road))
                     {
                         color = Color.black;
@@ -47,8 +47,8 @@ public static class TerxtureGennerator
             }
         }
         texture.SetPixels(colors);
-        texture.filterMode = FilterMode.Point;
-        texture.wrapMode = TextureWrapMode.Clamp;
+        //texture.filterMode = FilterMode.Point;
+        //texture.wrapMode = TextureWrapMode.Clamp;
         texture.Apply();
         return texture;
     }

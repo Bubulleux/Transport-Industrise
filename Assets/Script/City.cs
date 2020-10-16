@@ -136,7 +136,7 @@ public class City
             {
                 if (!Map.instence.AddBuilding(GetVec2Pos() + pos + new Vector2Int(x, y), height))
                 {
-                    Debug.LogFormat("Pos {0}, min {1}, max {2}, try {3}", pos + GetVec2Pos(), minVec, maxVec, GetVec2Pos() + pos + new Vector2Int(x, y));
+                    //Debug.LogFormat("Pos {0}, min {1}, max {2}, try {3}", pos + GetVec2Pos(), minVec, maxVec, GetVec2Pos() + pos + new Vector2Int(x, y));
                 }
                 parcelsCityStatus[pos + new Vector2Int(x, y)] = parcelStatus.construction;
             }
