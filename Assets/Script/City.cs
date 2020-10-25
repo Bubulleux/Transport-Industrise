@@ -134,7 +134,7 @@ public class City
         {
             for (int x = minVec.x; x <= maxVec.x; x++)
             {
-                if (!Map.instence.AddBuilding(GetVec2Pos() + pos + new Vector2Int(x, y), height))
+                if (!Map.instence.AddBuilding(GetVec2Pos() + pos + new Vector2Int(x, y), height, parent, Color.grey))
                 {
                     //Debug.LogFormat("Pos {0}, min {1}, max {2}, try {3}", pos + GetVec2Pos(), minVec, maxVec, GetVec2Pos() + pos + new Vector2Int(x, y));
                 }

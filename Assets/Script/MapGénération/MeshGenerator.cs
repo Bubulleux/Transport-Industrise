@@ -1,8 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq.Expressions;
-//using System.Diagnostics;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public static class MeshGenerator
 {
@@ -41,8 +40,8 @@ public static class MeshGenerator
                         new Vector3(parcels[x, y].pos.x, parcels[x, y].corner[2], parcels[x, y].pos.y + 1),
                         new Vector3(parcels[x, y].pos.x + 1, parcels[x, y].corner[3], parcels[x, y].pos.y + 1)
                     };  
-                    chunk.AddTriangles(new Vector3[] { cornerPos[2], cornerPos[3], cornerPos[0] });
-                    chunk.AddTriangles(new Vector3[] { cornerPos[3], cornerPos[1], cornerPos[0] });
+                    chunk.AddTriangles(new Vector3[] { cornerPos[2], cornerPos[3], cornerPos[0] }, new Vector2Int(chunkX, chunkY));
+                    chunk.AddTriangles(new Vector3[] { cornerPos[3], cornerPos[1], cornerPos[0] }, new Vector2Int(chunkX, chunkY));
                 }
             }
         }
@@ -55,7 +54,7 @@ public class MeshData
     public List<int> triangles = new List<int>();
     public List<Vector2> uvs = new List<Vector2>();
 
-    public void AddTriangles(Vector3[] corner)
+    public void AddTriangles(Vector3[] corner, Vector2Int chunk)
     {
         if (corner.Length != 3)
         {
@@ -65,7 +64,7 @@ public class MeshData
         for (int i = 0; i < 3; i++)
         {
             verticies.Add(corner[i]);
-            uvs.Add(new Vector2(corner[i].x / 50f, corner[i].z / 50f));
+            uvs.Add(new Vector2((corner[i].x - chunk.x * 50f) / 50f, (corner[i].z - chunk.y * 50f) / 50f));
             triangles.Add(verticies.Count - 1);
         }
     }
@@ -75,14 +74,11 @@ public class MeshData
         Vector3[] verticesArray = new Vector3[verticies.Count];
         Vector2[] uvsArray = new Vector2[verticies.Count];
         int[] triangleArray = new int[triangles.Count];
-        string txt = "";
         for (int i = 0; i < verticies.Count; i++)
         {
             verticesArray[i] = verticies[i];
             uvsArray[i] = uvs[i];
-            txt = txt + "   " + uvs[i];
         }
-        Debug.Log(txt);
         for (int i = 0; i < triangles.Count; i++)
         {
             triangleArray[i] = triangles[i];

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UIElements;
 public static class TerxtureGennerator
 {
     public static Texture2D[,] GeneratTexture(Parcel[,] parcels)
@@ -47,8 +47,8 @@ public static class TerxtureGennerator
             }
         }
         texture.SetPixels(colors);
-        //texture.filterMode = FilterMode.Point;
-        //texture.wrapMode = TextureWrapMode.Clamp;
+        texture.filterMode = FilterMode.Point;
+        texture.wrapMode = TextureWrapMode.Clamp;
         texture.Apply();
         return texture;
     }
