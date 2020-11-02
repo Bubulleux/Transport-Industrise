@@ -10,3 +10,8 @@ public class Building
 {
 
 }
+
+public class Depot
+{
+    public List<GameObject> vehicles = new List<GameObject>();
+}

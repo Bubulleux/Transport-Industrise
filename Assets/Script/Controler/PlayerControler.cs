@@ -6,6 +6,7 @@ using UnityEngine.UIElements;
 public class PlayerControler : MonoBehaviour
 {
     public Camera cam;
+    public Tools curTool;
     void Start()
     {
         
@@ -14,9 +15,27 @@ public class PlayerControler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && GetMoussePos() != Vector3.zero)
         {
-            StartCoroutine(MakeRoad());
+            switch(curTool)
+            {
+                case Tools.none:
+                    object construction = Map.instence.parcels[Vec3ToVec2Int(GetMoussePos()).x, Vec3ToVec2Int(GetMoussePos()).y].construction;
+                    if (construction != null)
+                    {
+                        if (construction is Depot)
+                        {
+                            WindosOpener.openDepotWindow(Vec3ToVec2Int(GetMoussePos()));
+                        }
+                    }
+                    break;
+                case Tools.road:
+                    StartCoroutine(MakeRoad());
+                    break;
+                case Tools.depot:
+                    Map.instence.AddDepot(Vec3ToVec2Int(GetMoussePos()));
+                    break;
+            }
         }
     }
 
@@ -24,7 +43,7 @@ public class PlayerControler : MonoBehaviour
     {
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit))
+        if (Physics.Raycast(ray, out hit) && !PointerIsOverUI())
         {
             return hit.point;
         }
@@ -66,5 +85,28 @@ public class PlayerControler : MonoBehaviour
             }
            
         }
+    }
+
+    public void SetTool(int tool)
+    {
+        curTool = (Tools)tool;
+    }
+    public enum Tools
+    {
+        none,
+        road,
+        depot
+    }
+
+    private bool PointerIsOverUI()
+    {
+        foreach (GameObject curWindow in GameObject.FindGameObjectsWithTag("Window"))
+        {
+            if (curWindow.GetComponent<Window>().pointerOverMe)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

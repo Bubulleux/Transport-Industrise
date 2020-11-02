@@ -55,10 +55,11 @@ public class Insdustrise
         mineCoal,
         stokehole
     }
-    public enum Materials
-    {
-        coal,
-        wood,
-        fer
-    }
+    
+}
+public enum Materials
+{
+    coal,
+    wood,
+    fer
 }

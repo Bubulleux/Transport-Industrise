@@ -160,6 +160,17 @@ public class Map : MonoBehaviour
         }
         return false;
     }
+
+    public bool AddDepot(Vector2Int pos)
+    {
+        if (parcels[pos.x, pos.y].construction == null)
+        {
+            parcels[pos.x, pos.y].construction = new Depot();
+            UpdateChunk(Mathf.FloorToInt(pos.x / 50), Mathf.FloorToInt(pos.y / 50));
+            return true;
+        }
+        return false;
+    }
     public bool AddBuilding(Vector2Int pos, float height, Transform parent, Color color)
     {
         if (parcels[pos.x, pos.y].construction == null)
