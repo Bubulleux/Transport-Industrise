@@ -20,12 +20,12 @@ public class PlayerControler : MonoBehaviour
             switch(curTool)
             {
                 case Tools.none:
-                    object construction = Map.instence.parcels[Vec3ToVec2Int(GetMoussePos()).x, Vec3ToVec2Int(GetMoussePos()).y].construction;
+                    object construction = Map.instence.parcels[GetMoussePos().ToVec2Int().x, GetMoussePos().ToVec2Int().y].construction;
                     if (construction != null)
                     {
                         if (construction is Depot)
                         {
-                            WindosOpener.openDepotWindow(Vec3ToVec2Int(GetMoussePos()));
+                            WindosOpener.openDepotWindow(GetMoussePos().ToVec2Int());
                         }
                     }
                     break;
@@ -33,7 +33,7 @@ public class PlayerControler : MonoBehaviour
                     StartCoroutine(MakeRoad());
                     break;
                 case Tools.depot:
-                    Map.instence.AddDepot(Vec3ToVec2Int(GetMoussePos()));
+                    Map.instence.AddDepot(GetMoussePos().ToVec2Int());
                     break;
             }
         }
@@ -50,19 +50,14 @@ public class PlayerControler : MonoBehaviour
         return Vector3.zero;
     }
 
-    public static Vector2Int Vec3ToVec2Int(Vector3 vec)
-    {
-        return new Vector2Int(Mathf.FloorToInt(vec.x), Mathf.FloorToInt(vec.z));
-    }
-
     public IEnumerator MakeRoad()
     {
-        Vector2Int startMouse = Vec3ToVec2Int(GetMoussePos());
+        Vector2Int startMouse = GetMoussePos().ToVec2Int();
         while (Input.GetMouseButton(0))
         {
             yield return new WaitForFixedUpdate();
         }
-        Vector2Int endMouse = Vec3ToVec2Int(GetMoussePos());
+        Vector2Int endMouse = GetMoussePos().ToVec2Int();
         Vector2Int lastPos = startMouse;
         Map.instence.AddRoad(startMouse);
         int i = 0;

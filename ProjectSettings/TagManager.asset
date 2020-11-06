@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Window
+  - Vehicle
+  - Vehicles
   layers:
   - Default
   - TransparentFX

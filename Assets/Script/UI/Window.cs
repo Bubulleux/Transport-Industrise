@@ -16,6 +16,11 @@ public class Window : MonoBehaviour, IPointerClickHandler, IDragHandler, IPointe
     {
         
     }
+
+    public void Close()
+    {
+        Destroy(gameObject);
+    }
     public void OnPointerClick(PointerEventData eventData)
     {
 

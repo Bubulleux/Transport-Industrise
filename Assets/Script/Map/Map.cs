@@ -165,7 +165,7 @@ public class Map : MonoBehaviour
     {
         if (parcels[pos.x, pos.y].construction == null)
         {
-            parcels[pos.x, pos.y].construction = new Depot();
+            parcels[pos.x, pos.y].construction = new Depot(pos);
             UpdateChunk(Mathf.FloorToInt(pos.x / 50), Mathf.FloorToInt(pos.y / 50));
             return true;
         }
