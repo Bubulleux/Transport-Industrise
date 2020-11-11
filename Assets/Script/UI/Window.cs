@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 public class Window : MonoBehaviour, IPointerClickHandler, IDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
     public bool pointerOverMe = false;
+    public bool fixWindow;
     void Start()
     {
         
@@ -23,12 +24,16 @@ public class Window : MonoBehaviour, IPointerClickHandler, IDragHandler, IPointe
     }
     public void OnPointerClick(PointerEventData eventData)
     {
-
+        transform.SetAsLastSibling();
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-
+        if (! fixWindow)
+        {
+            transform.SetAsLastSibling();
+            GetComponent<RectTransform>().anchoredPosition += eventData.delta;
+        }
     }
 
     public void OnPointerEnter(PointerEventData eventData)

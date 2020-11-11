@@ -93,7 +93,7 @@ public class PlayerControler : MonoBehaviour
         depot
     }
 
-    private bool PointerIsOverUI()
+    public static bool PointerIsOverUI()
     {
         foreach (GameObject curWindow in GameObject.FindGameObjectsWithTag("Window"))
         {

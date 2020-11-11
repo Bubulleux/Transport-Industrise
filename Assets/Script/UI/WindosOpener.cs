@@ -13,11 +13,24 @@ public static class WindosOpener
         return _go;
     }
 
-    public static GameObject openMarketWindow(Vector2Int depotPos)
+    public static GameObject OpenRouteListWindow()
     {
-        GameObject _go = Object.Instantiate(Resources.Load("UI/MarketWindow", typeof(GameObject)) as GameObject);
+        GameObject _go = Object.Instantiate(Resources.Load("UI/RoutesListWindow", typeof(GameObject)) as GameObject);
         _go.transform.SetParent(GameObject.Find("Canvas").transform, false);
         _go.transform.localPosition = Vector3.zero;
+        return _go;
+    }
+
+    public static GameObject OpenRouteCreatorWindow(RouteCreatorWindow.FunctionFinish _functionFinish, Route _route = null)
+    {
+        GameObject _go = Object.Instantiate(Resources.Load("UI/RoutesCreatorWindow", typeof(GameObject)) as GameObject);
+        _go.transform.SetParent(GameObject.Find("Canvas").transform, false);
+        _go.transform.localPosition = Vector3.zero;
+        _go.GetComponent<RouteCreatorWindow>().functionFinish = _functionFinish;
+        if (_route != null)
+        {
+            _go.GetComponent<RouteCreatorWindow>().route = _route;
+        }
         return _go;
     }
 }
