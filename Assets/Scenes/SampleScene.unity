@@ -2211,6 +2211,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pointerOverMe: 0
+  fixWindow: 1
 --- !u!1 &2122737437
 GameObject:
   m_ObjectHideFlags: 0

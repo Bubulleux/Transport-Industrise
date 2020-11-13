@@ -9,7 +9,7 @@ public class Window : MonoBehaviour, IPointerClickHandler, IDragHandler, IPointe
     public bool fixWindow;
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame

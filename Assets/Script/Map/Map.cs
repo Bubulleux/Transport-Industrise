@@ -21,6 +21,16 @@ public class Map : MonoBehaviour
 
     private bool[,] chunkNeedUpdate = new bool[20, 20];
 
+    private class MyClass
+    {
+        public int myValue = 5;
+    }
+
+    public struct MapData
+    {
+        public Parcel[,] parcels;
+    }
+
     public static readonly Vector2Int[] parcelAround = 
     {
         new Vector2Int(0, 1),
