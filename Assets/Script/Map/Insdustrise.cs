@@ -9,7 +9,7 @@ public class Insdustrise
     public Materials[] materialsInpute;
     public Materials[] materialsOutpute;
 
-    public Insdustrise(Transform _parent)
+    public Insdustrise(Transform _parent, MapData _mapData)
     {
         parent = _parent;
         type = (TypeIndustrise)Random.Range(0, 2);
@@ -30,7 +30,7 @@ public class Insdustrise
                         height = 3f;
                         break;
                 }
-                Map.instence.AddBuilding(new Vector2Int(x + Mathf.FloorToInt(parent.position.x), y + Mathf.FloorToInt(parent.position.z)), height, parent, color);
+                _mapData.AddBuilding(new Vector2Int(x + Mathf.FloorToInt(parent.position.x), y + Mathf.FloorToInt(parent.position.z)), height, parent, color);
             }
         }
     }

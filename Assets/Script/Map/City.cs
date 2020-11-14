@@ -12,10 +12,11 @@ public class City
     public int inhabitantsNumber;
     public Transform parent;
     private Dictionary<Vector2Int, parcelStatus> parcelsCityStatus = new Dictionary<Vector2Int, parcelStatus>();
-    public City(Transform _parent)
+    public MapData mapData;
+    public City(Transform _parent, MapData _mapData)
     {
         parent = _parent;
-        
+        mapData = _mapData;
         for (int y = -3; y < 4; y++)
         {
             for (int x = -3; x < 4; x++)
@@ -27,7 +28,7 @@ public class City
                 else if (y == 2 || y == -2 || x == -2 || x == 2)
                 {
                     parcelsCityStatus[new Vector2Int(x, y)] =  parcelStatus.road;
-                    Map.instence.AddRoad(new Vector2Int(GetVec2Pos().x + x, GetVec2Pos().y + y));
+                    mapData.AddRoad(new Vector2Int(GetVec2Pos().x + x, GetVec2Pos().y + y));
                 }
                 else 
                 {
@@ -79,7 +80,7 @@ public class City
             Vector2Int _road = mainRoad + (dir * i);
             //Debug.LogFormat("road : {0}, dir: {1}, i: {2}, main : {3}", _road, dir, i, mainRoad);
             parcelsCityStatus[_road] = parcelStatus.road;
-            if (!Map.instence.AddRoad(GetVec2Pos() + _road))
+            if (!mapData.AddRoad(GetVec2Pos() + _road))
             {
                 break;
             }
@@ -134,7 +135,7 @@ public class City
         {
             for (int x = minVec.x; x <= maxVec.x; x++)
             {
-                if (!Map.instence.AddBuilding(GetVec2Pos() + pos + new Vector2Int(x, y), height, parent, Color.grey))
+                if (!mapData.AddBuilding(GetVec2Pos() + pos + new Vector2Int(x, y), height, parent, Color.grey))
                 {
                     //Debug.LogFormat("Pos {0}, min {1}, max {2}, try {3}", pos + GetVec2Pos(), minVec, maxVec, GetVec2Pos() + pos + new Vector2Int(x, y));
                 }
