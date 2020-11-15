@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class MapLoader : MonoBehaviour
 {
-    private Task<MapData> operation;
+    private Task<Map> operation;
     public static bool load = false;
     public void Awake()
     {
@@ -19,22 +19,24 @@ public class MapLoader : MonoBehaviour
         load = true;
         Debug.Log("Load");
         DontDestroyOnLoad(gameObject);
-        operation = AsyncLoadMap(GameObject.Find("Map").GetComponent<Map>().heightCurv, GameObject.Find("Map").GetComponent<Map>().limitWaterCurv);
+        operation = AsyncLoadMap(GameObject.Find("Map").GetComponent<MapManager>().heightCurv, GameObject.Find("Map").GetComponent<MapManager>().limitWaterCurv);
         
     }
 
-    public async Task<MapData> AsyncLoadMap(AnimationCurve heightCurv, AnimationCurve limitWaterCurv)
+    public async Task<Map> AsyncLoadMap(AnimationCurve heightCurv, AnimationCurve limitWaterCurv)
     {
+        float startTime = System.DateTime.Now.Second + System.DateTime.Now.Minute * 60;
         SceneManager.LoadSceneAsync(1);
-        MapData _mapdata = new MapData();
+        Map _mapdata = new Map();
         await _mapdata.GenerateMap(heightCurv, limitWaterCurv);
         //await Task.Delay(3000);
         SceneManager.LoadSceneAsync(0);
         Debug.Log(_mapdata.citys.Count);
-        Map.mapData = _mapdata;
+        MapManager.map = _mapdata;
         //operation = null;
         Debug.Log("Load End");
         Destroy(gameObject);
+        Debug.Log($"time to creat Map: {System.DateTime.Now.Second + System.DateTime.Now.Minute * 60 - startTime}");
         return _mapdata;
     }
 }

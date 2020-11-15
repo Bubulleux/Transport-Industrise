@@ -9,7 +9,7 @@ public class Insdustrise
     public Materials[] materialsInpute;
     public Materials[] materialsOutpute;
 
-    public Insdustrise(Transform _parent, MapData _mapData)
+    public Insdustrise(Transform _parent, Map _mapData)
     {
         parent = _parent;
         type = (TypeIndustrise)Random.Range(0, 2);
@@ -34,7 +34,7 @@ public class Insdustrise
             }
         }
     }
-    public void setInputeOutpure()
+    public void SetInputeOutpure()
     {
         switch(type)
         {

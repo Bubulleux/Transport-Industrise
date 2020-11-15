@@ -12,8 +12,8 @@ public class City
     public int inhabitantsNumber;
     public Transform parent;
     private Dictionary<Vector2Int, parcelStatus> parcelsCityStatus = new Dictionary<Vector2Int, parcelStatus>();
-    public MapData mapData;
-    public City(Transform _parent, MapData _mapData)
+    public Map mapData;
+    public City(Transform _parent, Map _mapData)
     {
         parent = _parent;
         mapData = _mapData;
@@ -68,7 +68,7 @@ public class City
         List<Vector2Int> parcelCanRoad = GetParcels(parcelStatus.canRoad);
         Vector2Int mainRoad = parcelCanRoad[Random.Range(0, parcelCanRoad.Count)];
         Vector2Int dir = Vector2Int.zero;
-        foreach(Vector2Int _dir in Map.parcelAround)
+        foreach(Vector2Int _dir in MapManager.parcelAround)
         {
             if (parcelsCityStatus.ContainsKey(mainRoad + _dir) && parcelsCityStatus[mainRoad + _dir] == parcelStatus.road)
             {

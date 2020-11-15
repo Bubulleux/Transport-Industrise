@@ -20,7 +20,7 @@ public class PlayerControler : MonoBehaviour
             switch(curTool)
             {
                 case Tools.none:
-                    object construction = Map.instence.parcels[GetMoussePos().ToVec2Int().x, GetMoussePos().ToVec2Int().y].construction;
+                    object construction = MapManager.map.parcels[GetMoussePos().ToVec2Int().x, GetMoussePos().ToVec2Int().y].construction;
                     if (construction != null)
                     {
                         if (construction is Depot)
@@ -33,7 +33,7 @@ public class PlayerControler : MonoBehaviour
                     StartCoroutine(MakeRoad());
                     break;
                 case Tools.depot:
-                    Map.instence.AddDepot(GetMoussePos().ToVec2Int());
+                    MapManager.map.AddDepot(GetMoussePos().ToVec2Int());
                     break;
             }
         }
@@ -59,7 +59,7 @@ public class PlayerControler : MonoBehaviour
         }
         Vector2Int endMouse = GetMoussePos().ToVec2Int();
         Vector2Int lastPos = startMouse;
-        Map.mapData.AddRoad(startMouse);
+        MapManager.map.AddRoad(startMouse);
         int i = 0;
         while (true)
         {
@@ -71,12 +71,12 @@ public class PlayerControler : MonoBehaviour
             if (Mathf.Abs(lastPos.x - endMouse.x) / (float)Mathf.Abs(startMouse.x - endMouse.x) > Mathf.Abs(lastPos.y - endMouse.y) / (float)Mathf.Abs(startMouse.y - endMouse.y))
             {
                 lastPos = lastPos + new Vector2Int(lastPos.x < endMouse.x ? 1 : -1, 0);
-                Map.mapData.AddRoad(lastPos);
+                MapManager.map.AddRoad(lastPos);
             }
             else
             {
                 lastPos = lastPos + new Vector2Int(0, lastPos.y < endMouse.y ? 1 : -1);
-                Map.mapData.AddRoad(lastPos);
+                MapManager.map.AddRoad(lastPos);
             }
            
         }

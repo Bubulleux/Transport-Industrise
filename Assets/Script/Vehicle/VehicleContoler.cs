@@ -18,7 +18,7 @@ public class VehicleContoler : MonoBehaviour
     void Update()
     {
         Vector2Int pos = transform.position.ToVec2Int();
-        float y = Map.instence.parcels[pos.x, pos.y].corner.Max();
+        float y = MapManager.map.parcels[pos.x, pos.y].corner.Max();
         transform.position = new Vector3(transform.position.x, y, transform.position.z);
     }
 }

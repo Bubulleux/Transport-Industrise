@@ -9,7 +9,7 @@ public class DepotWindow : MonoBehaviour
     public GameObject templateStoreVehicle;
     public Transform listContente;
     private Vector2Int depotpos;
-    public Depot Depot { set => Map.instence.parcels[depotpos.x, depotpos.y].construction = value;  get => (Depot)Map.instence.parcels[depotpos.x, depotpos.y].construction;}
+    public Depot Depot { set => MapManager.map.parcels[depotpos.x, depotpos.y].construction = value;  get => (Depot)MapManager.map.parcels[depotpos.x, depotpos.y].construction;}
     public bool onStore = false;
     public Text butTxt;
     public VehicleData[] vehicleInStore;
