@@ -10,12 +10,12 @@ public class City
 {
     public string name;
     public int inhabitantsNumber;
-    public Transform parent;
+    public Vector2Int pos;
     private Dictionary<Vector2Int, parcelStatus> parcelsCityStatus = new Dictionary<Vector2Int, parcelStatus>();
     public Map mapData;
-    public City(Transform _parent, Map _mapData)
+    public City(Vector2Int _pos, Map _mapData)
     {
-        parent = _parent;
+        pos = _pos;
         mapData = _mapData;
         for (int y = -3; y < 4; y++)
         {
@@ -28,7 +28,7 @@ public class City
                 else if (y == 2 || y == -2 || x == -2 || x == 2)
                 {
                     parcelsCityStatus[new Vector2Int(x, y)] =  parcelStatus.road;
-                    mapData.AddRoad(new Vector2Int(GetVec2Pos().x + x, GetVec2Pos().y + y));
+                    mapData.AddRoad(new Vector2Int(pos.x + x, pos.y + y));
                 }
                 else 
                 {
@@ -52,14 +52,10 @@ public class City
         }
     }
 
-    public Vector2Int GetVec2Pos()
-    {
-        return new Vector2Int(Mathf.FloorToInt(parent.position.x), Mathf.FloorToInt(parent.position.z));
-    }
 
     public Vector2Int GetVec2Pos(Vector2Int pos)
     {
-        return GetVec2Pos() + pos;
+        return pos + pos;
     }
 
 
@@ -80,7 +76,7 @@ public class City
             Vector2Int _road = mainRoad + (dir * i);
             //Debug.LogFormat("road : {0}, dir: {1}, i: {2}, main : {3}", _road, dir, i, mainRoad);
             parcelsCityStatus[_road] = parcelStatus.road;
-            if (!mapData.AddRoad(GetVec2Pos() + _road))
+            if (!mapData.AddRoad(pos + _road))
             {
                 break;
             }
@@ -135,9 +131,9 @@ public class City
         {
             for (int x = minVec.x; x <= maxVec.x; x++)
             {
-                if (!mapData.AddBuilding(GetVec2Pos() + pos + new Vector2Int(x, y), height, parent, Color.grey))
+                if (!mapData.AddBuilding(pos + pos + new Vector2Int(x, y), height, Color.grey))
                 {
-                    //Debug.LogFormat("Pos {0}, min {1}, max {2}, try {3}", pos + GetVec2Pos(), minVec, maxVec, GetVec2Pos() + pos + new Vector2Int(x, y));
+                    //Debug.LogFormat("Pos {0}, min {1}, max {2}, try {3}", pos + pos, minVec, maxVec, pos + pos + new Vector2Int(x, y));
                 }
                 parcelsCityStatus[pos + new Vector2Int(x, y)] = parcelStatus.construction;
             }

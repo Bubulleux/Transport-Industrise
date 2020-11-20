@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class Insdustrise
 {
-    public Transform parent;
     public TypeIndustrise type;
     public Materials[] materialsInpute;
     public Materials[] materialsOutpute;
+    public Vector2Int pos;
 
-    public Insdustrise(Transform _parent, Map _mapData)
+    public Insdustrise(Vector2Int _pos, Map _mapData)
     {
-        parent = _parent;
+        pos = _pos;
         type = (TypeIndustrise)Random.Range(0, 2);
         for (int y = -1; y <= 2; y++)
         {
@@ -30,7 +30,7 @@ public class Insdustrise
                         height = 3f;
                         break;
                 }
-                _mapData.AddBuilding(new Vector2Int(x + Mathf.FloorToInt(parent.position.x), y + Mathf.FloorToInt(parent.position.z)), height, parent, color);
+                _mapData.AddBuilding(pos +  new Vector2Int(x, y), height, color);
             }
         }
     }

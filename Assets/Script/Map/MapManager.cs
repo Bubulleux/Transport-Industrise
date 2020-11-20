@@ -61,20 +61,20 @@ public class MapManager : MonoBehaviour
         }
         Debug.Log(map.citys.Count);
         int startTime = System.DateTime.Now.Second + System.DateTime.Now.Minute * 60;
-        mapMeshs = MeshGenerator.MeshGenerat(map.parcels);
-        mapTexture = TerxtureGennerator.GeneratTexture(map.parcels);
+        //mapMeshs = MeshGenerator.MeshGenerat(map.parcels);
+        //mapTexture = TerxtureGennerator.GeneratTexture(map.parcels);
         Debug.Log($"time creat mesh and texture: {System.DateTime.Now.Second + System.DateTime.Now.Minute * 60 - startTime}");
         startTime = System.DateTime.Now.Second + System.DateTime.Now.Minute * 60;
-        for (int y = 0; y < mapMeshs.GetLength(1); y++)
+        for (int y = 0; y < gfxsMap.GetLength(0); y++)
         {
-            for (int x = 0; x < mapMeshs.GetLength(0); x++)
+            for (int x = 0; x < gfxsMap.GetLength(0); x++)
             {
                 gfxsMap[x, y] = Instantiate(gfxMapPrefab, Vector3.zero, Quaternion.identity, GameObject.Find("Chunks").transform);
-                map.chunkNeedMeshUpdate[x, y] = false;
-                map.chunkNeedTextureUpdate[x, y] = false;
+                map.chunkNeedMeshUpdate[x, y] = true;
+                map.chunkNeedTextureUpdate[x, y] = true;
             }
         }
-        SetMesh();
+        //SetMesh();
         Debug.Log($"time creat chunck: {System.DateTime.Now.Second + System.DateTime.Now.Minute * 60 - startTime}");
         Debug.Log($"time: {System.DateTime.Now.Second + System.DateTime.Now.Minute * 60 - startTimeOfGame}");
     }
@@ -91,17 +91,17 @@ public class MapManager : MonoBehaviour
             {
                 if (map.chunkNeedTextureUpdate[x, y] || map.chunkNeedMeshUpdate[x, y])
                 {
-                    if (map.chunkNeedTextureUpdate[x, y])
+                    if (map.chunkNeedMeshUpdate[x, y])
                     {
-                        mapTexture[x, y] = TerxtureGennerator.GenerateTextureChunck(x, y, map.parcels);
-                        map.chunkNeedTextureUpdate[x, y] = false;
-                    }
-                    if (map.chunkNeedTextureUpdate[x, y])
-                    {
-                        mapMeshs[x, y] = MeshGenerator.GenerateChunck(x, y, map.parcels);
+                        MeshGenerator.AsyncGenerateChunck(x, y, map.parcels, gfxsMap[x, y]);
                         map.chunkNeedMeshUpdate[x, y] = false;
                     }
-                    SetMesh();
+                    if (map.chunkNeedTextureUpdate[x, y])
+                    {
+                        TerxtureGennerator.AsyncGenerateTextureChunck(x, y, map.parcels, gfxsMap[x, y]);
+                        map.chunkNeedTextureUpdate[x, y] = false;
+                    }
+                    //SetMesh();
                 }
             }
         }

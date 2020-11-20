@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using System.Threading.Tasks;
 
 public static class MeshGenerator
 {
@@ -15,13 +16,13 @@ public static class MeshGenerator
         {
             for (int x = 0; x < width; x++)
             {
-                chunks[x, y] = GenerateChunck(x, y, parcels);
+                //chunks[x, y] = GenerateChunck(x, y, parcels);
             }
         }
         return chunks;
     }
 
-    public static Mesh GenerateChunck(int chunkX, int chunkY, Parcel[,] parcels)
+    public static async Task AsyncGenerateChunck(int chunkX, int chunkY, Parcel[,] parcels, GameObject chunckGo)
     {
         MeshData chunk = new MeshData();
         for (int _y = 0; _y < 50; _y++)
@@ -44,8 +45,11 @@ public static class MeshGenerator
                     chunk.AddTriangles(new Vector3[] { cornerPos[3], cornerPos[1], cornerPos[0] }, new Vector2Int(chunkX, chunkY));
                 }
             }
+            await Task.Delay(1);
         }
-        return chunk.GetMesh();
+        Mesh mesh = await chunk.GetMesh();
+        chunckGo.GetComponent<MeshFilter>().mesh = mesh;
+        chunckGo.GetComponent<MeshCollider>().sharedMesh = mesh;
     }
 }
 public class MeshData
@@ -69,7 +73,7 @@ public class MeshData
         }
     }
 
-    public Mesh GetMesh()
+    public async Task<Mesh> GetMesh()
     {
         Vector3[] verticesArray = new Vector3[verticies.Count];
         Vector2[] uvsArray = new Vector2[verticies.Count];
@@ -78,10 +82,18 @@ public class MeshData
         {
             verticesArray[i] = verticies[i];
             uvsArray[i] = uvs[i];
+            if (i % 50 == 0)
+            {
+                await Task.Delay(1);
+            }
         }
         for (int i = 0; i < triangles.Count; i++)
         {
             triangleArray[i] = triangles[i];
+            if (i % 50 == 0)
+            {
+                await Task.Delay(1);
+            }
         }
         Mesh mesh = new Mesh();
         mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;

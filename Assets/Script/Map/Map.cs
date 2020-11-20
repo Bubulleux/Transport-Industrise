@@ -10,9 +10,11 @@ public  class Map
     public List<Insdustrise> industrises =  new List<Insdustrise>();
     public bool[,] chunkNeedTextureUpdate = new bool[20, 20];
     public bool[,] chunkNeedMeshUpdate = new bool[20, 20];
-    public Task GenerateMap(AnimationCurve heightCurv, AnimationCurve limitWaterCurv)
+    public async Task GenerateMap(AnimationCurve heightCurv, AnimationCurve limitWaterCurv)
     {
         parcels = new Parcel[1000, 1000];
+        await Task.Delay(10);
+        Debug.Log("Wait");
         citys = new List<City>();
         industrises = new List<Insdustrise>();
         float[,] mapNoise = NoiseGenerator.GenerNoise(1001, 1001, 60, 3, 6, 0.1f, 10, heightCurv, limitWaterCurv);
@@ -25,34 +27,44 @@ public  class Map
                 parcels[x, y].pos = new Vector2Int(x, y);
             }
         }
-
+        await Task.Delay(10);
+        Debug.Log("Wait");
         while (citys.Count < 20)
         {
+            Debug.Log("city");
+            await Task.Delay(10);
+            Debug.Log("Wait");
             CreatCity(Random.Range(100, 900), Random.Range(100, 900));
+            Debug.Log("Wait");
         }
         for (int i = 0; i < 50; i++)
         {
             CreatIndustrise(Random.Range(100, 900), Random.Range(100, 900));
+            await Task.Delay(10);
+            Debug.Log("Wait");
         }
-        return Task.CompletedTask;
+        Debug.Log("finish");
     }
 
     public bool CreatCity(int x, int y)
     {
+        Debug.Log("Creat City");
         foreach (City _city in citys)
         {
-            if (Vector3.Distance(new Vector3(x, 0f, y), _city.parent.position) < 100f)
+            if (Vector2Int.Distance(new Vector2Int(x, y), _city.pos) < 100f)
             {
                 return false;
             }
         }
-        Transform _go = new GameObject().transform;
-        _go.position = new Vector3(x, 0f, y);
-        _go.parent = GameObject.Find("Citys").transform;
-        City city = new City(_go, this);
+        Debug.Log("Creat City");
+        //Transform _go = new GameObject().transform;
+        //_go.position = new Vector3(x, 0f, y);
+        //_go.parent = GameObject.Find("Citys").transform;
+        City city = new City(new Vector2Int(x, y),this);
         city.name = "City " + citys.Count;
         city.inhabitantsNumber = Random.Range(100, 1999);
         citys.Add(city);
+        Debug.Log("Creat City");
         return true;
     }
 
@@ -60,14 +72,14 @@ public  class Map
     {
         foreach (City _city in citys)
         {
-            if (Vector3.Distance(new Vector3(x, 0f, y), _city.parent.position) < 30f)
+            if (Vector2Int.Distance(new Vector2Int(x, y), _city.pos) < 30f)
             {
                 return false;
             }
         }
         foreach (Insdustrise _industrise in industrises)
         {
-            if (Vector3.Distance(new Vector3(x, 0f, y), _industrise.parent.position) < 10f)
+            if (Vector2Int.Distance(new Vector2Int(x, y), _industrise.pos) < 10f)
             {
                 return false;
             }
@@ -76,7 +88,7 @@ public  class Map
         _go.position = new Vector3(x, 0f, y);
         _go.parent = GameObject.Find("Instrises").transform;
         _go.name = "Industrise " + industrises.Count;
-        Insdustrise insdustrise = new Insdustrise(_go, this);
+        Insdustrise insdustrise = new Insdustrise(new Vector2Int(x, y), this);
         industrises.Add(insdustrise);
         return true;
     }
@@ -132,7 +144,7 @@ public  class Map
         return false;
     }
 
-    public bool AddBuilding(Vector2Int pos, float height, Transform parent, Color color)
+    public bool AddBuilding(Vector2Int pos, float height, Color color)
     {
         if (parcels[pos.x, pos.y].construction == null)
         {

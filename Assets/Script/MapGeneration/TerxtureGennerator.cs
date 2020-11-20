@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using System.Threading.Tasks;
 public static class TerxtureGennerator
 {
     public static Texture2D[,] GeneratTexture(Parcel[,] parcels)
@@ -14,13 +15,13 @@ public static class TerxtureGennerator
         {
             for (int x = 0; x < width; x++)
             {
-                chunks[x, y] = GenerateTextureChunck(x, y, parcels);
+                //chunks[x, y] = GenerateTextureChunck(x, y, parcels);
             }
         }
         return chunks;
     }
 
-    public static Texture2D GenerateTextureChunck(int chunkX, int chunkY, Parcel[,] parcels)
+    public static async Task AsyncGenerateTextureChunck(int chunkX, int chunkY, Parcel[,] parcels, GameObject chunckGo)
     {
         Texture2D texture = new Texture2D(50, 50);
         Color[] colors = new Color[50 * 50];
@@ -47,13 +48,16 @@ public static class TerxtureGennerator
                         color = Color.green;
                     }
                     colors[_y * 50 + _x] = color;
+                    
                 }
             }
         }
+        await Task.Delay(1);
         texture.SetPixels(colors);
         texture.filterMode = FilterMode.Point;
         texture.wrapMode = TextureWrapMode.Clamp;
         texture.Apply();
-        return texture;
+        chunckGo.GetComponent<Renderer>().sharedMaterial = new Material(Shader.Find("Standard"));
+        chunckGo.GetComponent<Renderer>().sharedMaterial.mainTexture = texture;
     }
 }
