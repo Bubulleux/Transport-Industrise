@@ -8,7 +8,8 @@ public class Road
 }
 public class Building
 {
-
+    public float height;
+    public Color color;
 }
 
 public class Depot

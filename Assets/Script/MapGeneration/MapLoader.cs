@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MapLoader : MonoBehaviour
 {
     private Task<Map> operation;
     public static bool load = false;
+    public TaskStatus operationStatus;
     public void Awake()
     {
         Debug.Log(load);
@@ -20,6 +22,7 @@ public class MapLoader : MonoBehaviour
         Debug.Log("Load");
         DontDestroyOnLoad(gameObject);
         operation = AsyncLoadMap(GameObject.Find("Map").GetComponent<MapManager>().heightCurv, GameObject.Find("Map").GetComponent<MapManager>().limitWaterCurv);
+        operationStatus = operation.Status;
         
     }
 
@@ -38,5 +41,14 @@ public class MapLoader : MonoBehaviour
         Destroy(gameObject);
         Debug.Log($"time to creat Map: {System.DateTime.Now.Second + System.DateTime.Now.Minute * 60 - startTime}");
         return _mapdata;
+    }
+
+    private void Update()
+    {
+        if (operationStatus != TaskStatus.Faulted && operation.Status == TaskStatus.Faulted)
+        {
+            operationStatus = operation.Status;
+            Debug.LogError($"message: {operation.Exception.Message}, \n source: {operation.Exception.Source}, \n\n comple: {operation.Exception.ToString()}");
+        }
     }
 }

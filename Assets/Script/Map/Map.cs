@@ -14,7 +14,6 @@ public  class Map
     {
         parcels = new Parcel[1000, 1000];
         await Task.Delay(10);
-        Debug.Log("Wait");
         citys = new List<City>();
         industrises = new List<Insdustrise>();
         float[,] mapNoise = NoiseGenerator.GenerNoise(1001, 1001, 60, 3, 6, 0.1f, 10, heightCurv, limitWaterCurv);
@@ -28,35 +27,27 @@ public  class Map
             }
         }
         await Task.Delay(10);
-        Debug.Log("Wait");
         while (citys.Count < 20)
         {
-            Debug.Log("city");
-            await Task.Delay(10);
-            Debug.Log("Wait");
+            await Task.Delay(10);;
             CreatCity(Random.Range(100, 900), Random.Range(100, 900));
-            Debug.Log("Wait");
         }
         for (int i = 0; i < 50; i++)
         {
             CreatIndustrise(Random.Range(100, 900), Random.Range(100, 900));
             await Task.Delay(10);
-            Debug.Log("Wait");
         }
-        Debug.Log("finish");
     }
 
     public bool CreatCity(int x, int y)
     {
-        Debug.Log("Creat City");
         foreach (City _city in citys)
         {
-            if (Vector2Int.Distance(new Vector2Int(x, y), _city.pos) < 100f)
+            if (Vector2Int.Distance(new Vector2Int(x, y), _city.MasterPos) < 100f)
             {
                 return false;
             }
         }
-        Debug.Log("Creat City");
         //Transform _go = new GameObject().transform;
         //_go.position = new Vector3(x, 0f, y);
         //_go.parent = GameObject.Find("Citys").transform;
@@ -64,7 +55,6 @@ public  class Map
         city.name = "City " + citys.Count;
         city.inhabitantsNumber = Random.Range(100, 1999);
         citys.Add(city);
-        Debug.Log("Creat City");
         return true;
     }
 
@@ -72,22 +62,22 @@ public  class Map
     {
         foreach (City _city in citys)
         {
-            if (Vector2Int.Distance(new Vector2Int(x, y), _city.pos) < 30f)
+            if (Vector2Int.Distance(new Vector2Int(x, y), _city.MasterPos) < 30f)
             {
                 return false;
             }
         }
         foreach (Insdustrise _industrise in industrises)
         {
-            if (Vector2Int.Distance(new Vector2Int(x, y), _industrise.pos) < 10f)
+            if (Vector2Int.Distance(new Vector2Int(x, y), _industrise.MasterPos) < 10f)
             {
                 return false;
             }
         }
-        Transform _go = new GameObject().transform;
-        _go.position = new Vector3(x, 0f, y);
-        _go.parent = GameObject.Find("Instrises").transform;
-        _go.name = "Industrise " + industrises.Count;
+        //Transform _go = new GameObject().transform;
+        //_go.position = new Vector3(x, 0f, y);
+        //_go.parent = GameObject.Find("Instrises").transform;
+        //_go.name = "Industrise " + industrises.Count;
         Insdustrise insdustrise = new Insdustrise(new Vector2Int(x, y), this);
         industrises.Add(insdustrise);
         return true;
@@ -95,6 +85,11 @@ public  class Map
 
     public bool AddRoad(Vector2Int pos)
     {
+        if (pos.x < 50 || pos.x >= 950 || pos.y < 50 || pos.y >= 950)
+        {
+            Debug.Log("Return");
+            return false;
+        }
         if (parcels[pos.x, pos.y].construction == null)
         {
             for (int j = 0; j < MapManager.parcelAroundCorner.Length; j++)
@@ -145,17 +140,14 @@ public  class Map
     }
 
     public bool AddBuilding(Vector2Int pos, float height, Color color)
-    {
+    { 
         if (parcels[pos.x, pos.y].construction == null)
         {
-
-            //GameObject _go = Instantiate(buildingPrefab, new Vector3(pos.x, parcels[pos.x, pos.y].corner[0], pos.y), Quaternion.identity, transform);
-            //_go.transform.GetChild(0).localPosition = new Vector3(0.5f, height / 2, 0.5f);
-            //_go.transform.GetChild(0).localScale = new Vector3(1f, height, 1f);
-            //_go.transform.parent = parent;
-            //_go.transform.Find("GFX").GetComponent<Renderer>().material.color = color;
-            parcels[pos.x, pos.y].construction = new Building();
-            parcels[pos.x, pos.y].seeTerrain = false;
+            Building building = new Building();
+            building.color = color;
+            building.height = height;
+            parcels[pos.x, pos.y].construction = building;
+            //parcels[pos.x, pos.y].seeTerrain = false;
             UpdateChunkMesh(Mathf.FloorToInt(pos.x / 50), Mathf.FloorToInt(pos.y / 50));
             return true;
 

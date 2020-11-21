@@ -7,11 +7,11 @@ public class Insdustrise
     public TypeIndustrise type;
     public Materials[] materialsInpute;
     public Materials[] materialsOutpute;
-    public Vector2Int pos;
+    public Vector2Int MasterPos;
 
     public Insdustrise(Vector2Int _pos, Map _mapData)
     {
-        pos = _pos;
+        MasterPos = _pos;
         type = (TypeIndustrise)Random.Range(0, 2);
         for (int y = -1; y <= 2; y++)
         {
@@ -30,7 +30,7 @@ public class Insdustrise
                         height = 3f;
                         break;
                 }
-                _mapData.AddBuilding(pos +  new Vector2Int(x, y), height, color);
+                _mapData.AddBuilding(MasterPos +  new Vector2Int(x, y), height, color);
             }
         }
     }

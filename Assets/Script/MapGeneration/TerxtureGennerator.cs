@@ -43,6 +43,10 @@ public static class TerxtureGennerator
                     {
                         color = new Color(0.7f, 0.1f, 0f);
                     }
+                    else if (parcels[x, y].construction != null && parcels[x, y].construction.GetType() == typeof(Building))
+                    {
+                        color = ((Building)parcels[x, y].construction).color;
+                    }
                     else
                     {
                         color = Color.green;
