@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using System.Threading.Tasks;
 
 public class MapManager : MonoBehaviour
 {
@@ -23,7 +24,7 @@ public class MapManager : MonoBehaviour
     public static Map map;
     public static int startTimeOfGame;
 
-    public static readonly Vector2Int[] parcelAround = 
+    public static readonly Vector2Int[] parcelAround =
     {
         new Vector2Int(0, 1),
         new Vector2Int(1, 0),
@@ -78,11 +79,7 @@ public class MapManager : MonoBehaviour
         Debug.Log($"time creat chunck: {System.DateTime.Now.Second + System.DateTime.Now.Minute * 60 - startTime}");
         Debug.Log($"time: {System.DateTime.Now.Second + System.DateTime.Now.Minute * 60 - startTimeOfGame}");
     }
-    
-    void Update()
-    {
-        
-    }
+
     private void FixedUpdate()
     {
         for (int y = 0; y < 20; y++)
@@ -101,40 +98,8 @@ public class MapManager : MonoBehaviour
                         TerxtureGennerator.AsyncGenerateTextureChunck(x, y, map.parcels, gfxsMap[x, y]);
                         map.chunkNeedTextureUpdate[x, y] = false;
                     }
-                    //SetMesh();
                 }
             }
         }
     }
-
-    
-
-    
-
-    
-    
-
-    public void SetMesh()
-    {
-        for (int y = 0; y < mapMeshs.GetLength(1); y++)
-        {
-            for (int x = 0; x < mapMeshs.GetLength(0); x++)
-            {
-                gfxsMap[x, y].GetComponent<MeshFilter>().mesh = mapMeshs[x, y];
-                gfxsMap[x, y].GetComponent<MeshCollider>().sharedMesh = mapMeshs[x, y];
-                gfxsMap[x, y].GetComponent<Renderer>().sharedMaterial = new Material(Shader.Find("Standard"));
-                gfxsMap[x, y].GetComponent<Renderer>().sharedMaterial.mainTexture = mapTexture[x, y];
-            }
-        }
-        //Debug.Log("Mesh Set");
-    }
-}
-
-public class Parcel
-{
-    public Vector2Int pos;
-    public int[] corner = new int[4];
-    public object construction = null;
-    public bool seeTerrain = true;
-
 }

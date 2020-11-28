@@ -7,7 +7,7 @@ public  class Map
 {
     public Parcel[,] parcels = new Parcel[1000, 1000];
     public List<City> citys = new List<City>();
-    public List<Insdustrise> industrises =  new List<Insdustrise>();
+    public List<Industrise> industrises =  new List<Industrise>();
     public bool[,] chunkNeedTextureUpdate = new bool[20, 20];
     public bool[,] chunkNeedMeshUpdate = new bool[20, 20];
     public async Task GenerateMap(AnimationCurve heightCurv, AnimationCurve limitWaterCurv)
@@ -15,7 +15,7 @@ public  class Map
         parcels = new Parcel[1000, 1000];
         await Task.Delay(10);
         citys = new List<City>();
-        industrises = new List<Insdustrise>();
+        industrises = new List<Industrise>();
         float[,] mapNoise = NoiseGenerator.GenerNoise(1001, 1001, 60, 3, 6, 0.1f, 10, heightCurv, limitWaterCurv);
         for (int y = 0; y < parcels.GetLength(1); y++)
         {
@@ -62,12 +62,12 @@ public  class Map
     {
         foreach (City _city in citys)
         {
-            if (Vector2Int.Distance(new Vector2Int(x, y), _city.MasterPos) < 30f)
+            if (Vector2Int.Distance(new Vector2Int(x, y), _city.MasterPos) < 50f)
             {
                 return false;
             }
         }
-        foreach (Insdustrise _industrise in industrises)
+        foreach (Industrise _industrise in industrises)
         {
             if (Vector2Int.Distance(new Vector2Int(x, y), _industrise.MasterPos) < 10f)
             {
@@ -78,8 +78,8 @@ public  class Map
         //_go.position = new Vector3(x, 0f, y);
         //_go.parent = GameObject.Find("Instrises").transform;
         //_go.name = "Industrise " + industrises.Count;
-        Insdustrise insdustrise = new Insdustrise(new Vector2Int(x, y), this);
-        industrises.Add(insdustrise);
+        Industrise Industrise = new Industrise(new Vector2Int(x, y), this);
+        industrises.Add(Industrise);
         return true;
     }
 
@@ -90,7 +90,7 @@ public  class Map
             Debug.Log("Return");
             return false;
         }
-        if (parcels[pos.x, pos.y].construction == null)
+        if (parcels[pos.x, pos.y].GetType() == typeof(Parcel))
         {
             for (int j = 0; j < MapManager.parcelAroundCorner.Length; j++)
             {
@@ -106,7 +106,7 @@ public  class Map
                     {
                         _j = MapManager.parcelAroundCorner.Length - 1;
                     }
-                    if (parcels[MapManager.parcelAroundCorner[_j].x + pos.x, MapManager.parcelAroundCorner[_j].y + pos.y].construction != null && parcels[MapManager.parcelAroundCorner[_j].x + pos.x, MapManager.parcelAroundCorner[_j].y + pos.y].construction.GetType() == typeof(Road))
+                    if (parcels[MapManager.parcelAroundCorner[_j].x + pos.x, MapManager.parcelAroundCorner[_j].y + pos.y].GetType() != typeof(Parcel) && parcels[MapManager.parcelAroundCorner[_j].x + pos.x, MapManager.parcelAroundCorner[_j].y + pos.y].GetType() == typeof(Road))
                     {
                         _countRoad++;
                     }
@@ -117,12 +117,12 @@ public  class Map
                 }
             }
             //Instantiate(roadPrefab, new Vector3(pos.x, parcels[pos.x, pos.y].corner[0], pos.y), Quaternion.identity, transform);
-            parcels[pos.x, pos.y].construction = new Road();
+            parcels[pos.x, pos.y] = Parcel.CopyClass(parcels[pos.x, pos.y], new Road());
             for (int i = 0; i < MapManager.parcelAround.Length; i++)
             {
-                if (parcels[MapManager.parcelAroundCorner[i].x + pos.x, MapManager.parcelAroundCorner[i].y + pos.y].construction != null && parcels[MapManager.parcelAroundCorner[i].x + pos.x, MapManager.parcelAroundCorner[i].y + pos.y].construction.GetType() == typeof(Road))
+                if (parcels[MapManager.parcelAroundCorner[i].x + pos.x, MapManager.parcelAroundCorner[i].y + pos.y].GetType() != typeof(Parcel) && parcels[MapManager.parcelAroundCorner[i].x + pos.x, MapManager.parcelAroundCorner[i].y + pos.y].GetType() == typeof(Road))
                 {
-                    ((Road)parcels[pos.x, pos.y].construction).direction[i] = true;
+                    ((Road)parcels[pos.x, pos.y]).direction[i] = true;
                 }
             }
             //parcels[pos.x, pos.y].seeTerrain = false;
@@ -141,12 +141,12 @@ public  class Map
 
     public bool AddBuilding(Vector2Int pos, float height, Color color)
     { 
-        if (parcels[pos.x, pos.y].construction == null)
+        if (parcels[pos.x, pos.y].GetType() == typeof(Parcel))
         {
             Building building = new Building();
             building.color = color;
             building.height = height;
-            parcels[pos.x, pos.y].construction = building;
+            parcels[pos.x, pos.y] = Parcel.CopyClass(parcels[pos.x, pos.y], building);
             //parcels[pos.x, pos.y].seeTerrain = false;
             UpdateChunkMesh(Mathf.FloorToInt(pos.x / 50), Mathf.FloorToInt(pos.y / 50));
             return true;
@@ -155,15 +155,25 @@ public  class Map
         return false;
     }
 
-    public bool AddDepot(Vector2Int pos)
+    public bool AddConstruction(Vector2Int pos, Parcel construction)
     {
-        if (parcels[pos.x, pos.y].construction == null)
+        if (parcels[pos.x, pos.y].GetType() == typeof(Parcel))
         {
-            parcels[pos.x, pos.y].construction = new Depot(pos);
+            parcels[pos.x, pos.y] = Parcel.CopyClass(parcels[pos.x, pos.y], construction);
             UpdateChunkTexture(Mathf.FloorToInt(pos.x / 50), Mathf.FloorToInt(pos.y / 50));
             return true;
         }
         return false;
+    }
+
+    public void Color(Vector2Int pos, Color color)
+    {
+        Building building = new Building();
+        building.color = color;
+        building.height = 0;
+        parcels[pos.x, pos.y] = Parcel.CopyClass(parcels[pos.x, pos.y], building);
+        //parcels[pos.x, pos.y].seeTerrain = false;
+        UpdateChunkTexture(Mathf.FloorToInt(pos.x / 50), Mathf.FloorToInt(pos.y / 50));
     }
 
     public void UpdateChunkTexture(int x, int y)

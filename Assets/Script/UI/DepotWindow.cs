@@ -9,7 +9,7 @@ public class DepotWindow : MonoBehaviour
     public GameObject templateStoreVehicle;
     public Transform listContente;
     private Vector2Int depotpos;
-    public Depot Depot { set => MapManager.map.parcels[depotpos.x, depotpos.y].construction = value;  get => (Depot)MapManager.map.parcels[depotpos.x, depotpos.y].construction;}
+    public Depot Depot { set => MapManager.map.parcels[depotpos.x, depotpos.y] = value;  get => (Depot)MapManager.map.parcels[depotpos.x, depotpos.y];}
     public bool onStore = false;
     public Text butTxt;
     public VehicleData[] vehicleInStore;
@@ -48,7 +48,7 @@ public class DepotWindow : MonoBehaviour
                 _go.SetParent(listContente);
                 _go.Find("Name").GetComponent<Text>().text = curVehicle.GetComponent<VehicleContoler>().vehicleData.name;
                 _go.Find("Damage").GetComponent<Text>().text = string.Format("Damage: {0}%", Mathf.Floor(curVehicle.GetComponent<VehicleContoler>().damage * 100));
-                _go.Find("Info").GetComponent<Button>().onClick.AddListener(delegate { Debug.Log("Buton Clk"); });
+                _go.Find("Info").GetComponent<Button>().onClick.AddListener(delegate { WindosOpener.OpenVehicleWindow(curVehicle.GetComponent<VehicleContoler>()); });
                 _go.gameObject.SetActive(true);
             }
         }

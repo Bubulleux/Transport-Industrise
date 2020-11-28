@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Insdustrise
+public class Industrise
 {
     public TypeIndustrise type;
     public Materials[] materialsInpute;
     public Materials[] materialsOutpute;
     public Vector2Int MasterPos;
 
-    public Insdustrise(Vector2Int _pos, Map _mapData)
+    public Industrise(Vector2Int _pos, Map _mapData)
     {
         MasterPos = _pos;
         type = (TypeIndustrise)Random.Range(0, 2);

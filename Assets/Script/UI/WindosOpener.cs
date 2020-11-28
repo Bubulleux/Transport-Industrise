@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class WindosOpener 
 {
-    public static GameObject openDepotWindow(Vector2Int pos)
+    public static GameObject OpenDepotWindow(Vector2Int pos)
     {
         GameObject _go = Object.Instantiate(Resources.Load("UI/DepotWindow", typeof(GameObject)) as GameObject);
         _go.transform.SetParent(GameObject.Find("Canvas").transform, false);
@@ -31,6 +31,15 @@ public static class WindosOpener
         {
             _go.GetComponent<RouteCreatorWindow>().route = _route;
         }
+        return _go;
+    }
+
+    public static GameObject OpenVehicleWindow(VehicleContoler vehicle)
+    {
+        GameObject _go = Object.Instantiate(Resources.Load("UI/VehicleWindow", typeof(GameObject)) as GameObject);
+        _go.transform.SetParent(GameObject.Find("Canvas").transform, false);
+        _go.transform.localPosition = Vector3.zero;
+        _go.GetComponent<VehicleWIndow>().vehicle = vehicle;
         return _go;
     }
 }

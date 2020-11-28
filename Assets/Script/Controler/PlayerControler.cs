@@ -1,41 +1,64 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class PlayerControler : MonoBehaviour
 {
+    public static PlayerControler instance;
     public Camera cam;
     public Tools curTool;
-    void Start()
+    public delegate void MainToolRedir(Vector2Int posMouse);
+    public MainToolRedir toolRedirection = null;
+
+    private void Awake()
     {
-        
+        instance = this;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            toolRedirection = null;
+        }
+        if (Input.GetKeyDown(KeyCode.F1))
+        {
+            Debug.Log(GetMoussePos().ToVec2Int());
+        }
+
         if (Input.GetMouseButtonDown(0) && GetMoussePos() != Vector3.zero)
         {
-            switch(curTool)
+            if (toolRedirection == null)
             {
-                case Tools.none:
-                    object construction = MapManager.map.parcels[GetMoussePos().ToVec2Int().x, GetMoussePos().ToVec2Int().y].construction;
-                    if (construction != null)
-                    {
-                        if (construction is Depot)
+                switch (curTool)
+                {
+                    case Tools.none:
+                        object construction = MapManager.map.parcels[GetMoussePos().ToVec2Int().x, GetMoussePos().ToVec2Int().y];
+                        if (construction != null)
                         {
-                            WindosOpener.openDepotWindow(GetMoussePos().ToVec2Int());
+                            if (construction is Depot)
+                            {
+                                WindosOpener.OpenDepotWindow(GetMoussePos().ToVec2Int());
+                            }
                         }
-                    }
-                    break;
-                case Tools.road:
-                    StartCoroutine(MakeRoad());
-                    break;
-                case Tools.depot:
-                    MapManager.map.AddDepot(GetMoussePos().ToVec2Int());
-                    break;
+                        break;
+                    case Tools.road:
+                        StartCoroutine(MakeRoad());
+                        break;
+                    case Tools.depot:
+                        MapManager.map.AddConstruction(GetMoussePos().ToVec2Int(), new Depot());
+                        break;
+                    case Tools.loadingBay:
+                        MapManager.map.AddConstruction(GetMoussePos().ToVec2Int(), new LoadingBay());
+                        break;
+                }
             }
+            else
+            {
+                toolRedirection(GetMoussePos().ToVec2Int());
+            }
+            
         }
     }
 
@@ -85,12 +108,20 @@ public class PlayerControler : MonoBehaviour
     public void SetTool(int tool)
     {
         curTool = (Tools)tool;
+        toolRedirection = null;
+    }
+
+    public void RedirectTool( MainToolRedir func)
+    {
+        toolRedirection = func;
+        Debug.Log("Redirec Main Tool");
     }
     public enum Tools
     {
         none,
         road,
-        depot
+        depot,
+        loadingBay
     }
 
     public static bool PointerIsOverUI()

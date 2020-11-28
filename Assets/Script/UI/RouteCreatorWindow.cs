@@ -48,8 +48,15 @@ public class RouteCreatorWindow : MonoBehaviour
     }
     public void AddPoint()
     {
-        route.points.Add(new Vector2Int(Random.Range(0, 100), Random.Range(0, 100)));
-        UpdateList();
+        PlayerControler.instance.RedirectTool(delegate (Vector2Int pos)
+        {
+            System.Type type = MapManager.map.parcels[pos.x, pos.y].GetType();
+            if (type == typeof(Depot) || type == typeof(LoadingBay))
+            {
+                route.points.Add(pos);
+                UpdateList();
+            }
+        });
     }
     public void Delete(int index)
     {

@@ -35,17 +35,21 @@ public static class TerxtureGennerator
                 if (parcels[x, y].seeTerrain)
                 {
                     Color color;
-                    if (parcels[x, y].construction != null && parcels[x, y].construction.GetType() == typeof(Road))
+                    if (parcels[x, y].GetType() == typeof(Road))
                     {
                         color = Color.black;
                     }
-                    else if (parcels[x, y].construction != null && parcels[x, y].construction.GetType() == typeof(Depot))
+                    else if (parcels[x, y].GetType() == typeof(Depot))
                     {
                         color = new Color(0.7f, 0.1f, 0f);
                     }
-                    else if (parcels[x, y].construction != null && parcels[x, y].construction.GetType() == typeof(Building))
+                    else if (parcels[x, y].GetType() == typeof(Building))
                     {
-                        color = ((Building)parcels[x, y].construction).color;
+                        color = ((Building)parcels[x, y]).color;
+                    }
+                    else if (parcels[x, y].GetType() == typeof(LoadingBay))
+                    {
+                        color = Color.white;
                     }
                     else
                     {

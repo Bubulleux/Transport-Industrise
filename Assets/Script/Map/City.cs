@@ -167,7 +167,7 @@ public class City
                     parcelsCityStatus.Add(dir + road, parcelStatus.canRoad);
                     continue;
                 }
-                if(mapData.parcels[MasterPos.x + road.x + dir.x, MasterPos.y + road.y + dir.y].construction == null)
+                if(mapData.parcels[MasterPos.x + road.x + dir.x, MasterPos.y + road.y + dir.y].GetType() == typeof(Parcel))
                 {
                     parcelsCityStatus[dir + road]= parcelStatus.canRoad;
                 }
