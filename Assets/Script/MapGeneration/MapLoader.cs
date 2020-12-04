@@ -12,14 +12,12 @@ public class MapLoader : MonoBehaviour
     public TaskStatus operationStatus;
     public void Awake()
     {
-        Debug.Log(load);
         if (load == true)
         {
             Destroy(gameObject);
             return;
         }
         load = true;
-        Debug.Log("Load");
         DontDestroyOnLoad(gameObject);
         operation = AsyncLoadMap(GameObject.Find("Map").GetComponent<MapManager>().heightCurv, GameObject.Find("Map").GetComponent<MapManager>().limitWaterCurv);
         operationStatus = operation.Status;
@@ -34,7 +32,6 @@ public class MapLoader : MonoBehaviour
         await _mapdata.GenerateMap(heightCurv, limitWaterCurv);
         //await Task.Delay(3000);
         SceneManager.LoadSceneAsync(0);
-        Debug.Log(_mapdata.citys.Count);
         MapManager.map = _mapdata;
         //operation = null;
         Debug.Log("Load End");

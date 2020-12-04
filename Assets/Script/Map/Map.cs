@@ -10,6 +10,9 @@ public  class Map
     public List<Industrise> industrises =  new List<Industrise>();
     public bool[,] chunkNeedTextureUpdate = new bool[20, 20];
     public bool[,] chunkNeedMeshUpdate = new bool[20, 20];
+    public List<Parcel> importParcels = new List<Parcel>();
+
+
     public async Task GenerateMap(AnimationCurve heightCurv, AnimationCurve limitWaterCurv)
     {
         parcels = new Parcel[1000, 1000];
@@ -21,9 +24,11 @@ public  class Map
         {
             for (int x = 0; x < parcels.GetLength(0); x++)
             {
-                parcels[x, y] = new Parcel();
-                parcels[x, y].corner = new int[4] { Mathf.FloorToInt(mapNoise[x, y]), Mathf.FloorToInt(mapNoise[x + 1, y]), Mathf.FloorToInt(mapNoise[x, y + 1]), Mathf.FloorToInt(mapNoise[x + 1, y + 1]) };
-                parcels[x, y].pos = new Vector2Int(x, y);
+                parcels[x, y] = new Parcel
+                {
+                    corner = new int[4] { Mathf.FloorToInt(mapNoise[x, y]), Mathf.FloorToInt(mapNoise[x + 1, y]), Mathf.FloorToInt(mapNoise[x, y + 1]), Mathf.FloorToInt(mapNoise[x + 1, y + 1]) },
+                    pos = new Vector2Int(x, y)
+                };
             }
         }
         await Task.Delay(10);
@@ -51,9 +56,11 @@ public  class Map
         //Transform _go = new GameObject().transform;
         //_go.position = new Vector3(x, 0f, y);
         //_go.parent = GameObject.Find("Citys").transform;
-        City city = new City(new Vector2Int(x, y),this);
-        city.name = "City " + citys.Count;
-        city.inhabitantsNumber = Random.Range(100, 1999);
+        City city = new City(new Vector2Int(x, y), this)
+        {
+            name = "City " + citys.Count,
+            inhabitantsNumber = Random.Range(100, 1999)
+        };
         citys.Add(city);
         return true;
     }
@@ -143,9 +150,11 @@ public  class Map
     { 
         if (parcels[pos.x, pos.y].GetType() == typeof(Parcel))
         {
-            Building building = new Building();
-            building.color = color;
-            building.height = height;
+            Building building = new Building
+            {
+                color = color,
+                height = height
+            };
             parcels[pos.x, pos.y] = Parcel.CopyClass(parcels[pos.x, pos.y], building);
             //parcels[pos.x, pos.y].seeTerrain = false;
             UpdateChunkMesh(Mathf.FloorToInt(pos.x / 50), Mathf.FloorToInt(pos.y / 50));
@@ -161,6 +170,7 @@ public  class Map
         {
             parcels[pos.x, pos.y] = Parcel.CopyClass(parcels[pos.x, pos.y], construction);
             UpdateChunkTexture(Mathf.FloorToInt(pos.x / 50), Mathf.FloorToInt(pos.y / 50));
+            importParcels.Add(construction);
             return true;
         }
         return false;
@@ -168,9 +178,11 @@ public  class Map
 
     public void Color(Vector2Int pos, Color color)
     {
-        Building building = new Building();
-        building.color = color;
-        building.height = 0;
+        Building building = new Building
+        {
+            color = color,
+            height = 0
+        };
         parcels[pos.x, pos.y] = Parcel.CopyClass(parcels[pos.x, pos.y], building);
         //parcels[pos.x, pos.y].seeTerrain = false;
         UpdateChunkTexture(Mathf.FloorToInt(pos.x / 50), Mathf.FloorToInt(pos.y / 50));
@@ -183,5 +195,24 @@ public  class Map
     public void UpdateChunkMesh(int x, int y)
     {
         chunkNeedMeshUpdate[x, y] = true;
+    }
+
+    public T[] GetImpotantParcel<T>() where T : Parcel
+    {
+        List<T> parcelsList = new List<T>();
+        foreach(Parcel curParcel in importParcels)
+        {
+            if (curParcel.GetType() == typeof(T))
+            {
+                parcelsList.Add(curParcel as T);
+            }
+        }
+        T[] parcelArray = new T[parcelsList.Count];
+        for (int i = 0; i < parcelsList.Count; i++)
+        {
+            parcelArray[i] = parcelsList[i];
+        }
+        return parcelArray;
+
     }
 }

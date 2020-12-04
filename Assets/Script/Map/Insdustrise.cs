@@ -1,18 +1,19 @@
-﻿using System.Collections;
+﻿ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Industrise
 {
-    public TypeIndustrise type;
-    public Materials[] materialsInpute;
-    public Materials[] materialsOutpute;
+    public IndustriseData industriseData;
+    public Dictionary<Materials, int> materialsInpute = new Dictionary<Materials, int>();
+    public Dictionary<Materials, int> materialsOutpute = new Dictionary<Materials, int>();
     public Vector2Int MasterPos;
 
     public Industrise(Vector2Int _pos, Map _mapData)
     {
         MasterPos = _pos;
-        type = (TypeIndustrise)Random.Range(0, 2);
+        IndustriseData[] allIndustriseData
+        industriseData = Resources.Load
         for (int y = -1; y <= 2; y++)
         {
             for (int x = -1; x <= 2; x++)

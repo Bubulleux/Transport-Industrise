@@ -50,6 +50,11 @@ public class RouteCreatorWindow : MonoBehaviour
     {
         PlayerControler.instance.RedirectTool(delegate (Vector2Int pos)
         {
+            if (this == null)
+            {
+                PlayerControler.instance.toolRedirection = null;
+                return;
+            }
             System.Type type = MapManager.map.parcels[pos.x, pos.y].GetType();
             if (type == typeof(Depot) || type == typeof(LoadingBay))
             {

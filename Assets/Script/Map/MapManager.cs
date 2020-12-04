@@ -24,6 +24,9 @@ public class MapManager : MonoBehaviour
     public static Map map;
     public static int startTimeOfGame;
 
+    public delegate void MapUpdateEventDelegate();
+    public event MapUpdateEventDelegate MapUpdateEvent;
+
     public static readonly Vector2Int[] parcelAround =
     {
         new Vector2Int(0, 1),
@@ -82,10 +85,12 @@ public class MapManager : MonoBehaviour
 
     private void FixedUpdate()
     {
+        bool mapHasBeenUpdate = false;
         for (int y = 0; y < 20; y++)
         {
             for (int x = 0; x < 20; x++)
             {
+                
                 if (map.chunkNeedTextureUpdate[x, y] || map.chunkNeedMeshUpdate[x, y])
                 {
                     if (map.chunkNeedMeshUpdate[x, y])
@@ -98,8 +103,14 @@ public class MapManager : MonoBehaviour
                         TerxtureGennerator.AsyncGenerateTextureChunck(x, y, map.parcels, gfxsMap[x, y]);
                         map.chunkNeedTextureUpdate[x, y] = false;
                     }
+                    mapHasBeenUpdate = true;
                 }
             }
         }
+        if (mapHasBeenUpdate)
+        {
+            MapUpdateEvent?.Invoke();
+        }
     }
+
 }

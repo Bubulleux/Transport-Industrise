@@ -46,7 +46,6 @@ public static class NoiseGenerator
                 noise[x, y] = noiseHeight;
             }
         }
-        Debug.Log(maxNoiseHeight);
         for (int y = 0; y < mapHeight; y++)
         {
             for (int x = 0; x < mapWidth; x++)

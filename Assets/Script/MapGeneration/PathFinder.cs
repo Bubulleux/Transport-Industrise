@@ -11,6 +11,7 @@ public static class PathFinder
         bool endFind = false;
         Vector2Int end = Vector2Int.zero;
         int dist = 0;
+        int i = 0;
         while(parcelNeedCheck.Count != 0)
         {
             List<Vector2Int> furureParcelNeedCheck = new List<Vector2Int>();
@@ -23,7 +24,6 @@ public static class PathFinder
                         endFind = true;
                         end = curParcel;
                         parcelCheck.Add(curParcel, dist);
-                        Debug.Log("End: " + curEnd);
                         break;
                     }
                 }
@@ -36,7 +36,7 @@ public static class PathFinder
                     parcelCheck.Add(curParcel, dist);
                     foreach(Vector2Int curParcelAround in MapManager.parcelAround)
                     {
-                        if(!parcelCheck.ContainsKey(curParcel + curParcelAround))
+                        if(!parcelCheck.ContainsKey(curParcel + curParcelAround) && !furureParcelNeedCheck.Contains(curParcel + curParcelAround))
                         {
                             furureParcelNeedCheck.Add(curParcel + curParcelAround);
                         }
@@ -44,7 +44,10 @@ public static class PathFinder
                 }
                 else
                 {
-                    parcelCheck.Add(curParcel, -1);
+                    if (!parcelCheck.ContainsKey(curParcel))
+                    {
+                        parcelCheck.Add(curParcel, -1);
+                    }
                 }
             }
             if (endFind)
@@ -53,6 +56,12 @@ public static class PathFinder
             }
             parcelNeedCheck = furureParcelNeedCheck;
             dist++;
+            i++;
+            if (i >= 300)
+            {
+                Debug.Log("Break 1");
+                break;
+            }
         }
 
         if (!endFind)
@@ -60,16 +69,29 @@ public static class PathFinder
             return null;
         }
 
+        //List<Vector2Int> returnPath = new List<Vector2Int>();
+        //foreach(KeyValuePair<Vector2Int, int> curPointDist in parcelCheck)
+        //{
+        //    returnPath.Add(curPointDist.Key);
+        //}
+        //return returnPath;
         List<Vector2Int> path = new List<Vector2Int>() { end };
+        i = 0;
         while(path[0] != start)
         {
             foreach(Vector2Int curAroundDir in MapManager.parcelAround)
             {
                 Vector2Int curParcelAround = path[0] + curAroundDir;
-                if(parcelCheck.ContainsKey(curParcelAround) && parcelCheck[curParcelAround] < parcelCheck[path[0]])
+                if(parcelCheck.ContainsKey(curParcelAround)&& parcelCheck[curParcelAround] != -1 && parcelCheck[curParcelAround] < parcelCheck[path[0]])
                 {
                     path.Insert(0, curParcelAround);
                 }
+            }
+            i++;
+            if (i >= 1000)
+            {
+                Debug.Log("Break 2 " + i);
+                break;
             }
         }
         return path;
