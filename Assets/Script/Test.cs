@@ -4,16 +4,12 @@ using UnityEngine;
 
 public class Test : MonoBehaviour
 {
-    void Start()
+    void Awake()
     {
-        List<int> list = new List<int>() { 1, 2, 3, 4 };
-        list.Insert(0, 0);
-        string pr = "";
-        foreach(int i in list)
+        foreach (VehicleData curVehicleData in FIleSys.GetAllInstances<VehicleData>())
         {
-            pr = pr + "  " + i;
+            Debug.Log(curVehicleData.name);
         }
-        Debug.Log(pr);
     }
 }
 

@@ -14,8 +14,12 @@ public class PlayerControler : MonoBehaviour
     {
         instance = this;
     }
-
-    // Update is called once per frame
+    /*
+     * F1: Get parcel Info
+     * F2: Make auto Construct
+     * F3: Print vehicle info
+     * F4: Interact whith Industrise
+     */
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -25,6 +29,39 @@ public class PlayerControler : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F1))
         {
             Debug.Log(GetMoussePos().ToVec2Int());
+            if (MapManager.map.GetparcelType(GetMoussePos().ToVec2Int()) == typeof(LoadingBay))
+            {
+                string result = "Inpute:";
+                foreach(KeyValuePair<Materials, int> curMaterial in MapManager.map.GetParcel<LoadingBay>(GetMoussePos().ToVec2Int()).GetMaterialInput())
+                {
+                    result += $"\n{curMaterial.Key}: {curMaterial.Value}";
+                }
+                result += "\nOutpute: ";
+                foreach (KeyValuePair<Materials, int> curMaterial in MapManager.map.GetParcel<LoadingBay>(GetMoussePos().ToVec2Int()).GetMaterialOutpute())
+                {
+                    result += $"\n{curMaterial.Key}: {curMaterial.Value}";
+                }
+                Debug.Log(result);
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.F2))
+        {
+            AutoCratore.MakeAuto(GetMoussePos().ToVec2Int());
+        }
+
+        if (Input.GetKeyDown(KeyCode.F4) && MapManager.map.GetparcelType(GetMoussePos().ToVec2Int()) == typeof(LoadingBay))
+        {
+            LoadingBay loadingBay = MapManager.map.GetParcel<LoadingBay>(GetMoussePos().ToVec2Int());
+            foreach(KeyValuePair<Materials, int> curMaterial in loadingBay.GetMaterialInput())
+            {
+                int materialSuccessful = loadingBay.TryToInteract(curMaterial.Key, 20);
+                Debug.Log($"Try to give 20 {curMaterial.Key}, material Successful: {materialSuccessful}, now Loading Material: {loadingBay.GetMaterialInput()[curMaterial.Key]}");
+            }
+            foreach (KeyValuePair<Materials, int> curMaterial in loadingBay.GetMaterialOutpute())
+            {
+                int materialSuccessful = -loadingBay.TryToInteract(curMaterial.Key, -20);
+                Debug.Log($"Try to take 20 {curMaterial.Key}, material Successful: {materialSuccessful}, now Loading Material: {loadingBay.GetMaterialOutpute()[curMaterial.Key]}");
+            }
         }
 
         if (Input.GetMouseButtonDown(0) && GetMoussePos() != Vector3.zero)

@@ -85,6 +85,10 @@ public class MapManager : MonoBehaviour
 
     private void FixedUpdate()
     {
+        foreach (Industrise curIndustrise in map.industrises)
+        {
+            curIndustrise.Update(Time.fixedDeltaTime);
+        }
         bool mapHasBeenUpdate = false;
         for (int y = 0; y < 20; y++)
         {

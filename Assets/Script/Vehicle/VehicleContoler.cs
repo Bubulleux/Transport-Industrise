@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using System.Linq;
 using System;
+using System.Threading.Tasks;
 
 public class VehicleContoler : MonoBehaviour
 {
@@ -14,77 +15,125 @@ public class VehicleContoler : MonoBehaviour
     public Route route;
     public int routePointGo;
     public List<Vector2Int> path = new List<Vector2Int>();
+    public Groupe groupe = null;
 
-    private float moveCooldown = 0f;
+    //private float moveCooldown = 0f;
     public Animator vehicleAnimation;
 
-    public VehicleStat state;
+    public VehicleStat state = VehicleStat.InDepot;
 
-    public Vector2Int VehiclePos { get { return transform.position.ToVec2Int(); } set { transform.position = new Vector3(value.x, 0f, value.y); } }
+    public Vector2Int VehiclePos { get { return transform.position.ToVec2Int(); } 
+        set
+        {
+            float y = MapManager.map.parcels[value.x, value.y].corner.Max();
+            transform.position = new Vector3(value.x, y, value.y);
+        } }
 
     public Materials materialCurTransport;
-    public float meterialQuantity;
+    public int materialQuantity;
+
+    public Task asyncUpdateOperation;
     void Start()
     {
         id = GameObject.FindGameObjectsWithTag("Vehicle").Length;
         transform.parent = GameObject.Find("Vehicles").transform;
-        state = VehicleStat.InDepot;
+        asyncUpdateOperation = AsyncUpdate();
     }
 
     void Update()
     {
-        
-        if (route == null && state != VehicleStat.InDepot && state != VehicleStat.OnDepotWay)
+        if (Input.GetKeyDown(KeyCode.F3))
         {
-            ReturnInDepot();
+            Debug.Log(state);
+        }
+        
+        if (asyncUpdateOperation.Status == TaskStatus.Faulted)
+        {
+            Debug.LogError($"message: {asyncUpdateOperation.Exception.Message}, \n source: {asyncUpdateOperation.Exception.Source}, \n\n comple: {asyncUpdateOperation.Exception.ToString()}");
+            asyncUpdateOperation = AsyncUpdate();
         }
 
-        if (state == VehicleStat.OnWay)
+        Vector2Int pos = transform.position.ToVec2Int();
+    }
+
+    private async Task AsyncUpdate()
+    {
+        while(true)
         {
-            if (VehiclePos == route.points[routePointGo])
+            await Task.Delay(10);
+            if (route == null && state != VehicleStat.InDepot && state != VehicleStat.OnDepotWay)
             {
-                routePointGo += 1;
-                routePointGo %= route.points.Count;
-                path = PathFinder.FindPath(VehiclePos, route.points[routePointGo]);
-                state = VehicleStat.Loading;
+                ReturnInDepot();
+            }
+
+            //if (state == VehicleStat.InDepot || state == VehicleStat.OnDepotWay)
+            //{
+            //    continue;
+            //}
+
+            if (state == VehicleStat.OnWay)
+            {
+                if (VehiclePos == route.points[routePointGo])
+                {
+                    GoToAnotherPoint();
+                    path = PathFinder.FindPath(VehiclePos, route.points[routePointGo]);
+                    if (MapManager.map.GetparcelType(VehiclePos) == typeof(LoadingBay) && CanDoSomthing(VehiclePos) != Action.nothing)
+                    {
+                        state = VehicleStat.Loading;
+                        await Load();
+                        Debug.Log($"material Quantity: {materialQuantity}");
+                        Debug.Log($"On WAY: {route.points[routePointGo]}");
+                        state = VehicleStat.OnWay;
+                    }
+                }
+            }
+            if (path != null && path.Count != 0)
+            {
+                await DriveAlong();
             }
         }
-
-        if (path != null && path.Count != 0)
-        {
-            DriveAlong();
-        }
-        Vector2Int pos = transform.position.ToVec2Int();
-        float y = MapManager.map.parcels[pos.x, pos.y].corner.Max();
-        transform.position = new Vector3(transform.position.x, y, transform.position.z);
     }
 
-    private void FixedUpdate()
+    public void GoToAnotherPoint()
     {
-        if (moveCooldown > 0)
+        Debug.Log("Change Route point");
+        Debug.Log($"CurenteMaterial : {materialCurTransport}, quantity: {materialQuantity}");
+        for (int i = 1; i < route.points.Count; i++)
         {
-            moveCooldown -= Time.fixedDeltaTime;
+            if (CanDoSomthing(route.points[(routePointGo + i) % route.points.Count]) != Action.nothing)
+            {
+                routePointGo = (routePointGo + i) % route.points.Count;
+                return;
+            }
         }
+        routePointGo += 1;
+        routePointGo %= route.points.Count;
     }
 
-    public void DriveAlong()
+    public async Task StartVehicle()
     {
-        if (VehiclePos == path[0])
+        Debug.Log("StartVehicle");
+        if (route == null)
         {
-            path.RemoveAt(0);
+            return;
         }
-        else if (moveCooldown <= 0)
-        {
-            AnimeVehicle();
-            VehiclePos = path[0];
-            path.RemoveAt(0);
-            moveCooldown = 1f / vehicleData.speed;
-        }
+        path = PathFinder.FindPath(VehiclePos, route.points[routePointGo]);
+        vehicleAnimation.Play("Start", 0, 0f);
+        await Task.Delay(Mathf.FloorToInt(1000f / vehicleData.speed));
+        state = VehicleStat.OnWay;
     }
 
-    private void ReturnInDepot()
+    public async Task DriveAlong()
     {
-        if (MapManager.map.parcels[VehiclePos.x, VehiclePos.y].GetType() == typeof(Depot) || state == VehicleStat.InDepot || state == VehicleStat.OnDepotWay)
+        await Task.Delay(Mathf.FloorToInt(1000f / vehicleData.speed));
+        AnimeVehicle();
+        VehiclePos = path[0];
+        path.RemoveAt(0);
+    }
+
+    public void ReturnInDepot()
+    {
+        if (MapManager.map.parcels[VehiclePos.x, VehiclePos.y].GetType() == typeof(Depot) || state == VehicleStat.InDepot)
         {
             state = VehicleStat.InDepot;
             return;
@@ -95,40 +144,77 @@ public class VehicleContoler : MonoBehaviour
         {
             depotsPos[i] = depotsList[i].pos;
         }
+        state = VehicleStat.OnDepotWay;
         path = PathFinder.FindPath(VehiclePos, depotsPos);
         if (path == null)
         {
             state = VehicleStat.Stuck;
             return;
         }
+        Debug.Log($"Path count to go depot: {path.Count}");
     }
 
-    public bool CanDoSomthing(Vector2Int pos)
+    private async Task Load()
     {
-        Type parcelType = MapManager.map.parcels[pos.x, pos.y].GetType();
-        if (parcelType == typeof(LoadingBay))
+        Debug.Log("Load");
+        if (materialQuantity != 0 && CanDoSomthing(VehiclePos) == Action.unload)
         {
-            LoadingBay loadingBay = MapManager.map.parcels[pos.x, pos.y] as LoadingBay;
-            if (materialCurTransport == 0)
+            int materialSucessful = MapManager.map.GetParcel<LoadingBay>(VehiclePos).TryToInteract(materialCurTransport, materialQuantity);
+            materialQuantity -= materialSucessful;
+            await Task.Delay(2000);
+            return;
+        }
+        if (materialQuantity == 0 && CanDoSomthing(VehiclePos) == Action.load)
+        {
+            foreach(Materials curMaterial in vehicleData.materialCanTransport)
             {
-                foreach(Industrise curIndustrise in loadingBay.industriseLink)
+                if (MapManager.map.GetParcel<LoadingBay>(VehiclePos).GetMaterialOutpute()[curMaterial] != 0)
                 {
-                    foreach(Materials curMaterialIndu in curIndustrise.materialsOutpute)
-                    {
-                        foreach(Materials curMaterialVehicle in vehicleData.materialCanTransport)
-                        {
-                            if ()
-                        }
-                    }
+                    int materialSucessful = MapManager.map.GetParcel<LoadingBay>(VehiclePos).TryToInteract(materialCurTransport, materialQuantity - vehicleData.maxMaterialTransport);
+                    materialQuantity -= materialSucessful;
+                    await Task.Delay(2000);
+                    return;
                 }
             }
         }
-        return false;
+    }
+
+    public Action CanDoSomthing(Vector2Int pos)
+    {
+        Type parcelType = MapManager.map.GetparcelType(pos);
+        if (parcelType == typeof(LoadingBay))
+        {
+            LoadingBay loadingBay = MapManager.map.GetParcel<LoadingBay>(pos);
+            if (materialQuantity == 0)
+            {
+                foreach (Materials curMaterialVehicle in vehicleData.materialCanTransport)
+                {
+                    if (loadingBay.GetMaterial(curMaterialVehicle) > 0)
+                    {
+                        return Action.load;
+                    }
+                }
+            }
+            else
+            {
+                if (loadingBay.CanUnload(materialCurTransport))
+                {
+                    return Action.unload;
+                }
+            }
+        }
+        else if (parcelType == typeof(Depot))
+        {
+            if (damage >= 0.8f)
+            {
+                return Action.repare;
+            }
+        }
+        return Action.nothing;
     }
 
     public void AnimeVehicle()
     {
-        
         if (path.Count <= 1)
         {
             return;
@@ -162,17 +248,7 @@ public class VehicleContoler : MonoBehaviour
         vehicleAnimation.SetFloat("Speed", vehicleData.speed);
     }
 
-    public void StartVehicle()
-    {
-        if(route == null)
-        {
-            return;
-        }
-        path = PathFinder.FindPath(VehiclePos, route.points[routePointGo]);
-        moveCooldown = 1 / vehicleData.speed;
-        state = VehicleStat.OnWay;
-        vehicleAnimation.Play("Start", 0, 0f);
-    }
+    
 
     public enum VehicleStat
     {
@@ -182,6 +258,14 @@ public class VehicleContoler : MonoBehaviour
         OnDepotWay,
         Stuck,
         Loading
+    }
+
+    public enum Action
+    {
+        load,
+        unload,
+        repare,
+        nothing
     }
 }
 public static class Vector3Extension

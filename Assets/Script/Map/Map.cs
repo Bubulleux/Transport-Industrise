@@ -39,9 +39,19 @@ public  class Map
         }
         for (int i = 0; i < 50; i++)
         {
-            CreatIndustrise(Random.Range(100, 900), Random.Range(100, 900));
+            CreatIndustrise(new Vector2Int(Random.Range(100, 900), Random.Range(100, 900)));
             await Task.Delay(10);
         }
+    }
+
+    public T GetParcel<T>(Vector2Int pos) where T : Parcel
+    {
+        return parcels[pos.x, pos.y] as T;
+    }
+
+    public System.Type GetparcelType(Vector2Int pos)
+    {
+        return parcels[pos.x, pos.y].GetType();
     }
 
     public bool CreatCity(int x, int y)
@@ -65,29 +75,29 @@ public  class Map
         return true;
     }
 
-    public bool CreatIndustrise(int x, int y)
+    public Industrise CreatIndustrise(Vector2Int pos)
     {
         foreach (City _city in citys)
         {
-            if (Vector2Int.Distance(new Vector2Int(x, y), _city.MasterPos) < 50f)
+            if (Vector2Int.Distance(pos, _city.MasterPos) < 50f)
             {
-                return false;
+                return null;
             }
         }
         foreach (Industrise _industrise in industrises)
         {
-            if (Vector2Int.Distance(new Vector2Int(x, y), _industrise.MasterPos) < 10f)
+            if (Vector2Int.Distance(pos, _industrise.MasterPos) < 10f)
             {
-                return false;
+                return null;
             }
         }
         //Transform _go = new GameObject().transform;
         //_go.position = new Vector3(x, 0f, y);
         //_go.parent = GameObject.Find("Instrises").transform;
         //_go.name = "Industrise " + industrises.Count;
-        Industrise Industrise = new Industrise(new Vector2Int(x, y), this);
+        Industrise Industrise = new Industrise(pos, this);
         industrises.Add(Industrise);
-        return true;
+        return Industrise;
     }
 
     public bool AddRoad(Vector2Int pos)
@@ -129,7 +139,7 @@ public  class Map
             {
                 if (parcels[MapManager.parcelAroundCorner[i].x + pos.x, MapManager.parcelAroundCorner[i].y + pos.y].GetType() != typeof(Parcel) && parcels[MapManager.parcelAroundCorner[i].x + pos.x, MapManager.parcelAroundCorner[i].y + pos.y].GetType() == typeof(Road))
                 {
-                    ((Road)parcels[pos.x, pos.y]).direction[i] = true;
+                    GetParcel<Road>(pos).direction[i] = true;
                 }
             }
             //parcels[pos.x, pos.y].seeTerrain = false;

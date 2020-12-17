@@ -1,6 +1,7 @@
 ﻿ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading.Tasks;
 
 public class Industrise
 {
@@ -8,53 +9,76 @@ public class Industrise
     public Dictionary<Materials, int> materialsInpute = new Dictionary<Materials, int>();
     public Dictionary<Materials, int> materialsOutpute = new Dictionary<Materials, int>();
     public Vector2Int MasterPos;
+    public static int maxMaterialCanStock = 300;
+    public float materialProductionRatio;
+
+    public float productionCoolDown;
 
     public Industrise(Vector2Int _pos, Map _mapData)
     {
         MasterPos = _pos;
-        IndustriseData[] allIndustriseData
-        industriseData = Resources.Load
+        IndustriseData[] allIndustriseData = FIleSys.GetAllInstances<IndustriseData>();
+        industriseData = allIndustriseData[Random.Range(0, allIndustriseData.Length)];
         for (int y = -1; y <= 2; y++)
         {
             for (int x = -1; x <= 2; x++)
             {
-                float height = 1f;
-                Color color = Color.black;
-                switch(type)
-                {
-                    case TypeIndustrise.mineCoal:
-                        color = Color.black;
-                        height = 1.5f;
-                        break;
-                    case TypeIndustrise.stokehole:
-                        color = new Color(1f, 0.5f, 0f);
-                        height = 3f;
-                        break;
-                }
-                _mapData.AddBuilding(MasterPos +  new Vector2Int(x, y), height, color);
+                _mapData.AddBuilding(MasterPos +  new Vector2Int(x, y), industriseData.height, industriseData.color);
             }
         }
+        materialProductionRatio = Random.Range(0.8f, 3f);
+        SetInputeOutpure();
     }
     public void SetInputeOutpure()
     {
-        switch(type)
+        materialsInpute = new Dictionary<Materials, int>();
+        materialsOutpute = new Dictionary<Materials, int>();
+        foreach (Materials curMaterial in industriseData.materialInpute)
         {
-            case TypeIndustrise.mineCoal:
-                materialsInpute = new Materials[] { };
-                materialsOutpute = new Materials[]{ Materials.coal };
-                break;
-            case TypeIndustrise.stokehole:
-                materialsInpute = new Materials[] { Materials.coal, Materials.wood };
-                materialsOutpute = new Materials[] { };
-                break;
-
+            materialsInpute.Add(curMaterial, 0);
+        }
+        foreach (Materials curMaterial in industriseData.materialOutpute)
+        {
+            materialsOutpute.Add(curMaterial, 0);
         }
     }
 
-    public enum TypeIndustrise
+    public void Update(float deltaTime)
     {
-        mineCoal,
-        stokehole
+        if (productionCoolDown <= 0f)
+        {
+            ProductMaterial();
+            productionCoolDown += 1f / materialProductionRatio;
+        }
+        productionCoolDown -= deltaTime;
+    }
+
+    public void ProductMaterial()
+    {
+        List<Materials> listMaterialsInpute = new List<Materials>();
+        List<Materials> listMaterialsOutpute = new List<Materials>();
+        foreach(KeyValuePair<Materials, int> curMaterial in materialsInpute)
+        {
+            if (curMaterial.Value != 0)
+            {
+                listMaterialsInpute.Add(curMaterial.Key);
+            }
+        }
+        foreach (KeyValuePair<Materials, int> curMaterial in materialsOutpute)
+        {
+            if (curMaterial.Value != maxMaterialCanStock)
+            {
+                listMaterialsOutpute.Add(curMaterial.Key);
+            }
+        }
+        foreach (Materials curMaterial in listMaterialsInpute)
+        {
+            materialsInpute[curMaterial] -= 1;
+        }
+        foreach (Materials curMaterial in listMaterialsOutpute)
+        {
+            materialsOutpute[curMaterial] += 1;
+        }
     }
     
 }

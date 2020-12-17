@@ -19,4 +19,8 @@ public class UIManager : MonoBehaviour
     {
         WindosOpener.OpenRouteListWindow();
     }
+    public void OpenGroupesListWindow()
+    {
+        WindosOpener.OpenGroupesListWindow();
+    }
 }

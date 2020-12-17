@@ -20,6 +20,13 @@ public static class WindosOpener
         _go.transform.localPosition = Vector3.zero;
         return _go;
     }
+    public static GameObject OpenGroupesListWindow()
+    {
+        GameObject _go = Object.Instantiate(Resources.Load("UI/GroupesListWindow", typeof(GameObject)) as GameObject);
+        _go.transform.SetParent(GameObject.Find("Canvas").transform, false);
+        _go.transform.localPosition = Vector3.zero;
+        return _go;
+    }
 
     public static GameObject OpenRouteCreatorWindow(RouteCreatorWindow.FunctionFinish _functionFinish, Route _route = null)
     {

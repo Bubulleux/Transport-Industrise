@@ -12,7 +12,7 @@ public class DepotWindow : MonoBehaviour
     public Depot Depot { set => MapManager.map.parcels[depotpos.x, depotpos.y] = value;  get => (Depot)MapManager.map.parcels[depotpos.x, depotpos.y];}
     public bool onStore = false;
     public Text butTxt;
-    public VehicleData[] vehicleInStore;
+    public Dropdown groupesDropdown;
     public void Init(Vector2Int _depot)
     {
         depotpos = _depot;
@@ -29,19 +29,38 @@ public class DepotWindow : MonoBehaviour
         }
         if (onStore)
         {
-            foreach (VehicleData curVehicle in vehicleInStore)
+            groupesDropdown.gameObject.SetActive(true);
+            List<string> dropdownOption = new List<string>();
+            foreach(Groupe curGroupe in Groupe.groupes)
+            {
+                dropdownOption.Add(curGroupe.name);
+            }
+            dropdownOption.Add("None");
+            groupesDropdown.ClearOptions();
+            groupesDropdown.AddOptions(dropdownOption);
+            groupesDropdown.value = Groupe.groupes.Count;
+            foreach (VehicleData curVehicle in FIleSys.GetAllInstances<VehicleData>())
             {
                 Transform _go = Instantiate(templateStoreVehicle).transform;
                 _go.SetParent(listContente);
                 _go.Find("Name").GetComponent<Text>().text = curVehicle.name;
                 _go.Find("Description").GetComponent<Text>().text = curVehicle.description;
-                _go.Find("Buy").GetComponent<Button>().onClick.AddListener(delegate { Depot.BuyVehicle(curVehicle); });
+                _go.Find("Buy").GetComponent<Button>().onClick.AddListener(delegate 
+                { 
+                    VehicleContoler vehicle = Depot.BuyVehicle(curVehicle);
+                    if (groupesDropdown.value != Groupe.groupes.Count)
+                    {
+                        Debug.Log("vehicle Groupe Set");
+                        vehicle.groupe = Groupe.groupes[groupesDropdown.value];
+                        Groupe.groupes[groupesDropdown.value].vehicles.Add(vehicle);
+                    }
+                });
                 _go.gameObject.SetActive(true);
             }
         }
         else
         {
-
+            groupesDropdown.gameObject.SetActive(false);
             foreach (GameObject curVehicle in Depot.GetVehicles())
             {
                 Transform _go = Instantiate(templateDepotVehicle).transform;
