@@ -14,7 +14,7 @@ public class GroupesListWindow : MonoBehaviour
 
     public void ButCreateGroupe()
     {
-        new Groupe();
+        new Group();
         UpdateList();
     }
     public void UpdateList()
@@ -27,7 +27,7 @@ public class GroupesListWindow : MonoBehaviour
             }
         }
         int i = 0;
-        foreach (Groupe curGroupe in Groupe.groupes)
+        foreach (Group curGroupe in Group.groups)
         {
             Transform _go = Instantiate(groupePrefab).transform;
             _go.SetParent(groupesList);
@@ -35,6 +35,7 @@ public class GroupesListWindow : MonoBehaviour
             int _i = i;
             _go.Find("Start").GetComponent<Button>().onClick.AddListener(delegate { curGroupe.StartEveryVehicle(); });
             _go.Find("Stop").GetComponent<Button>().onClick.AddListener(delegate { curGroupe.StopEveryVehicle(); });
+            _go.Find("Info").GetComponent<Button>().onClick.AddListener(delegate { WindowsOpener.OpenGroupWindow(curGroupe); });
             _go.gameObject.SetActive(true);
             i++;
         }

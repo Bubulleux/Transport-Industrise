@@ -31,14 +31,14 @@ public class DepotWindow : MonoBehaviour
         {
             groupesDropdown.gameObject.SetActive(true);
             List<string> dropdownOption = new List<string>();
-            foreach(Groupe curGroupe in Groupe.groupes)
+            foreach(Group curGroupe in Group.groups)
             {
                 dropdownOption.Add(curGroupe.name);
             }
             dropdownOption.Add("None");
             groupesDropdown.ClearOptions();
             groupesDropdown.AddOptions(dropdownOption);
-            groupesDropdown.value = Groupe.groupes.Count;
+            groupesDropdown.value = Group.groups.Count;
             foreach (VehicleData curVehicle in FIleSys.GetAllInstances<VehicleData>())
             {
                 Transform _go = Instantiate(templateStoreVehicle).transform;
@@ -48,11 +48,10 @@ public class DepotWindow : MonoBehaviour
                 _go.Find("Buy").GetComponent<Button>().onClick.AddListener(delegate 
                 { 
                     VehicleContoler vehicle = Depot.BuyVehicle(curVehicle);
-                    if (groupesDropdown.value != Groupe.groupes.Count)
+                    if (groupesDropdown.value != Group.groups.Count)
                     {
                         Debug.Log("vehicle Groupe Set");
-                        vehicle.groupe = Groupe.groupes[groupesDropdown.value];
-                        Groupe.groupes[groupesDropdown.value].vehicles.Add(vehicle);
+                        vehicle.Group = Group.groups[groupesDropdown.value];
                     }
                 });
                 _go.gameObject.SetActive(true);
@@ -67,7 +66,7 @@ public class DepotWindow : MonoBehaviour
                 _go.SetParent(listContente);
                 _go.Find("Name").GetComponent<Text>().text = curVehicle.GetComponent<VehicleContoler>().vehicleData.name;
                 _go.Find("Damage").GetComponent<Text>().text = string.Format("Damage: {0}%", Mathf.Floor(curVehicle.GetComponent<VehicleContoler>().damage * 100));
-                _go.Find("Info").GetComponent<Button>().onClick.AddListener(delegate { WindosOpener.OpenVehicleWindow(curVehicle.GetComponent<VehicleContoler>()); });
+                _go.Find("Info").GetComponent<Button>().onClick.AddListener(delegate { WindowsOpener.OpenVehicleWindow(curVehicle.GetComponent<VehicleContoler>()); });
                 _go.gameObject.SetActive(true);
             }
         }

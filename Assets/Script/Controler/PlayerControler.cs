@@ -46,7 +46,7 @@ public class PlayerControler : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.F2))
         {
-            AutoCratore.MakeAuto(GetMoussePos().ToVec2Int());
+            AutoCreatore.MakeAuto(GetMoussePos().ToVec2Int());
         }
 
         if (Input.GetKeyDown(KeyCode.F4) && MapManager.map.GetparcelType(GetMoussePos().ToVec2Int()) == typeof(LoadingBay))
@@ -76,7 +76,7 @@ public class PlayerControler : MonoBehaviour
                         {
                             if (construction is Depot)
                             {
-                                WindosOpener.OpenDepotWindow(GetMoussePos().ToVec2Int());
+                                WindowsOpener.OpenDepotWindow(GetMoussePos().ToVec2Int());
                             }
                         }
                         break;

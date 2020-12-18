@@ -17,10 +17,10 @@ public class UIManager : MonoBehaviour
     }
     public void OpenRoutesListWindow()
     {
-        WindosOpener.OpenRouteListWindow();
+        WindowsOpener.OpenRouteListWindow();
     }
     public void OpenGroupesListWindow()
     {
-        WindosOpener.OpenGroupesListWindow();
+        WindowsOpener.OpenGroupesListWindow();
     }
 }

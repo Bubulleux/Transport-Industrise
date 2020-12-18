@@ -15,7 +15,7 @@ public class RoutesListWindow : MonoBehaviour
 
     public void ButCreateRoute()
     {
-        WindosOpener.OpenRouteCreatorWindow(delegate (Route route) { routes.Add(route); PrintList(); UpdateList(); });
+        WindowsOpener.OpenRouteCreatorWindow(delegate (Route route) { routes.Add(route); PrintList(); UpdateList(); });
     }
     public void UpdateList()
     {
@@ -33,7 +33,7 @@ public class RoutesListWindow : MonoBehaviour
             _go.SetParent(routesList);
             _go.Find("Name").GetComponent<Text>().text = curRoute.name;
             int _i = i;
-            _go.Find("Edit").GetComponent<Button>().onClick.AddListener(delegate { WindosOpener.OpenRouteCreatorWindow(delegate (Route route) { routes[_i] = route; UpdateList(); }, curRoute); });
+            _go.Find("Edit").GetComponent<Button>().onClick.AddListener(delegate { WindowsOpener.OpenRouteCreatorWindow(delegate (Route route) { routes[_i] = route; UpdateList(); }, curRoute); });
             _go.Find("Delete").GetComponent<Button>().onClick.AddListener(delegate { Debug.Log(_i);  routes.RemoveAt(_i); UpdateList(); });
             _go.gameObject.SetActive(true);
             i++;

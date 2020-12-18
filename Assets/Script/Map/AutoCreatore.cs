@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class AutoCratore
+public static class AutoCreatore
 {
     public static void MakeAuto(Vector2Int origine)
     {
@@ -16,33 +16,33 @@ public static class AutoCratore
         Industrise indus2 = MapManager.map.CreatIndustrise(origine + new Vector2Int(50, 0));
         indus1.industriseData = FIleSys.GetAllInstances<IndustriseData>()[0];
         indus2.industriseData = FIleSys.GetAllInstances<IndustriseData>()[1];
+        indus1.materialProductionRatio = 200;
+        indus2.materialProductionRatio = 200;
         indus1.SetInputeOutpure();
         indus2.SetInputeOutpure();
         MapManager.map.AddConstruction(origine + new Vector2Int(-31, 1), new LoadingBay());
         MapManager.map.AddConstruction(origine + new Vector2Int(31, 1), new LoadingBay());
         Depot depot = MapManager.map.parcels[origine.x, origine.y] as Depot;
-        VehicleContoler vehicle1 = depot.BuyVehicle(FIleSys.GetAllInstances<VehicleData>()[0]);
-        VehicleContoler vehicle2 = depot.BuyVehicle(FIleSys.GetAllInstances<VehicleData>()[0]);
-        new Groupe()
+        Group group = new Group()
         {
-            name = "Auto Generate Groupe",
-            vehicles = new List<VehicleContoler>()
-            {
-                vehicle1,
-                vehicle2
-            }
+            name = "Auto Generate Groupe"
         };
-        vehicle1.groupe = Groupe.groupes[0];
-        vehicle2.groupe = Groupe.groupes[0];
-        vehicle1.route = new Route()
+        List<VehicleContoler> vehicles = new List<VehicleContoler>();
+        for (int i = 0; i < 50; i++)
+        {
+            vehicles.Add(depot.BuyVehicle(FIleSys.GetAllInstances<VehicleData>()[0]));
+            vehicles[i].Group = Group.groups[0];
+        }
+        group.forceRoute = true;
+        group.route = new Route()
         {
             points = new List<Vector2Int>()
-            {
-                origine + new Vector2Int(-31, 1),
-                origine + new Vector2Int(31, 1)
-            }
+                {
+                    origine + new Vector2Int(-31, 1),
+                    origine + new Vector2Int(31, 1)
+                }
         };
-        Groupe.groupes[0].StartEveryVehicle();
+        Group.groups[0].StartEveryVehicle();
     }
 
     

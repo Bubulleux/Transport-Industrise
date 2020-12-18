@@ -7,16 +7,7 @@ public class Window : MonoBehaviour, IPointerClickHandler, IDragHandler, IPointe
 {
     public bool pointerOverMe = false;
     public bool fixWindow;
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public Transform contente { get => transform.Find("WindowContent"); }
 
     public void Close()
     {

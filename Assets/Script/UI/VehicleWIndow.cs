@@ -16,14 +16,14 @@ public class VehicleWIndow : MonoBehaviour
         Dropdown routeDropdown = vehicleInfo.Find("RouteDropdown").GetComponent<Dropdown>();
         List<string> options = new List<string>();
         int index = -1;
-        if (vehicle.route == null)
+        if (vehicle.Route == null)
         {
             index = RoutesListWindow.routes.Count + 1;
         }
         foreach(Route curRoute in RoutesListWindow.routes)
         {
             options.Add(curRoute.name);
-            if (vehicle.route == curRoute)
+            if (vehicle.Route == curRoute)
             {
                 index = options.Count - 1;
             }
@@ -47,15 +47,15 @@ public class VehicleWIndow : MonoBehaviour
         }
         if (index == RoutesListWindow.routes.Count)
         {
-            WindosOpener.OpenRouteCreatorWindow(delegate(Route route){ vehicle.route = route; });
+            WindowsOpener.OpenRouteCreatorWindow(delegate(Route route){ vehicle.Route = route; });
         }
         else if (index == RoutesListWindow.routes.Count + 1)
         {
-            vehicle.route = null;
+            vehicle.Route = null;
         }
         else
         {
-            vehicle.route = RoutesListWindow.routes[index];
+            vehicle.Route = RoutesListWindow.routes[index];
         }
     }
 }

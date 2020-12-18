@@ -12,10 +12,41 @@ public class VehicleContoler : MonoBehaviour
     public int id;
     public float damage = 0f;
 
-    public Route route;
-    public int routePointGo;
+    private Route route = null;
+    public Route Route {
+        get
+        {
+            if (Group != null && Group.forceRoute)
+            {
+                return Group.route;
+            }
+            else
+            {
+                return route;
+            }
+
+        }
+        set => route = value; 
+    }
+
+    private int routePointGo;
+    public int RoutePointGo { get => routePointGo; set { routePointGo = value; routePointGo %= Route.points.Count; } }
+
     public List<Vector2Int> path = new List<Vector2Int>();
-    public Groupe groupe = null;
+
+    private Group group = null;
+    public Group Group { get => group;
+        set 
+        { 
+            if (group != null)
+            {
+                group.vehicles.Remove(this);
+            }
+            value.vehicles.Add(this);
+            Debug.Log($"Groupe Count: {value.vehicles.Count}");
+            group = value;
+        } 
+    }
 
     //private float moveCooldown = 0f;
     public Animator vehicleAnimation;
@@ -27,7 +58,8 @@ public class VehicleContoler : MonoBehaviour
         {
             float y = MapManager.map.parcels[value.x, value.y].corner.Max();
             transform.position = new Vector3(value.x, y, value.y);
-        } }
+        }
+    }
 
     public Materials materialCurTransport;
     public int materialQuantity;
@@ -38,6 +70,7 @@ public class VehicleContoler : MonoBehaviour
         id = GameObject.FindGameObjectsWithTag("Vehicle").Length;
         transform.parent = GameObject.Find("Vehicles").transform;
         asyncUpdateOperation = AsyncUpdate();
+        VehiclePos = VehiclePos;
     }
 
     void Update()
@@ -47,6 +80,7 @@ public class VehicleContoler : MonoBehaviour
             Debug.Log(state);
         }
         
+
         if (asyncUpdateOperation.Status == TaskStatus.Faulted)
         {
             Debug.LogError($"message: {asyncUpdateOperation.Exception.Message}, \n source: {asyncUpdateOperation.Exception.Source}, \n\n comple: {asyncUpdateOperation.Exception.ToString()}");
@@ -61,28 +95,20 @@ public class VehicleContoler : MonoBehaviour
         while(true)
         {
             await Task.Delay(10);
-            if (route == null && state != VehicleStat.InDepot && state != VehicleStat.OnDepotWay)
+            if (Route == null && state != VehicleStat.InDepot && state != VehicleStat.OnDepotWay)
             {
                 ReturnInDepot();
             }
-
-            //if (state == VehicleStat.InDepot || state == VehicleStat.OnDepotWay)
-            //{
-            //    continue;
-            //}
-
             if (state == VehicleStat.OnWay)
             {
-                if (VehiclePos == route.points[routePointGo])
+                if (VehiclePos == Route.points[RoutePointGo])
                 {
                     GoToAnotherPoint();
-                    path = PathFinder.FindPath(VehiclePos, route.points[routePointGo]);
+                    path = PathFinder.FindPath(VehiclePos, Route.points[RoutePointGo]);
                     if (MapManager.map.GetparcelType(VehiclePos) == typeof(LoadingBay) && CanDoSomthing(VehiclePos) != Action.nothing)
                     {
                         state = VehicleStat.Loading;
                         await Load();
-                        Debug.Log($"material Quantity: {materialQuantity}");
-                        Debug.Log($"On WAY: {route.points[routePointGo]}");
                         state = VehicleStat.OnWay;
                     }
                 }
@@ -96,28 +122,24 @@ public class VehicleContoler : MonoBehaviour
 
     public void GoToAnotherPoint()
     {
-        Debug.Log("Change Route point");
-        Debug.Log($"CurenteMaterial : {materialCurTransport}, quantity: {materialQuantity}");
-        for (int i = 1; i < route.points.Count; i++)
+        for (int i = 1; i < Route.points.Count; i++)
         {
-            if (CanDoSomthing(route.points[(routePointGo + i) % route.points.Count]) != Action.nothing)
+            if (CanDoSomthing(Route.points[(RoutePointGo + i) % Route.points.Count]) != Action.nothing)
             {
-                routePointGo = (routePointGo + i) % route.points.Count;
+                RoutePointGo += 1;
                 return;
             }
         }
-        routePointGo += 1;
-        routePointGo %= route.points.Count;
+        RoutePointGo += 1;
     }
 
     public async Task StartVehicle()
     {
-        Debug.Log("StartVehicle");
-        if (route == null)
+        if (Route == null)
         {
             return;
         }
-        path = PathFinder.FindPath(VehiclePos, route.points[routePointGo]);
+        path = PathFinder.FindPath(VehiclePos, Route.points[RoutePointGo]);
         vehicleAnimation.Play("Start", 0, 0f);
         await Task.Delay(Mathf.FloorToInt(1000f / vehicleData.speed));
         state = VehicleStat.OnWay;
@@ -151,12 +173,10 @@ public class VehicleContoler : MonoBehaviour
             state = VehicleStat.Stuck;
             return;
         }
-        Debug.Log($"Path count to go depot: {path.Count}");
     }
 
     private async Task Load()
     {
-        Debug.Log("Load");
         if (materialQuantity != 0 && CanDoSomthing(VehiclePos) == Action.unload)
         {
             int materialSucessful = MapManager.map.GetParcel<LoadingBay>(VehiclePos).TryToInteract(materialCurTransport, materialQuantity);
