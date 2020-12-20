@@ -13,13 +13,13 @@ public  class Map
     public List<Parcel> importParcels = new List<Parcel>();
 
 
-    public async Task GenerateMap(AnimationCurve heightCurv, AnimationCurve limitWaterCurv)
+    public async Task GenerateMap(MapSettingData mapSetting)
     {
         parcels = new Parcel[1000, 1000];
         await Task.Delay(10);
         citys = new List<City>();
         industrises = new List<Industrise>();
-        float[,] mapNoise = NoiseGenerator.GenerNoise(1001, 1001, 60, 3, 6, 0.1f, 10, heightCurv, limitWaterCurv);
+        float[,] mapNoise = NoiseGenerator.GenerNoise(1001, 1001, 60, 3, 6, 0.1f, 10, mapSetting.heightCurv, mapSetting.limitWaterCurv);
         for (int y = 0; y < parcels.GetLength(1); y++)
         {
             for (int x = 0; x < parcels.GetLength(0); x++)
@@ -177,7 +177,7 @@ public  class Map
     public bool AddConstruction(Vector2Int pos, Parcel construction)
     {
         if (parcels[pos.x, pos.y].GetType() == typeof(Parcel))
-        {
+       {
             parcels[pos.x, pos.y] = Parcel.CopyClass(parcels[pos.x, pos.y], construction);
             UpdateChunkTexture(Mathf.FloorToInt(pos.x / 50), Mathf.FloorToInt(pos.y / 50));
             importParcels.Add(construction);

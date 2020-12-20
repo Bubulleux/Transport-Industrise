@@ -3,59 +3,53 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class VehicleWIndow : MonoBehaviour
+public class VehicleWIndow : Window
 {
     public VehicleContoler vehicle;
-    public Transform vehicleInfo;
-    public bool first = true;
-    void Start()
+
+    private void Start()
     {
-        vehicleInfo.Find("Name").GetComponent<Text>().text = vehicle.vehicleData.name;
-        vehicleInfo.Find("Damage").GetComponent<Text>().text = "Damage:" + vehicle.damage.ToString();
-        vehicleInfo.Find("ID").GetComponent<Text>().text = "ID: " + vehicle.id;
-        Dropdown routeDropdown = vehicleInfo.Find("RouteDropdown").GetComponent<Dropdown>();
+        UpdateWindow();
+    }
+
+    public void UpdateWindow()
+    {
+        Contente.Find("Name").GetComponent<Text>().text = vehicle.vehicleData.name;
+        Contente.Find("Damage").GetComponent<Text>().text = "Damage:" + vehicle.damage.ToString();
+        Contente.Find("ID").GetComponent<Text>().text = "ID: " + vehicle.Id;
+        Contente.Find("Route").GetComponent<Button>().interactable = (vehicle.MyGroup == null || vehicle.MyGroup.forceRoute == false);
+        Dropdown group = Contente.Find("Group").GetComponent<Dropdown>();
         List<string> options = new List<string>();
-        int index = -1;
-        if (vehicle.Route == null)
+        int index = Group.groups.Count;
+        foreach(Group curGroup in Group.groups)
         {
-            index = RoutesListWindow.routes.Count + 1;
-        }
-        foreach(Route curRoute in RoutesListWindow.routes)
-        {
-            options.Add(curRoute.name);
-            if (vehicle.Route == curRoute)
+            options.Add(curGroup.name);
+            if (vehicle.MyGroup == curGroup)
             {
                 index = options.Count - 1;
             }
         }
-        options.Add("Custom");
         options.Add("None");
-        if (index == -1)
-        {
-            index = RoutesListWindow.routes.Count;
-        }
-        routeDropdown.AddOptions(options);
-        routeDropdown.value = index;
+        group.ClearOptions();
+        group.AddOptions(options);
+        group.SetValueWithoutNotify(index);
     }
 
-    public void RouteSet(int index)
+    public void GroupSet(int index)
     {
-        if (first)
+        if (index == Group.groups.Count)
         {
-            first = false;
-            return;
-        }
-        if (index == RoutesListWindow.routes.Count)
-        {
-            WindowsOpener.OpenRouteCreatorWindow(delegate(Route route){ vehicle.Route = route; });
-        }
-        else if (index == RoutesListWindow.routes.Count + 1)
-        {
-            vehicle.Route = null;
+            vehicle.MyGroup = null;
         }
         else
         {
-            vehicle.Route = RoutesListWindow.routes[index];
+            vehicle.MyGroup = Group.groups[index];
         }
+        UpdateWindow();
+    }
+
+    public void SetRoute()
+    {
+        WindowsOpener.OpenRouteCreatorWindow(delegate (Route route) { vehicle.MyRoute = route; }, vehicle.MyRoute);
     }
 }

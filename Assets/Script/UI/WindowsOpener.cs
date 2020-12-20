@@ -4,10 +4,10 @@ using UnityEngine;
 
 public static class WindowsOpener 
 {
-    public static GameObject OpenDepotWindow(Vector2Int pos)
+    public static GameObject OpenDepotWindow(Depot depot)
     {
         GameObject _go = OpenWindowByName("DepotWindow");
-        _go.GetComponent<DepotWindow>().Init(pos);
+        _go.GetComponent<DepotWindow>().depot = depot;
         return _go;
     }
 

@@ -190,7 +190,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Groupes
+  m_Text: Groups
 --- !u!222 &35724742
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -217,7 +217,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &170906565
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1247,90 +1247,6 @@ MonoBehaviour:
     type: 3}
   buildingPrefab: {fileID: 6798715203275893466, guid: 1c9b862a19591d249b1c6bf68e62235c,
     type: 3}
-  heightCurv:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 0.15
-      value: 1
-      inSlope: 2.9818978
-      outSlope: 2.9818978
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.14412382
-    - serializedVersion: 3
-      time: 0.95
-      value: 6
-      inSlope: 10.33631
-      outSlope: 10.33631
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 1
-    - serializedVersion: 3
-      time: 1
-      value: 9
-      inSlope: 82.20143
-      outSlope: 82.20143
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.16143437
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  limitWaterCurv:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 3
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 10
-      value: 0.1
-      inSlope: 0.0056019975
-      outSlope: 0.0056019975
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.068385676
-    - serializedVersion: 3
-      time: 50
-      value: 1
-      inSlope: 0.055360045
-      outSlope: 0.055360045
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.031390093
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
   gfxMapPrefab: {fileID: 9056373014444483734, guid: fc597df07bad844459023280c7bbcafe,
     type: 3}
 --- !u!4 &778757881
@@ -1474,6 +1390,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   operationStatus: 0
+  loadingIndicator: {fileID: 0}
 --- !u!1 &919692868
 GameObject:
   m_ObjectHideFlags: 0
@@ -1909,7 +1826,7 @@ GameObject:
   - component: {fileID: 1581396343}
   - component: {fileID: 1581396342}
   m_Layer: 5
-  m_Name: Groupes
+  m_Name: Groups
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

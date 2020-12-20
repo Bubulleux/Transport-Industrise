@@ -1,50 +1,60 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Rendering;
 using System.Linq;
-using System;
 using System.Threading.Tasks;
+using UnityEngine;
 
 public class VehicleContoler : MonoBehaviour
 {
     public VehicleData vehicleData;
-    public int id;
+    public string Id { 
+        get 
+        {
+            string _group = "";
+            if (myGroup != null)
+            {
+                _group = Group.groups.IndexOf(MyGroup) + "-";
+            }
+            return _group + transform.GetSiblingIndex();
+        } 
+    }
     public float damage = 0f;
 
-    private Route route = null;
-    public Route Route {
+    private Route myRoute = null;
+    public Route MyRoute {
         get
         {
-            if (Group != null && Group.forceRoute)
+            if (MyGroup != null && MyGroup.forceRoute)
             {
-                return Group.route;
+                return MyGroup.route;
             }
             else
             {
-                return route;
+                return myRoute;
             }
 
         }
-        set => route = value; 
+        set => myRoute = value; 
     }
 
     private int routePointGo;
-    public int RoutePointGo { get => routePointGo; set { routePointGo = value; routePointGo %= Route.points.Count; } }
+    public int RoutePointGo { get => routePointGo; set { routePointGo = value; routePointGo %= MyRoute.points.Count; } }
 
     public List<Vector2Int> path = new List<Vector2Int>();
 
-    private Group group = null;
-    public Group Group { get => group;
+    private Group myGroup = null;
+    public Group MyGroup { get => myGroup;
         set 
         { 
-            if (group != null)
+            if (myGroup != null)
             {
-                group.vehicles.Remove(this);
+                myGroup.vehicles.Remove(this);
             }
-            value.vehicles.Add(this);
-            Debug.Log($"Groupe Count: {value.vehicles.Count}");
-            group = value;
+            if (value != null)
+            {
+                value.vehicles.Add(this);
+            }
+            myGroup = value;
         } 
     }
 
@@ -67,7 +77,6 @@ public class VehicleContoler : MonoBehaviour
     public Task asyncUpdateOperation;
     void Start()
     {
-        id = GameObject.FindGameObjectsWithTag("Vehicle").Length;
         transform.parent = GameObject.Find("Vehicles").transform;
         asyncUpdateOperation = AsyncUpdate();
         VehiclePos = VehiclePos;
@@ -79,15 +88,13 @@ public class VehicleContoler : MonoBehaviour
         {
             Debug.Log(state);
         }
-        
+
 
         if (asyncUpdateOperation.Status == TaskStatus.Faulted)
         {
-            Debug.LogError($"message: {asyncUpdateOperation.Exception.Message}, \n source: {asyncUpdateOperation.Exception.Source}, \n\n comple: {asyncUpdateOperation.Exception.ToString()}");
+            Debug.LogError($"message: {asyncUpdateOperation.Exception.Message}, \n source: {asyncUpdateOperation.Exception.Source}, \n\n comple: {asyncUpdateOperation.Exception}");
             asyncUpdateOperation = AsyncUpdate();
         }
-
-        Vector2Int pos = transform.position.ToVec2Int();
     }
 
     private async Task AsyncUpdate()
@@ -95,22 +102,27 @@ public class VehicleContoler : MonoBehaviour
         while(true)
         {
             await Task.Delay(10);
-            if (Route == null && state != VehicleStat.InDepot && state != VehicleStat.OnDepotWay)
+            if (MyRoute == null && state != VehicleStat.InDepot && state != VehicleStat.OnDepotWay)
             {
                 ReturnInDepot();
             }
             if (state == VehicleStat.OnWay)
             {
-                if (VehiclePos == Route.points[RoutePointGo])
+                if (VehiclePos == MyRoute.points[RoutePointGo])
                 {
                     GoToAnotherPoint();
-                    path = PathFinder.FindPath(VehiclePos, Route.points[RoutePointGo]);
+                    path = PathFinder.FindPath(VehiclePos, MyRoute.points[RoutePointGo]);
                     if (MapManager.map.GetparcelType(VehiclePos) == typeof(LoadingBay) && CanDoSomthing(VehiclePos) != Action.nothing)
                     {
                         state = VehicleStat.Loading;
                         await Load();
                         state = VehicleStat.OnWay;
                     }
+                }
+                if (path == null)
+                {
+                    Debug.Log("Path Set");
+                    path = PathFinder.FindPath(VehiclePos, MyRoute.points[RoutePointGo]);
                 }
             }
             if (path != null && path.Count != 0)
@@ -122,9 +134,9 @@ public class VehicleContoler : MonoBehaviour
 
     public void GoToAnotherPoint()
     {
-        for (int i = 1; i < Route.points.Count; i++)
+        for (int i = 1; i < MyRoute.points.Count; i++)
         {
-            if (CanDoSomthing(Route.points[(RoutePointGo + i) % Route.points.Count]) != Action.nothing)
+            if (CanDoSomthing(MyRoute.points[(RoutePointGo + i) % MyRoute.points.Count]) != Action.nothing)
             {
                 RoutePointGo += 1;
                 return;
@@ -133,24 +145,26 @@ public class VehicleContoler : MonoBehaviour
         RoutePointGo += 1;
     }
 
-    public async Task StartVehicle()
+    public void StartVehicle()
     {
-        if (Route == null)
+        if (MyRoute == null)
         {
             return;
         }
-        path = PathFinder.FindPath(VehiclePos, Route.points[RoutePointGo]);
-        vehicleAnimation.Play("Start", 0, 0f);
-        await Task.Delay(Mathf.FloorToInt(1000f / vehicleData.speed));
+        //path = PathFinder.FindPath(VehiclePos, MyRoute.points[RoutePointGo]);
+        //vehicleAnimation.Play("Start", 0, 0f);
+        //await Task.Delay(Mathf.FloorToInt(1000f / vehicleData.speed));
         state = VehicleStat.OnWay;
+        path = null;
+        Debug.Log("Path: " + (path != null));
     }
 
     public async Task DriveAlong()
     {
-        await Task.Delay(Mathf.FloorToInt(1000f / vehicleData.speed));
         AnimeVehicle();
         VehiclePos = path[0];
         path.RemoveAt(0);
+        await Task.Delay(Mathf.FloorToInt(1000f / vehicleData.speed));
     }
 
     public void ReturnInDepot()
@@ -235,12 +249,30 @@ public class VehicleContoler : MonoBehaviour
 
     public void AnimeVehicle()
     {
-        if (path.Count <= 1)
+        if (path.Count == 0 || (path.Count == 1 && VehiclePos == path[0]))
         {
             return;
         }
-        Vector2Int posBefor = VehiclePos - path[0];
-        Vector2Int posGo = path[1] - path[0];
+        Vector2Int posBefor;
+        Vector2Int posGo;
+        if (VehiclePos == path[0])
+        {
+            posBefor = path[0] - path[1];
+        }
+        else
+        {
+            posBefor = VehiclePos - path[0];
+        }
+        if (path.Count == 1) 
+        {
+            posGo = -posBefor;
+        }
+        else
+        {
+            posGo = path[1] - path[0];
+        }
+
+         
         float dir = Mathf.Atan2(posBefor.x * -1, posBefor.y * -1) * Mathf.Rad2Deg;
         vehicleAnimation.transform.rotation = Quaternion.Euler(0f, dir, 0f);
         int dirAnime = 0;
@@ -263,7 +295,16 @@ public class VehicleContoler : MonoBehaviour
         //float dirAng = Mathf.Atan2(posGo.x, posGo.y) - Mathf.Atan2(posBefor.x, posBefor.y);
         //dirAnime = Mathf.FloorToInt(Mathf.Sin(dirAng));
         vehicleAnimation.StopPlayback();
-        vehicleAnimation.Play(dirAnime == 0 ? "Forward" : dirAnime == -1 ? "TurnRight" : "TurnLeft", 0, 0f);
+        string animation = dirAnime == 0 ? "Forward" : dirAnime == -1 ? "TurnRight" : "TurnLeft";
+        if (VehiclePos == path[0])
+        {
+            animation = "Start";
+        }
+        else if (path.Count == 1)
+        {
+            animation = "Stop";
+        }
+        vehicleAnimation.Play(animation, 0, 0f);
         //vehicleAnimation.SetInteger("Direction", dirAnime);
         vehicleAnimation.SetFloat("Speed", vehicleData.speed);
     }

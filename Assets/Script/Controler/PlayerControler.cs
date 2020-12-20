@@ -76,7 +76,7 @@ public class PlayerControler : MonoBehaviour
                         {
                             if (construction is Depot)
                             {
-                                WindowsOpener.OpenDepotWindow(GetMoussePos().ToVec2Int());
+                                WindowsOpener.OpenDepotWindow(MapManager.map.GetParcel<Depot>(GetMoussePos().ToVec2Int()));
                             }
                         }
                         break;
@@ -102,8 +102,7 @@ public class PlayerControler : MonoBehaviour
     public Vector3 GetMoussePos()
     {
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit) && !PointerIsOverUI())
+        if (Physics.Raycast(ray, out RaycastHit hit) && !PointerIsOverUI())
         {
             return hit.point;
         }
@@ -130,12 +129,12 @@ public class PlayerControler : MonoBehaviour
             }
             if (Mathf.Abs(lastPos.x - endMouse.x) / (float)Mathf.Abs(startMouse.x - endMouse.x) > Mathf.Abs(lastPos.y - endMouse.y) / (float)Mathf.Abs(startMouse.y - endMouse.y))
             {
-                lastPos = lastPos + new Vector2Int(lastPos.x < endMouse.x ? 1 : -1, 0);
+                lastPos += new Vector2Int(lastPos.x < endMouse.x ? 1 : -1, 0);
                 MapManager.map.AddRoad(lastPos);
             }
             else
             {
-                lastPos = lastPos + new Vector2Int(0, lastPos.y < endMouse.y ? 1 : -1);
+                lastPos += new Vector2Int(0, lastPos.y < endMouse.y ? 1 : -1);
                 MapManager.map.AddRoad(lastPos);
             }
            

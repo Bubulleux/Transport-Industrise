@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   model: Coaler MK1
   description: Best truck ever.
-  speed: 10
+  speed: 30
   price: 1000
   maxMaterialTransport: 20
   materialCanTransport: 00000000

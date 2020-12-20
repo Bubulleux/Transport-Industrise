@@ -1,13 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class Window : MonoBehaviour, IPointerClickHandler, IDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
     public bool pointerOverMe = false;
     public bool fixWindow;
-    public Transform contente { get => transform.Find("WindowContent"); }
+    public Transform Contente { get => transform.Find("WindowContent"); }
 
     public void Close()
     {

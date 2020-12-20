@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Threading.Tasks;
 
 public class Group
 {
@@ -19,12 +18,11 @@ public class Group
     }
 
 
-    public async Task StartEveryVehicle()
+    public void StartEveryVehicle()
     {
         foreach(VehicleContoler curVehicle in vehicles)
         {
             curVehicle.StartVehicle();
-            await Task.Delay(500);
         }
     }
 

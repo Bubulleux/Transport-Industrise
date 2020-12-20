@@ -8,44 +8,101 @@ using UnityEngine.UI;
 public class MapLoader : MonoBehaviour
 {
     private Task<Map> operation;
-    public static bool load = false;
-    public TaskStatus operationStatus;
+    public static LoadStatus load = LoadStatus.NotStart;
+
+    public string LoadingIndicator { set { GameObject.Find("OperationState").GetComponent<Text>().text = value; } }
+
+    public int Width { get =>  MapManager.map.parcels.GetLength(0) / 50;  }
+    public int Height { get =>  MapManager.map.parcels.GetLength(1) / 50;  }
+
     public void Awake()
     {
-        if (load == true)
+        if (load != LoadStatus.NotStart)
         {
-            Destroy(gameObject);
             return;
         }
-        load = true;
+        load = LoadStatus.Loading;
         DontDestroyOnLoad(gameObject);
-        operation = AsyncLoadMap(GameObject.Find("Map").GetComponent<MapManager>().heightCurv, GameObject.Find("Map").GetComponent<MapManager>().limitWaterCurv);
-        operationStatus = operation.Status;
+        operation = AsyncLoadMap();
         
     }
 
-    public async Task<Map> AsyncLoadMap(AnimationCurve heightCurv, AnimationCurve limitWaterCurv)
+    public async Task<Map> AsyncLoadMap()
     {
-        float startTime = System.DateTime.Now.Second + System.DateTime.Now.Minute * 60;
-        SceneManager.LoadSceneAsync(1);
+        await AsyncLoadScene(1);
+
+        LoadingIndicator = "Generate Map";
         Map _mapdata = new Map();
-        await _mapdata.GenerateMap(heightCurv, limitWaterCurv);
-        //await Task.Delay(3000);
-        SceneManager.LoadSceneAsync(0);
+        await _mapdata.GenerateMap(FIleSys.GetAllInstances<MapSettingData>()[0]);
         MapManager.map = _mapdata;
-        //operation = null;
-        Debug.Log("Load End");
+
+
+        Mesh[,] meshs = await LoadEveryMesh();
+
+        Texture2D[,] textures = await LoadEveryTexture();
+
+        await AsyncLoadScene(0);
+
+        MapManager.instence.CreateChunck(meshs, textures);
+
+        load = LoadStatus.Done;
         Destroy(gameObject);
-        Debug.Log($"time to creat Map: {System.DateTime.Now.Second + System.DateTime.Now.Minute * 60 - startTime}");
         return _mapdata;
+    }
+
+    public async Task<Texture2D[,]> LoadEveryTexture()
+    {
+        Texture2D[,] chunks = new Texture2D[Width, Height];
+
+        for (int y = 0; y < Height; y++)
+        {
+            for (int x = 0; x < Width; x++)
+            {
+                LoadingIndicator = $"Loading Texture {y * Height + x}/{Height*Width}";
+                chunks[x, y] = await TextureGenerator.AsyncGetChunkTexture(new Vector2Int(x, y), MapManager.map);
+            }
+        }
+        return chunks;
+    }
+
+    public async Task<Mesh[,]> LoadEveryMesh()
+    {
+        Mesh[,] chunks = new Mesh[Width, Height];
+
+        for (int y = 0; y < Height; y++)
+        {
+            for (int x = 0; x < Width; x++)
+            {
+                LoadingIndicator = $"Loading Mesh {y * Height + x}/{Height * Width}";
+                chunks[x, y] = await MeshGenerator.AsyncGetChunkMesh(new Vector2Int(x, y), MapManager.map);
+            }
+        }
+        return chunks;
+    }
+
+    public async Task AsyncLoadScene(int index)
+    {
+        AsyncOperation loadMap = SceneManager.LoadSceneAsync(index);
+        while (!loadMap.isDone)
+        {
+            await Task.Delay(1);
+        }
     }
 
     private void Update()
     {
-        if (operationStatus != TaskStatus.Faulted && operation.Status == TaskStatus.Faulted)
+        if (operation != null && load == LoadStatus.Loading && operation.Status == TaskStatus.Faulted)
         {
-            operationStatus = operation.Status;
-            Debug.LogError($"message: {operation.Exception.Message}, \n source: {operation.Exception.Source}, \n\n comple: {operation.Exception.ToString()}");
+            load = LoadStatus.Faulted;
+            Debug.LogError($"message: {operation.Exception.Message}, \n source: {operation.Exception.Source}, \n\n comple: {operation.Exception}");
         }
+    }
+
+    public enum LoadStatus
+    {
+        NotStart,
+        Loading,
+        Done,
+        Faulted
     }
 }

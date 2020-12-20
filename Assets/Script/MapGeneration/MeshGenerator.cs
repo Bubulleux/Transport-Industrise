@@ -6,51 +6,43 @@ using System.Threading.Tasks;
 
 public static class MeshGenerator
 {
-    public static Mesh[,] MeshGenerat(Parcel[,] parcels)
-    {
-        int width = parcels.GetLength(0) / 50;
-        int height = parcels.GetLength(1) / 50;
-        Mesh[,] chunks = new Mesh[width, height];
+    
 
-        for (int y = 0;  y < height;  y++)
-        {
-            for (int x = 0; x < width; x++)
-            {
-                //chunks[x, y] = GenerateChunck(x, y, parcels);
-            }
-        }
-        return chunks;
+    public static async Task AsyncGenerateChunk(Vector2Int chunk, Map map, GameObject chunkGo)
+    {
+        Mesh mesh = await AsyncGetChunkMesh(chunk, map);
+        chunkGo.GetComponent<MeshFilter>().mesh = mesh;
+        chunkGo.GetComponent<MeshCollider>().sharedMesh = mesh;
     }
 
-    public static async Task AsyncGenerateChunck(int chunkX, int chunkY, Parcel[,] parcels, GameObject chunckGo)
+    public static async Task<Mesh> AsyncGetChunkMesh(Vector2Int chunk, Map map)
     {
-        MeshData chunk = new MeshData();
+        MeshData meshData = new MeshData();
         for (int _y = 0; _y < 50; _y++)
         {
             for (int _x = 0; _x < 50; _x++)
             {
-                int x = chunkX * 50 + _x;
-                int y = chunkY * 50 + _y;
-                
-                if (parcels[x, y].seeTerrain)
+                int x = chunk.x * 50 + _x;
+                int y = chunk.y * 50 + _y;
+
+                if (map.parcels[x, y].seeTerrain)
                 {
                     Vector3[] cornerPos = new Vector3[]
                     {
-                        new Vector3(parcels[x, y].pos.x, parcels[x, y].corner[0], parcels[x, y].pos.y),
-                        new Vector3(parcels[x, y].pos.x + 1, parcels[x, y].corner[1], parcels[x, y].pos.y),
-                        new Vector3(parcels[x, y].pos.x, parcels[x, y].corner[2], parcels[x, y].pos.y + 1),
-                        new Vector3(parcels[x, y].pos.x + 1, parcels[x, y].corner[3], parcels[x, y].pos.y + 1)
-                    };  
-                    chunk.AddTriangles(new Vector3[] { cornerPos[2], cornerPos[3], cornerPos[0] }, new Vector2Int(chunkX, chunkY));
-                    chunk.AddTriangles(new Vector3[] { cornerPos[3], cornerPos[1], cornerPos[0] }, new Vector2Int(chunkX, chunkY));
+                        new Vector3(map.parcels[x, y].pos.x, map.parcels[x, y].corner[0], map.parcels[x, y].pos.y),
+                        new Vector3(map.parcels[x, y].pos.x + 1, map.parcels[x, y].corner[1], map.parcels[x, y].pos.y),
+                        new Vector3(map.parcels[x, y].pos.x, map.parcels[x, y].corner[2], map.parcels[x, y].pos.y + 1),
+                        new Vector3(map.parcels[x, y].pos.x + 1, map.parcels[x, y].corner[3], map.parcels[x, y].pos.y + 1)
+                    };
+                    meshData.AddTriangles(new Vector3[] { cornerPos[2], cornerPos[3], cornerPos[0] }, new Vector2Int(chunk.x, chunk.y));
+                    meshData.AddTriangles(new Vector3[] { cornerPos[3], cornerPos[1], cornerPos[0] }, new Vector2Int(chunk.x, chunk.y));
                 }
             }
-            await Task.Delay(1);
         }
-        Mesh mesh = await chunk.GetMesh();
-        chunckGo.GetComponent<MeshFilter>().mesh = mesh;
-        chunckGo.GetComponent<MeshCollider>().sharedMesh = mesh;
+        Mesh mesh = await meshData.GetMesh();
+        return mesh;
     }
+
 }
 public class MeshData
 {
@@ -82,24 +74,19 @@ public class MeshData
         {
             verticesArray[i] = verticies[i];
             uvsArray[i] = uvs[i];
-            if (i % 50 == 0)
-            {
-                await Task.Delay(1);
-            }
         }
+        await Task.Delay(1);
         for (int i = 0; i < triangles.Count; i++)
         {
             triangleArray[i] = triangles[i];
-            if (i % 50 == 0)
-            {
-                await Task.Delay(1);
-            }
         }
-        Mesh mesh = new Mesh();
-        mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
-        mesh.vertices = verticesArray;
-        mesh.triangles = triangleArray;
-        mesh.uv = uvsArray;
+        Mesh mesh = new Mesh
+        {
+            indexFormat = UnityEngine.Rendering.IndexFormat.UInt32,
+            vertices = verticesArray,
+            triangles = triangleArray,
+            uv = uvsArray
+        };
         mesh.RecalculateNormals();
         return mesh;
     }

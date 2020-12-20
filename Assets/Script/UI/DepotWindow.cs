@@ -3,21 +3,29 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DepotWindow : MonoBehaviour
+public class DepotWindow : Window
 {
     public GameObject templateDepotVehicle;
     public GameObject templateStoreVehicle;
     public Transform listContente;
-    private Vector2Int depotpos;
-    public Depot Depot { set => MapManager.map.parcels[depotpos.x, depotpos.y] = value;  get => (Depot)MapManager.map.parcels[depotpos.x, depotpos.y];}
+    public Depot depot;
     public bool onStore = false;
     public Text butTxt;
     public Dropdown groupesDropdown;
-    public void Init(Vector2Int _depot)
+
+    private void Start()
     {
-        depotpos = _depot;
         UpdateWindow();
     }
+
+    private void Update()
+    {
+        if (!onStore && VehicleManager.GetVehicleByPos(depot).Count != listContente.childCount - 2)
+        {
+            UpdateWindow();
+        }
+    }
+
     public void UpdateWindow()
     {
         foreach(Transform child in listContente)
@@ -47,11 +55,11 @@ public class DepotWindow : MonoBehaviour
                 _go.Find("Description").GetComponent<Text>().text = curVehicle.description;
                 _go.Find("Buy").GetComponent<Button>().onClick.AddListener(delegate 
                 { 
-                    VehicleContoler vehicle = Depot.BuyVehicle(curVehicle);
+                    VehicleContoler vehicle = depot.BuyVehicle(curVehicle);
                     if (groupesDropdown.value != Group.groups.Count)
                     {
                         Debug.Log("vehicle Groupe Set");
-                        vehicle.Group = Group.groups[groupesDropdown.value];
+                        vehicle.MyGroup = Group.groups[groupesDropdown.value];
                     }
                 });
                 _go.gameObject.SetActive(true);
@@ -60,12 +68,13 @@ public class DepotWindow : MonoBehaviour
         else
         {
             groupesDropdown.gameObject.SetActive(false);
-            foreach (GameObject curVehicle in Depot.GetVehicles())
+            foreach (VehicleContoler curVehicle in VehicleManager.GetVehicleByPos(depot))
             {
                 Transform _go = Instantiate(templateDepotVehicle).transform;
                 _go.SetParent(listContente);
-                _go.Find("Name").GetComponent<Text>().text = curVehicle.GetComponent<VehicleContoler>().vehicleData.name;
-                _go.Find("Damage").GetComponent<Text>().text = string.Format("Damage: {0}%", Mathf.Floor(curVehicle.GetComponent<VehicleContoler>().damage * 100));
+                _go.Find("Name").GetComponent<Text>().text = curVehicle.vehicleData.name;
+                _go.Find("Damage").GetComponent<Text>().text = string.Format("Damage: {0}%", Mathf.Floor(curVehicle.damage * 100));
+                _go.Find("ID").GetComponent<Text>().text = "ID: " + curVehicle.Id;
                 _go.Find("Info").GetComponent<Button>().onClick.AddListener(delegate { WindowsOpener.OpenVehicleWindow(curVehicle.GetComponent<VehicleContoler>()); });
                 _go.gameObject.SetActive(true);
             }
@@ -73,11 +82,21 @@ public class DepotWindow : MonoBehaviour
         templateDepotVehicle.SetActive(false);
         templateStoreVehicle.SetActive(false);
     }
+
+
     public void Store()
     {
         onStore = !onStore;
         butTxt.text = onStore ? "Depot" : "Store";
         UpdateWindow();
+    }
+
+    public void StartVehicle()
+    {
+        foreach(VehicleContoler curVehicle in VehicleManager.GetVehicleByPos(depot))
+        {
+            curVehicle.StartVehicle();
+        }
     }
     
 }

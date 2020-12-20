@@ -13,10 +13,10 @@ public class GroupWindow : Window
     }
     public void UpdateWindow()
     {
-        contente.Find("Name").GetComponent<InputField>().text = group.name;
-        contente.Find("VehicleCount").GetComponent<Text>().text = "Vehicle Count: " + group.vehicles.Count;
-        contente.Find("ForceRoute").GetComponent<Toggle>().isOn = group.forceRoute;
-        contente.Find("SetRouteBut").GetComponent<Button>().interactable = group.forceRoute;
+        Contente.Find("Name").GetComponent<InputField>().text = group.name;
+        Contente.Find("VehicleCount").GetComponent<Text>().text = "Vehicle Count: " + group.vehicles.Count;
+        Contente.Find("ForceRoute").GetComponent<Toggle>().isOn = group.forceRoute;
+        Contente.Find("SetRouteBut").GetComponent<Button>().interactable = group.forceRoute;
     }
 
     public void SetRoute()
