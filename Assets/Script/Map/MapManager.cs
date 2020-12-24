@@ -84,6 +84,18 @@ public class MapManager : MonoBehaviour
         }
     }
 
+    public void UpdateEveryChunck()
+    {
+        for (int y = 0; y < 20; y++)
+        {
+            for (int x = 0; x < 20; x++)
+            {
+                map.chunkNeedMeshUpdate[x, y] = true;
+                map.chunkNeedTextureUpdate[x, y] = true;
+            }
+        }
+    }
+
     public void UpdateMap()
     {
         bool mapHasBeenUpdate = false;

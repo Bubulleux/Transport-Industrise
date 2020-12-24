@@ -2,12 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
+[JsonObject(MemberSerialization.OptIn)]
 public  class Map
 {
+    [JsonProperty]
     public Parcel[,] parcels = new Parcel[1000, 1000];
+    public Vector2Int Size { get => new Vector2Int(parcels.GetLength(0), parcels.GetLength(1)); }
+    [JsonProperty]
     public List<City> citys = new List<City>();
+    [JsonProperty]
     public List<Industrise> industrises =  new List<Industrise>();
+
+
     public bool[,] chunkNeedTextureUpdate = new bool[20, 20];
     public bool[,] chunkNeedMeshUpdate = new bool[20, 20];
     public List<Parcel> importParcels = new List<Parcel>();
@@ -47,6 +55,10 @@ public  class Map
     public T GetParcel<T>(Vector2Int pos) where T : Parcel
     {
         return parcels[pos.x, pos.y] as T;
+    }
+    public Parcel GetParcel(Vector2Int pos) 
+    {
+        return parcels[pos.x, pos.y];
     }
 
     public System.Type GetparcelType(Vector2Int pos)

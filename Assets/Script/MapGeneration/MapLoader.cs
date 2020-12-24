@@ -44,6 +44,7 @@ public class MapLoader : MonoBehaviour
         await AsyncLoadScene(0);
 
         MapManager.instence.CreateChunck(meshs, textures);
+        MapManager.instence.enabled = true;
 
         load = LoadStatus.Done;
         Destroy(gameObject);

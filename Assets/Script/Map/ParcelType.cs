@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json;
 
 
+[JsonObject(MemberSerialization.OptOut)]
 public class Parcel
 {
     public Vector2Int pos;
@@ -26,19 +28,21 @@ public class Parcel
 
 }
 
+[JsonObject(MemberSerialization.OptOut)]
 public class Road : Parcel
 {
     public bool[] direction = new bool[4];
 }
 
+[JsonObject(MemberSerialization.OptOut)]
 public class Building : Parcel
 {
     public float height;
-    public Color color;
+    public Color32 color;
 }
 
 
-
+[JsonObject(MemberSerialization.OptOut)]
 public class Depot : Parcel
 {
 
@@ -51,6 +55,7 @@ public class Depot : Parcel
     }
 }
 
+[JsonObject(MemberSerialization.OptOut)]
 public class LoadingBay : Parcel
 {
     public List<Industrise> industriseLink = new List<Industrise>();

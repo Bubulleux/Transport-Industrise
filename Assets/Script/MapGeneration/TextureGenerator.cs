@@ -4,10 +4,7 @@ public static class TextureGenerator
 {
     public static async Task AsyncGenerateTextureChunk(Vector2Int chunk, Map map, GameObject chunkGo)
     {
-        chunkGo.GetComponent<Renderer>().sharedMaterial = new Material(Shader.Find("Standard"))
-        {
-            mainTexture = await AsyncGetChunkTexture(chunk, map)
-        };
+        chunkGo.GetComponent<Renderer>().sharedMaterial = new Material(Shader.Find("Standard")) { mainTexture = await AsyncGetChunkTexture(chunk, map) };
     }
 
     public static async Task<Texture2D> AsyncGetChunkTexture(Vector2Int chunk, Map map)

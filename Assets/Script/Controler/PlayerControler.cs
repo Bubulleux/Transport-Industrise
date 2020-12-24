@@ -19,6 +19,8 @@ public class PlayerControler : MonoBehaviour
      * F2: Make auto Construct
      * F3: Print vehicle info
      * F4: Interact whith Industrise
+     * F5: Create & Serialize Save
+     * F6: LoadSave
      */
     void Update()
     {
@@ -29,6 +31,9 @@ public class PlayerControler : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F1))
         {
             Debug.Log(GetMoussePos().ToVec2Int());
+            string parcelJson = Save.GetJson(MapManager.map.GetParcel(GetMoussePos().ToVec2Int()));
+            Debug.Log(parcelJson);
+            Debug.Log(Save.GetObject<Parcel>(parcelJson).GetType());
             if (MapManager.map.GetparcelType(GetMoussePos().ToVec2Int()) == typeof(LoadingBay))
             {
                 string result = "Inpute:";
@@ -62,6 +67,18 @@ public class PlayerControler : MonoBehaviour
                 int materialSuccessful = -loadingBay.TryToInteract(curMaterial.Key, -20);
                 Debug.Log($"Try to take 20 {curMaterial.Key}, material Successful: {materialSuccessful}, now Loading Material: {loadingBay.GetMaterialOutpute()[curMaterial.Key]}");
             }
+        }
+
+        if (Input.GetKeyDown(KeyCode.F5))
+        {
+            Save save = new Save();
+            save.SerializeAndSave();
+        }
+
+        if (Input.GetKeyDown(KeyCode.F6))
+        {
+            Save save = new Save();
+            save.LoadAndDeserialize();
         }
 
         if (Input.GetMouseButtonDown(0) && GetMoussePos() != Vector3.zero)
