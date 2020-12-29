@@ -1,11 +1,24 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class Window : MonoBehaviour, IPointerClickHandler, IDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
     public bool pointerOverMe = false;
     public bool fixWindow;
+    public Text name;
     public Transform Contente { get => transform.Find("WindowContent"); }
+    public string WindowName
+    {
+        get
+        {
+            return name.text;
+        }
+        set
+        {
+            name.text = value;
+        }
+    }
 
     public void Close()
     {

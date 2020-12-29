@@ -6,51 +6,70 @@ public static class WindowsOpener
 {
     public static GameObject OpenDepotWindow(Depot depot)
     {
-        GameObject _go = OpenWindowByName("DepotWindow");
-        _go.GetComponent<DepotWindow>().depot = depot;
-        return _go;
+        Window window = OpenWindowByName("Depot");
+        window.Contente.GetComponent<DepotWindow>().depot = depot;
+        return window.gameObject;
     }
 
     public static GameObject OpenRouteListWindow()
     {
-        GameObject _go = OpenWindowByName("RoutesListWindow");
-        return _go;
+        Window window = OpenWindowByName("RoutesList");
+        return window.gameObject;
     }
     public static GameObject OpenGroupesListWindow()
     {
-        return OpenWindowByName("GroupesListWindow");
+        return OpenWindowByName("GroupsList").gameObject;
     }
 
     public static GameObject OpenRouteCreatorWindow(RouteCreatorWindow.FunctionFinish _functionFinish, Route _route = null)
     {
-        GameObject _go = OpenWindowByName("RoutesCreatorWindow");
-        _go.GetComponent<RouteCreatorWindow>().functionFinish = _functionFinish;
+        Window window = OpenWindowByName("RoutesCreator");
+        window.Contente.GetComponent<RouteCreatorWindow>().functionFinish = _functionFinish;
         if (_route != null)
         {
-            _go.GetComponent<RouteCreatorWindow>().route = _route;
+            window.GetComponent<Window>().Contente.GetComponent<RouteCreatorWindow>().route = _route;
         }
-        return _go;
+        return window.gameObject;
     }
 
     public static GameObject OpenVehicleWindow(VehicleContoler vehicle)
     {
-        GameObject _go = OpenWindowByName("VehicleWindow");
-        _go.GetComponent<VehicleWIndow>().vehicle = vehicle;
-        return _go;
+        Window window = OpenWindowByName("Vehicle");
+        window.Contente.GetComponent<VehicleWIndow>().vehicle = vehicle;
+        return window.gameObject;
     }
 
     public static GameObject OpenGroupWindow(Group group)
     {
-        GameObject _go = OpenWindowByName("GroupWindow");
-        _go.GetComponent<GroupWindow>().group = group;
-        return _go;
+        Window window = OpenWindowByName("Group");
+        window.Contente.GetComponent<GroupWindow>().group = group;
+        return window.gameObject;
     }
 
-    private static GameObject OpenWindowByName(string name)
+    private static Window OpenWindowByName(string name)
     {
-        GameObject _go = Object.Instantiate(Resources.Load("UI/" + name, typeof(GameObject)) as GameObject);
-        _go.transform.SetParent(GameObject.Find("Canvas").transform, false);
-        _go.transform.localPosition = Vector3.zero;
-        return _go;
+        GameObject _window = Object.Instantiate(Resources.Load("UI/Window", typeof(GameObject)) as GameObject);
+        GameObject _windowContente = Object.Instantiate(Resources.Load("UI/WindowContent/" + name, typeof(GameObject)) as GameObject);
+
+        _window.transform.SetParent(GameObject.Find("Canvas").transform, false);
+        _windowContente.transform.SetParent(_window.transform);
+
+        _windowContente.name = "WindowContent";
+
+        RectTransform windowRectTransform = _window.GetComponent<RectTransform>();
+        RectTransform windowContenteRectTransform = _windowContente.GetComponent<RectTransform>();
+
+        Vector2 _windowContenteSize = windowContenteRectTransform.sizeDelta;
+        windowRectTransform.sizeDelta = new Vector2(0, 20) + _windowContenteSize;
+
+        windowContenteRectTransform.anchorMin = Vector2.zero;
+        windowContenteRectTransform.anchorMax = Vector2.one;
+        windowContenteRectTransform.pivot = Vector2.zero;
+
+        windowContenteRectTransform.offsetMin = Vector2.zero;
+        windowContenteRectTransform.offsetMax = new Vector2(0, -20);
+
+        _window.transform.localPosition = Vector3.zero;
+        return _window.GetComponent<Window>();
     }
 }

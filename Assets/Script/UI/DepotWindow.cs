@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DepotWindow : Window
+public class DepotWindow : WindowContent
 {
     public GameObject templateDepotVehicle;
     public GameObject templateStoreVehicle;
@@ -15,6 +15,7 @@ public class DepotWindow : Window
 
     private void Start()
     {
+        WindowParente.WindowName = "Depot";
         UpdateWindow();
     }
 

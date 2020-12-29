@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class VehicleWIndow : Window
+public class VehicleWIndow : WindowContent
 {
     public VehicleContoler vehicle;
 
@@ -14,11 +14,11 @@ public class VehicleWIndow : Window
 
     public void UpdateWindow()
     {
-        Contente.Find("Name").GetComponent<Text>().text = vehicle.vehicleData.name;
-        Contente.Find("Damage").GetComponent<Text>().text = "Damage:" + vehicle.damage.ToString();
-        Contente.Find("ID").GetComponent<Text>().text = "ID: " + vehicle.Id;
-        Contente.Find("Route").GetComponent<Button>().interactable = (vehicle.MyGroup == null || vehicle.MyGroup.forceRoute == false);
-        Dropdown group = Contente.Find("Group").GetComponent<Dropdown>();
+        transform.Find("Name").GetComponent<Text>().text = vehicle.vehicleData.name;
+        transform.Find("Damage").GetComponent<Text>().text = "Damage:" + vehicle.damage.ToString();
+        transform.Find("ID").GetComponent<Text>().text = "ID: " + vehicle.Id;
+        transform.Find("Route").GetComponent<Button>().interactable = (vehicle.MyGroup == null || vehicle.MyGroup.forceRoute == false);
+        Dropdown group = transform.Find("Group").GetComponent<Dropdown>();
         List<string> options = new List<string>();
         int index = Group.groups.Count;
         foreach(Group curGroup in Group.groups)

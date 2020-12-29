@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class RouteCreatorWindow : MonoBehaviour
+public class RouteCreatorWindow : WindowContent
 {
 
     public delegate void FunctionFinish(Route route);
@@ -18,6 +18,7 @@ public class RouteCreatorWindow : MonoBehaviour
         {
             route = new Route();
         }
+        WindowParente.WindowName = "Route Creator";
         route.name = "Name Random" + Random.Range(0, 100);
         UpdateList();
 

@@ -3,20 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GroupWindow : Window
+public class GroupWindow : WindowContent
 {
     public Group group;
 
     public void Start()
     {
+        WindowParente.WindowName = "Group: " + group.name;
         UpdateWindow();
     }
     public void UpdateWindow()
     {
-        Contente.Find("Name").GetComponent<InputField>().text = group.name;
-        Contente.Find("VehicleCount").GetComponent<Text>().text = "Vehicle Count: " + group.vehicles.Count;
-        Contente.Find("ForceRoute").GetComponent<Toggle>().isOn = group.forceRoute;
-        Contente.Find("SetRouteBut").GetComponent<Button>().interactable = group.forceRoute;
+        transform.Find("Name").GetComponent<InputField>().text = group.name;
+        transform.Find("VehicleCount").GetComponent<Text>().text = "Vehicle Count: " + group.vehicles.Count;
+        transform.Find("ForceRoute").GetComponent<Toggle>().isOn = group.forceRoute;
+        transform.Find("SetRouteBut").GetComponent<Button>().interactable = group.forceRoute;
     }
 
     public void SetRoute()

@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GroupesListWindow : MonoBehaviour
+public class GroupesListWindow : WindowContent
 {
     public Transform groupesList;
     public GameObject groupePrefab;
     void Start()
     {
+        WindowParente.WindowName = "Groups List";
         UpdateList();
     }
 
