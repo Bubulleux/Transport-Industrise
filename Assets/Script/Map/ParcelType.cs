@@ -12,6 +12,12 @@ public class Parcel
     //public object construction = null;
     public bool seeTerrain = true;
 
+    public Parcel(Vector2Int _pos)
+    {
+        pos = _pos;
+    }
+    public Parcel() { }
+
     public virtual void Initialaze()
     {
 

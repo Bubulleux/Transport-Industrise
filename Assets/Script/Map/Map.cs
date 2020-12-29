@@ -27,15 +27,14 @@ public  class Map
         await Task.Delay(10);
         citys = new List<City>();
         industrises = new List<Industrise>();
-        float[,] mapNoise = NoiseGenerator.GenerNoise(1001, 1001, 60, 3, 6, 0.1f, 10, mapSetting.heightCurv, mapSetting.limitWaterCurv);
+        float[,] mapNoise = NoiseGenerator.GenerNoise(1001, 1001, 60, 3, 6, 0.1f, Random.Range(1, 10000), mapSetting.heightCurv, mapSetting.limitWaterCurv);
         for (int y = 0; y < parcels.GetLength(1); y++)
         {
             for (int x = 0; x < parcels.GetLength(0); x++)
             {
-                parcels[x, y] = new Parcel
+                parcels[x, y] = new Parcel(new Vector2Int(x, y))
                 {
-                    corner = new int[4] { Mathf.FloorToInt(mapNoise[x, y]), Mathf.FloorToInt(mapNoise[x + 1, y]), Mathf.FloorToInt(mapNoise[x, y + 1]), Mathf.FloorToInt(mapNoise[x + 1, y + 1]) },
-                    pos = new Vector2Int(x, y)
+                    corner = new int[4] { Mathf.FloorToInt(mapNoise[x, y]), Mathf.FloorToInt(mapNoise[x + 1, y]), Mathf.FloorToInt(mapNoise[x, y + 1]), Mathf.FloorToInt(mapNoise[x + 1, y + 1]) }
                 };
             }
         }

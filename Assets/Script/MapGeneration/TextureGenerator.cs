@@ -46,7 +46,7 @@ public static class TextureGenerator
                 }
             }
         }
-        await Task.Delay(1);
+        await AsyncTask.DelayIfNeed(1);
         texture.SetPixels(colors);
         texture.filterMode = FilterMode.Point;
         texture.wrapMode = TextureWrapMode.Clamp;

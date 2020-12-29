@@ -39,19 +39,36 @@ public class Save
 
     private async Task SerializeAndSaveMap()
     {
-        TextWriter()
-
-        return;
-        string[] parcelsJson = new string[map.Size.x * map.Size.y];
+        Timer timer = new Timer();
+        List<string> parcelsJsonList = new List<string>();
+        int[] mapForm = new int[map.Size.x * map.Size.y * 4];
         for (int y = 0; y < map.Size.y; y++)
         {
             for (int x = 0; x < map.Size.x; x++)
             {
-                parcelsJson[y * map.Size.x + x] = GetJson(map.GetParcel(new Vector2Int(x, y)));
+                if (map.GetparcelType(new Vector2Int(x, y)) != typeof(Parcel))
+                {
+                    parcelsJsonList.Add(GetJson(map.GetParcel(new Vector2Int(x, y))));
+                }
+                for (int i = 0; i < 4; i++)
+                {
+                    mapForm[(y * map.Size.x + x) * 4 + i] = map.GetParcel<Parcel>(new Vector2Int(x, y)).corner[i];
+                }
+                await AsyncTask.DelayIfNeed(1);
             }
-            await AsyncTask.DelayIf(y, 10, 1);
         }
-        FIleSys.SaveFile(path + "/map.dat", parcelsJson);
+        timer.DebugTime("Creat Forme and JSON");
+
+        string[] parcelsJsonArray = new string[parcelsJsonList.Count];
+        for (int i = 0; i < parcelsJsonList.Count; i++)
+        {
+            parcelsJsonArray[i] = parcelsJsonList[i];
+            //await AsyncTask.DelayIf(i, 100, 1);
+            await AsyncTask.DelayIfNeed(1);
+        }
+        timer.DebugTime("List => Array ");
+        FIleSys.SaveFile(path + "/mapForme.dat", mapForm);
+        FIleSys.SaveFile(path + "/mapConstruction.dat", parcelsJsonArray);
     }
 
     public async Task LoadAndDeserialize()
@@ -63,14 +80,31 @@ public class Save
     }
     private async Task LoadAndDeserializeMap()
     {
+        Timer timer = new Timer();
         //map = new Map();
-        string[] parcelsJson = FIleSys.OpenFile<string[]>(path + "/map.dat");
+        int[] mapForme = FIleSys.OpenFile<int[]>(path + "/mapForme.dat");
+        string[] parcelsJson = FIleSys.OpenFile<string[]>(path + "/mapConstruction.dat");
+        timer.DebugTime("Load File");
+        for (int i = 0; i < mapForme.Length; i += 4)
+        {
+            int x = (i / 4) % map.Size.x;
+            int y = (i  / 4 - x ) / map.Size.x;
+            map.parcels[x, y] = new Parcel(new Vector2Int(x, y));
+            for (int j = 0; j < 4; j++)
+            {
+                map.parcels[x, y].corner[j] = mapForme[i + j];
+            }
+            await AsyncTask.DelayIfNeed(1);
+        }
+        timer.DebugTime("Load Forme");
+
         for (int i = 0; i < parcelsJson.Length; i++)
         {
             Parcel curParcel = GetObject<Parcel>(parcelsJson[i]);
             map.parcels[curParcel.pos.x, curParcel.pos.y] = curParcel;
-            await AsyncTask.DelayIf(i, 10000, 1);
+            await AsyncTask.DelayIfNeed(1);
         }
+        timer.DebugTime("Load Construction");
     }
 
     public void LoadSave()

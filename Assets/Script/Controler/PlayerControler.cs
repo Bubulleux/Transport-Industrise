@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading.Tasks;
 
 public class PlayerControler : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class PlayerControler : MonoBehaviour
     public Tools curTool;
     public delegate void MainToolRedir(Vector2Int posMouse);
     public MainToolRedir toolRedirection = null;
+    public Task operation;
 
     private void Awake()
     {
@@ -72,13 +74,13 @@ public class PlayerControler : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F5))
         {
             Save save = new Save();
-            save.SerializeAndSave();
+            operation = save.SerializeAndSave();
         }
 
         if (Input.GetKeyDown(KeyCode.F6))
         {
             Save save = new Save();
-            save.LoadAndDeserialize();
+            operation = save.LoadAndDeserialize();
         }
 
         if (Input.GetMouseButtonDown(0) && GetMoussePos() != Vector3.zero)
@@ -113,6 +115,12 @@ public class PlayerControler : MonoBehaviour
                 toolRedirection(GetMoussePos().ToVec2Int());
             }
             
+        }
+
+        if (operation != null && operation.Status == TaskStatus.Faulted)
+        {
+            Debug.LogException(operation.Exception);
+            operation = null;
         }
     }
 

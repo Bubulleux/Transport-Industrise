@@ -86,7 +86,7 @@ public class MapLoader : MonoBehaviour
         AsyncOperation loadMap = SceneManager.LoadSceneAsync(index);
         while (!loadMap.isDone)
         {
-            await Task.Delay(1);
+            await AsyncTask.DelayIfNeed(1);
         }
     }
 
