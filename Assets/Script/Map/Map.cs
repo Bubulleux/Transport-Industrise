@@ -187,14 +187,26 @@ public  class Map
 
     public bool AddConstruction(Vector2Int pos, Parcel construction)
     {
-        if (parcels[pos.x, pos.y].GetType() == typeof(Parcel))
-       {
+        if (GetparcelType(pos) == typeof(Parcel))
+        {
             parcels[pos.x, pos.y] = Parcel.CopyClass(parcels[pos.x, pos.y], construction);
             UpdateChunkTexture(Mathf.FloorToInt(pos.x / 50), Mathf.FloorToInt(pos.y / 50));
             importParcels.Add(construction);
             return true;
         }
         return false;
+    }
+
+    public bool Destroy(Vector2Int pos)
+    {
+        if (GetparcelType(pos) == typeof(Parcel) || (GetparcelType(pos) == typeof(Road) && VehicleManager.GetVehicleByPos(GetParcel<Parcel>(pos)).Count != 0))
+        {
+            return false;
+        }
+        parcels[pos.x, pos.y] = Parcel.CopyClass(parcels[pos.x, pos.y], new Parcel());
+        UpdateChunkTexture(Mathf.FloorToInt(pos.x / 50), Mathf.FloorToInt(pos.y / 50));
+        importParcels.Remove(parcels[pos.x, pos.y]);
+        return true;
     }
 
     public void Color(Vector2Int pos, Color color)

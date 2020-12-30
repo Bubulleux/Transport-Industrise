@@ -108,6 +108,9 @@ public class PlayerControler : MonoBehaviour
                     case Tools.loadingBay:
                         MapManager.map.AddConstruction(GetMoussePos().ToVec2Int(), new LoadingBay());
                         break;
+                    case Tools.destroy:
+                        MapManager.map.Destroy(GetMoussePos().ToVec2Int());
+                        break;
                 }
             }
             else
@@ -182,7 +185,8 @@ public class PlayerControler : MonoBehaviour
         none,
         road,
         depot,
-        loadingBay
+        loadingBay,
+        destroy
     }
 
     public static bool PointerIsOverUI()

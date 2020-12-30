@@ -2295,6 +2295,8 @@ MonoBehaviour:
       m_Image: {fileID: 0}
     - m_Text: Loading Bay
       m_Image: {fileID: 0}
+    - m_Text: Destroy
+      m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -2437,6 +2439,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pointerOverMe: 0
   fixWindow: 1
+  name: {fileID: 0}
 --- !u!1 &2122737437
 GameObject:
   m_ObjectHideFlags: 0
