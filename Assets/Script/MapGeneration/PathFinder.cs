@@ -57,7 +57,7 @@ public static class PathFinder
             parcelNeedCheck = furureParcelNeedCheck;
             dist++;
             i++;
-            if (i >= 300)
+            if (i >= 3000)
             {
                 Debug.Log("Break 1");
                 break;

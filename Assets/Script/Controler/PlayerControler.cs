@@ -147,23 +147,33 @@ public class PlayerControler : MonoBehaviour
         Vector2Int endMouse = GetMoussePos().ToVec2Int();
         Vector2Int lastPos = startMouse;
         MapManager.map.AddRoad(startMouse);
-        int i = 0;
         while (true)
         {
-            i++;
-            if (lastPos == endMouse || i > 1000)
+            if (lastPos == endMouse)
             {
                 break;
             }
-            if (Mathf.Abs(lastPos.x - endMouse.x) / (float)Mathf.Abs(startMouse.x - endMouse.x) > Mathf.Abs(lastPos.y - endMouse.y) / (float)Mathf.Abs(startMouse.y - endMouse.y))
+            float xProgress = Mathf.Abs(lastPos.x - startMouse.x) / (float)Mathf.Abs(startMouse.x - endMouse.x);
+            float yProgress = Mathf.Abs(lastPos.y - startMouse.y) / (float)Mathf.Abs(startMouse.y - endMouse.y);
+            xProgress = (float.IsNaN(xProgress) || float.IsInfinity(xProgress)) ? 1 : xProgress;
+            yProgress = (float.IsNaN(yProgress) || float.IsInfinity(yProgress)) ? 1 : yProgress;
+            if (xProgress < yProgress)
             {
-                lastPos += new Vector2Int(lastPos.x < endMouse.x ? 1 : -1, 0);
-                MapManager.map.AddRoad(lastPos);
+                for (int i = 0; i < 50; i++)
+                {
+                    lastPos += new Vector2Int(lastPos.x < endMouse.x ? 1 : -1, 0);
+                    MapManager.map.AddRoad(lastPos);
+                    if (lastPos.x == endMouse.x) { break; }
+                }
             }
             else
             {
-                lastPos += new Vector2Int(0, lastPos.y < endMouse.y ? 1 : -1);
-                MapManager.map.AddRoad(lastPos);
+                for (int i = 0; i < 50; i++)
+                {
+                    lastPos += new Vector2Int(0, lastPos.y < endMouse.y ? 1 : -1);
+                    MapManager.map.AddRoad(lastPos);
+                    if (lastPos.y == endMouse.y) { break; }
+                }
             }
            
         }
