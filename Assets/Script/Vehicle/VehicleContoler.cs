@@ -121,8 +121,11 @@ public class VehicleContoler : MonoBehaviour
                 }
                 if (path == null)
                 {
-                    Debug.Log("Path Set");
                     path = PathFinder.FindPath(VehiclePos, MyRoute.points[RoutePointGo]);
+                    if (path == null)
+                    {
+                        ReturnInDepot();
+                    }
                 }
             }
             if (path != null && path.Count != 0)
@@ -161,6 +164,15 @@ public class VehicleContoler : MonoBehaviour
 
     public async Task DriveAlong()
     {
+        if (MapManager.map.GetparcelType(path[0]) != typeof(Road) && path.Count != 1 && VehiclePos != path[0])
+        {
+            path = PathFinder.FindPath(VehiclePos, MyRoute.points[RoutePointGo]);
+            if (path == null)
+            {
+                ReturnInDepot();
+                return;
+            }
+        }
         AnimeVehicle();
         VehiclePos = path[0];
         path.RemoveAt(0);
@@ -185,8 +197,9 @@ public class VehicleContoler : MonoBehaviour
         if (path == null)
         {
             state = VehicleStat.Stuck;
-            return;
+            //return;
         }
+        Debug.Log(state);
     }
 
     private async Task Load()

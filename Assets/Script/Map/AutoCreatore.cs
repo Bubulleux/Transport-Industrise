@@ -7,7 +7,7 @@ public static class AutoCreatore
     public static void MakeAuto(Vector2Int origine)
     {
         //Vector2Int origine = new Vector2Int(200, 200);
-        MapManager.map.AddConstruction(origine + new Vector2Int(0, 1), new Depot());
+        MapManager.map.AddConstruction(origine, new Depot());
         for (int i = -30; i <= 0; i++)
         {
             MapManager.map.AddConstruction(origine + new Vector2Int(i, 1), new Road());
@@ -26,7 +26,7 @@ public static class AutoCreatore
         indus2.SetInputeOutpure();
         MapManager.map.AddConstruction(origine + new Vector2Int(-31, 1), new LoadingBay());
         MapManager.map.AddConstruction(origine + new Vector2Int(0, 31), new LoadingBay());
-        Depot depot = MapManager.map.parcels[origine.x, origine.y + 1] as Depot;
+        Depot depot = MapManager.map.parcels[origine.x, origine.y] as Depot;
         Group group = new Group()
         {
             name = "Auto Generate Groupe"
