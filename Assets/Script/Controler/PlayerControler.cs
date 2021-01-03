@@ -32,24 +32,7 @@ public class PlayerControler : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.F1))
         {
-            Debug.Log(GetMoussePos().ToVec2Int());
-            string parcelJson = Save.GetJson(MapManager.map.GetParcel(GetMoussePos().ToVec2Int()));
-            Debug.Log(parcelJson);
-            Debug.Log(Save.GetObject<Parcel>(parcelJson).GetType());
-            if (MapManager.map.GetparcelType(GetMoussePos().ToVec2Int()) == typeof(LoadingBay))
-            {
-                string result = "Inpute:";
-                foreach(KeyValuePair<Materials, int> curMaterial in MapManager.map.GetParcel<LoadingBay>(GetMoussePos().ToVec2Int()).GetMaterialInput())
-                {
-                    result += $"\n{curMaterial.Key}: {curMaterial.Value}";
-                }
-                result += "\nOutpute: ";
-                foreach (KeyValuePair<Materials, int> curMaterial in MapManager.map.GetParcel<LoadingBay>(GetMoussePos().ToVec2Int()).GetMaterialOutpute())
-                {
-                    result += $"\n{curMaterial.Key}: {curMaterial.Value}";
-                }
-                Debug.Log(result);
-            }
+            MapManager.map.GetParcel(GetMoussePos().ToVec2Int()).DebugParcel();
         }
         if (Input.GetKeyDown(KeyCode.F2))
         {
@@ -90,14 +73,7 @@ public class PlayerControler : MonoBehaviour
                 switch (curTool)
                 {
                     case Tools.none:
-                        object construction = MapManager.map.parcels[GetMoussePos().ToVec2Int().x, GetMoussePos().ToVec2Int().y];
-                        if (construction != null)
-                        {
-                            if (construction is Depot)
-                            {
-                                WindowsOpener.OpenDepotWindow(MapManager.map.GetParcel<Depot>(GetMoussePos().ToVec2Int()));
-                            }
-                        }
+                        MapManager.map.GetParcel(GetMoussePos().ToVec2Int()).Interact();
                         break;
                     case Tools.road:
                         StartCoroutine(MakeRoad());

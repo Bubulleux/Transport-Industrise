@@ -46,6 +46,13 @@ public static class WindowsOpener
         return window.gameObject;
     }
 
+    public static GameObject OpenLoadingBay(LoadingBay loadingBay)
+    {
+        Window window = OpenWindowByName("LoadingBay");
+        window.Contente.GetComponent<LoadingBayWindow>().loadingBay = loadingBay;
+        return window.gameObject;
+    }
+
     private static Window OpenWindowByName(string name)
     {
         GameObject _window = Object.Instantiate(Resources.Load("UI/Window", typeof(GameObject)) as GameObject);

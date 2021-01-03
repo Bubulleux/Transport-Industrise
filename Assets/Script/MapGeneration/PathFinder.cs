@@ -31,7 +31,7 @@ public static class PathFinder
                 {
                     break;
                 }
-                if (MapManager.map.parcels[curParcel.x, curParcel.y].GetType() == typeof(Road) || MapManager.map.parcels[curParcel.x, curParcel.y].GetType() == typeof(Depot) || MapManager.map.parcels[curParcel.x, curParcel.y].GetType() == typeof(LoadingBay))
+                if (MapManager.map.GetparcelType(curParcel) == typeof(Road) || parcelCheck.Count == 0)
                 {
                     parcelCheck.Add(curParcel, dist);
                     foreach(Vector2Int curParcelAround in MapManager.parcelAround)

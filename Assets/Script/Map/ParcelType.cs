@@ -22,6 +22,18 @@ public class Parcel
     {
 
     }
+    
+    public virtual void Interact()
+    {
+
+    }
+
+    public virtual void DebugParcel()
+    {
+        UnityEngine.Debug.Log(pos);
+        string parcelJson = Save.GetJson(MapManager.map.GetParcel(pos));
+        Debug.Log(parcelJson);
+    }
 
     public static Parcel CopyClass(Parcel copyClass,Parcel pastClass)
     {
@@ -59,7 +71,13 @@ public class Depot : Parcel
         _go.GetComponent<VehicleContoler>().vehicleData = vehicle;
         return _go.GetComponent<VehicleContoler>();
     }
+    public override void Interact()
+    {
+        base.Interact();
+        WindowsOpener.OpenDepotWindow(this);
+    }
 }
+
 
 [JsonObject(MemberSerialization.OptOut)]
 public class LoadingBay : Parcel
@@ -75,6 +93,27 @@ public class LoadingBay : Parcel
             }
         }
         Debug.Log($"Industrise link: {industriseLink.Count}");
+    }
+    public override void DebugParcel()
+    {
+        base.DebugParcel();
+        string result = "Inpute:";
+        foreach (KeyValuePair<Materials, int> curMaterial in GetMaterialInput())
+        {
+            result += $"\n{curMaterial.Key}: {curMaterial.Value}";
+        }
+        result += "\nOutpute: ";
+        foreach (KeyValuePair<Materials, int> curMaterial in GetMaterialOutpute())
+        {
+            result += $"\n{curMaterial.Key}: {curMaterial.Value}";
+        }
+        Debug.Log(result);
+    
+    }
+    public override void Interact()
+    {
+        base.Interact();
+        WindowsOpener.OpenLoadingBay(this);
     }
 
     public int GetMaterial(Materials material)
@@ -128,6 +167,34 @@ public class LoadingBay : Parcel
             }
         }
         return resulte;
+    }
+
+    public Dictionary<Materials, float> GetMaterialRatio(bool getInput)
+    {
+        Dictionary<Materials, int> materialQuantity = new Dictionary<Materials, int>();
+        Dictionary<Materials, int> materialCount = new Dictionary<Materials, int>();
+        foreach (Industrise curIndustrise in industriseLink)
+        {
+            foreach (KeyValuePair<Materials, int> curMaterial in getInput ? curIndustrise.materialsInpute : curIndustrise.materialsOutpute)
+            {
+                if (materialQuantity.ContainsKey(curMaterial.Key))
+                {
+                    materialQuantity[curMaterial.Key] += curMaterial.Value;
+                    materialCount[curMaterial.Key] += Industrise.maxMaterialCanStock;
+                }
+                else
+                {
+                    materialQuantity.Add(curMaterial.Key, curMaterial.Value);
+                    materialCount.Add(curMaterial.Key, Industrise.maxMaterialCanStock);
+                }
+            }
+        }
+        Dictionary<Materials, float> result = new Dictionary<Materials, float>();
+        foreach(KeyValuePair<Materials, int> curMaterial in materialQuantity)
+        {
+            result.Add(curMaterial.Key, curMaterial.Value / (float)materialCount[curMaterial.Key]);
+        }
+        return result;
     }
 
     public int GiveOrTakeMaterial(Materials material, int quantity)
