@@ -10,62 +10,18 @@ public class PlayerControler : MonoBehaviour
     public Tools curTool;
     public delegate void MainToolRedir(Vector2Int posMouse);
     public MainToolRedir toolRedirection = null;
-    public Task operation;
 
     private void Awake()
     {
         instance = this;
     }
-    /*
-     * F1: Get parcel Info
-     * F2: Make auto Construct
-     * F3: Print vehicle info
-     * F4: Interact whith Industrise
-     * F5: Create & Serialize Save
-     * F6: LoadSave
-     */
+    
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             toolRedirection = null;
         }
-        if (Input.GetKeyDown(KeyCode.F1))
-        {
-            MapManager.map.GetParcel(GetMoussePos().ToVec2Int()).DebugParcel();
-        }
-        if (Input.GetKeyDown(KeyCode.F2))
-        {
-            AutoCreatore.MakeAuto(GetMoussePos().ToVec2Int());
-        }
-
-        if (Input.GetKeyDown(KeyCode.F4) && MapManager.map.GetparcelType(GetMoussePos().ToVec2Int()) == typeof(LoadingBay))
-        {
-            LoadingBay loadingBay = MapManager.map.GetParcel<LoadingBay>(GetMoussePos().ToVec2Int());
-            foreach(KeyValuePair<Materials, int> curMaterial in loadingBay.GetMaterialInput())
-            {
-                int materialSuccessful = loadingBay.TryToInteract(curMaterial.Key, 20);
-                Debug.Log($"Try to give 20 {curMaterial.Key}, material Successful: {materialSuccessful}, now Loading Material: {loadingBay.GetMaterialInput()[curMaterial.Key]}");
-            }
-            foreach (KeyValuePair<Materials, int> curMaterial in loadingBay.GetMaterialOutpute())
-            {
-                int materialSuccessful = -loadingBay.TryToInteract(curMaterial.Key, -20);
-                Debug.Log($"Try to take 20 {curMaterial.Key}, material Successful: {materialSuccessful}, now Loading Material: {loadingBay.GetMaterialOutpute()[curMaterial.Key]}");
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.F5))
-        {
-            Save save = new Save();
-            operation = save.SerializeAndSave();
-        }
-
-        if (Input.GetKeyDown(KeyCode.F6))
-        {
-            Save save = new Save();
-            operation = save.LoadAndDeserialize();
-        }
-
         if (Input.GetMouseButtonDown(0) && GetMoussePos() != Vector3.zero)
         {
             if (toolRedirection == null)
@@ -96,16 +52,12 @@ public class PlayerControler : MonoBehaviour
             
         }
 
-        if (operation != null && operation.Status == TaskStatus.Faulted)
-        {
-            Debug.LogException(operation.Exception);
-            operation = null;
-        }
+        
     }
 
-    public Vector3 GetMoussePos()
+    public static Vector3 GetMoussePos()
     {
-        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit) && !PointerIsOverUI())
         {
             return hit.point;

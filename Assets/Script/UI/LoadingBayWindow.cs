@@ -35,8 +35,8 @@ public class LoadingBayWindow : WindowContent
 
         for (int i = 0; i < 2; i++)
         {
-            Dictionary<Materials, int> materialQuantity = i == 0 ? loadingBay.GetMaterialOutpute() : loadingBay.GetMaterialInput();
-            foreach (KeyValuePair<Materials, float> curMaterial in loadingBay.GetMaterialRatio(i != 0))
+            Dictionary<MaterialData, int> materialQuantity = i == 0 ? loadingBay.GetMaterialOutpute() : loadingBay.GetMaterialInput();
+            foreach (KeyValuePair<MaterialData, float> curMaterial in loadingBay.GetMaterialRatio(i != 0))
             {
                 Transform _go = Instantiate(outputList.Find("Template"));
                 _go.SetParent(outputList);

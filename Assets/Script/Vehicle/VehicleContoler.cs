@@ -71,7 +71,7 @@ public class VehicleContoler : MonoBehaviour
         }
     }
 
-    public Materials materialCurTransport;
+    public MaterialData materialCurTransport;
     public int materialQuantity;
 
     public Task asyncUpdateOperation;
@@ -84,15 +84,9 @@ public class VehicleContoler : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.F3))
-        {
-            Debug.Log(state);
-        }
-
-
         if (asyncUpdateOperation.Status == TaskStatus.Faulted)
         {
-            Debug.LogError($"message: {asyncUpdateOperation.Exception.Message}, \n source: {asyncUpdateOperation.Exception.Source}, \n\n comple: {asyncUpdateOperation.Exception}");
+            Debug.LogException(asyncUpdateOperation.Exception);
             asyncUpdateOperation = AsyncUpdate();
         }
     }
@@ -213,7 +207,7 @@ public class VehicleContoler : MonoBehaviour
         }
         if (materialQuantity == 0 && CanDoSomthing(VehiclePos) == Action.load)
         {
-            foreach(Materials curMaterial in vehicleData.materialCanTransport)
+            foreach(MaterialData curMaterial in vehicleData.materialCanTransport)
             {
                 if (MapManager.map.GetParcel<LoadingBay>(VehiclePos).GetMaterialOutpute()[curMaterial] != 0)
                 {
@@ -234,7 +228,7 @@ public class VehicleContoler : MonoBehaviour
             LoadingBay loadingBay = MapManager.map.GetParcel<LoadingBay>(pos);
             if (materialQuantity == 0)
             {
-                foreach (Materials curMaterialVehicle in vehicleData.materialCanTransport)
+                foreach (MaterialData curMaterialVehicle in vehicleData.materialCanTransport)
                 {
                     if (loadingBay.GetMaterial(curMaterialVehicle) > 0)
                     {

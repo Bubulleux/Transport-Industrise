@@ -6,8 +6,8 @@ using UnityEngine;
 public class IndustriseData : ScriptableObject
 {
     public string name;
-    public Materials[] materialInpute;
-    public Materials[] materialOutpute;
+    public MaterialData[] materialInpute;
+    public MaterialData[] materialOutpute;
     public Color color;
     public float height;
 }

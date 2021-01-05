@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 public class Industrise
 {
     public IndustriseData industriseData;
-    public Dictionary<Materials, int> materialsInpute = new Dictionary<Materials, int>();
-    public Dictionary<Materials, int> materialsOutpute = new Dictionary<Materials, int>();
+    public Dictionary<MaterialData, int> materialsInpute = new Dictionary<MaterialData, int>();
+    public Dictionary<MaterialData, int> materialsOutpute = new Dictionary<MaterialData, int>();
     public Vector2Int MasterPos;
     public static int maxMaterialCanStock = 300;
     public float materialProductionRatio;
@@ -31,13 +31,13 @@ public class Industrise
     }
     public void SetInputeOutpure()
     {
-        materialsInpute = new Dictionary<Materials, int>();
-        materialsOutpute = new Dictionary<Materials, int>();
-        foreach (Materials curMaterial in industriseData.materialInpute)
+        materialsInpute = new Dictionary<MaterialData, int>();
+        materialsOutpute = new Dictionary<MaterialData, int>();
+        foreach (MaterialData curMaterial in industriseData.materialInpute)
         {
             materialsInpute.Add(curMaterial, 0);
         }
-        foreach (Materials curMaterial in industriseData.materialOutpute)
+        foreach (MaterialData curMaterial in industriseData.materialOutpute)
         {
             materialsOutpute.Add(curMaterial, 0);
         }
@@ -55,36 +55,30 @@ public class Industrise
 
     public void ProductMaterial()
     {
-        List<Materials> listMaterialsInpute = new List<Materials>();
-        List<Materials> listMaterialsOutpute = new List<Materials>();
-        foreach(KeyValuePair<Materials, int> curMaterial in materialsInpute)
+        List<MaterialData> listMaterialsInpute = new List<MaterialData>();
+        List<MaterialData> listMaterialsOutpute = new List<MaterialData>();
+        foreach(KeyValuePair<MaterialData, int> curMaterial in materialsInpute)
         {
             if (curMaterial.Value != 0)
             {
                 listMaterialsInpute.Add(curMaterial.Key);
             }
         }
-        foreach (KeyValuePair<Materials, int> curMaterial in materialsOutpute)
+        foreach (KeyValuePair<MaterialData, int> curMaterial in materialsOutpute)
         {
             if (curMaterial.Value != maxMaterialCanStock)
             {
                 listMaterialsOutpute.Add(curMaterial.Key);
             }
         }
-        foreach (Materials curMaterial in listMaterialsInpute)
+        foreach (MaterialData curMaterial in listMaterialsInpute)
         {
             materialsInpute[curMaterial] -= 1;
         }
-        foreach (Materials curMaterial in listMaterialsOutpute)
+        foreach (MaterialData curMaterial in listMaterialsOutpute)
         {
             materialsOutpute[curMaterial] += 1;
         }
     }
     
-}
-public enum Materials
-{
-    coal,
-    wood,
-    fer
 }

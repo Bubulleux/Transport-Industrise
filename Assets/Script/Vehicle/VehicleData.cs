@@ -10,5 +10,5 @@ public class VehicleData : ScriptableObject
     public float speed;
     public int price;
     public int maxMaterialTransport;
-    public Materials[] materialCanTransport;
+    public MaterialData[] materialCanTransport;
 }

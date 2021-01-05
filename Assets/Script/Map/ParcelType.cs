@@ -98,12 +98,12 @@ public class LoadingBay : Parcel
     {
         base.DebugParcel();
         string result = "Inpute:";
-        foreach (KeyValuePair<Materials, int> curMaterial in GetMaterialInput())
+        foreach (KeyValuePair<MaterialData, int> curMaterial in GetMaterialInput())
         {
             result += $"\n{curMaterial.Key}: {curMaterial.Value}";
         }
         result += "\nOutpute: ";
-        foreach (KeyValuePair<Materials, int> curMaterial in GetMaterialOutpute())
+        foreach (KeyValuePair<MaterialData, int> curMaterial in GetMaterialOutpute())
         {
             result += $"\n{curMaterial.Key}: {curMaterial.Value}";
         }
@@ -116,7 +116,7 @@ public class LoadingBay : Parcel
         WindowsOpener.OpenLoadingBay(this);
     }
 
-    public int GetMaterial(Materials material)
+    public int GetMaterial(MaterialData material)
     {
         int resulte = 0;
         foreach(Industrise curIndustrise in industriseLink)
@@ -129,12 +129,12 @@ public class LoadingBay : Parcel
         return resulte;
     }
 
-    public Dictionary<Materials, int> GetMaterialInput()
+    public Dictionary<MaterialData, int> GetMaterialInput()
     {
-        Dictionary<Materials, int> resulte = new Dictionary<Materials, int>();
+        Dictionary<MaterialData, int> resulte = new Dictionary<MaterialData, int>();
         foreach (Industrise curIndustrise in industriseLink)
         {
-            foreach(KeyValuePair<Materials, int> curMaterial in curIndustrise.materialsInpute)
+            foreach(KeyValuePair<MaterialData, int> curMaterial in curIndustrise.materialsInpute)
             {
                 if (resulte.ContainsKey(curMaterial.Key))
                 {
@@ -149,12 +149,12 @@ public class LoadingBay : Parcel
         return resulte;
     }
 
-    public Dictionary<Materials, int> GetMaterialOutpute()
+    public Dictionary<MaterialData, int> GetMaterialOutpute()
     {
-        Dictionary<Materials, int> resulte = new Dictionary<Materials, int>();
+        Dictionary<MaterialData, int> resulte = new Dictionary<MaterialData, int>();
         foreach (Industrise curIndustrise in industriseLink)
         {
-            foreach (KeyValuePair<Materials, int> curMaterial in curIndustrise.materialsOutpute)
+            foreach (KeyValuePair<MaterialData, int> curMaterial in curIndustrise.materialsOutpute)
             {
                 if (resulte.ContainsKey(curMaterial.Key))
                 {
@@ -169,13 +169,13 @@ public class LoadingBay : Parcel
         return resulte;
     }
 
-    public Dictionary<Materials, float> GetMaterialRatio(bool getInput)
+    public Dictionary<MaterialData, float> GetMaterialRatio(bool getInput)
     {
-        Dictionary<Materials, int> materialQuantity = new Dictionary<Materials, int>();
-        Dictionary<Materials, int> materialCount = new Dictionary<Materials, int>();
+        Dictionary<MaterialData, int> materialQuantity = new Dictionary<MaterialData, int>();
+        Dictionary<MaterialData, int> materialCount = new Dictionary<MaterialData, int>();
         foreach (Industrise curIndustrise in industriseLink)
         {
-            foreach (KeyValuePair<Materials, int> curMaterial in getInput ? curIndustrise.materialsInpute : curIndustrise.materialsOutpute)
+            foreach (KeyValuePair<MaterialData, int> curMaterial in getInput ? curIndustrise.materialsInpute : curIndustrise.materialsOutpute)
             {
                 if (materialQuantity.ContainsKey(curMaterial.Key))
                 {
@@ -189,15 +189,15 @@ public class LoadingBay : Parcel
                 }
             }
         }
-        Dictionary<Materials, float> result = new Dictionary<Materials, float>();
-        foreach(KeyValuePair<Materials, int> curMaterial in materialQuantity)
+        Dictionary<MaterialData, float> result = new Dictionary<MaterialData, float>();
+        foreach(KeyValuePair<MaterialData, int> curMaterial in materialQuantity)
         {
             result.Add(curMaterial.Key, curMaterial.Value / (float)materialCount[curMaterial.Key]);
         }
         return result;
     }
 
-    public int GiveOrTakeMaterial(Materials material, int quantity)
+    public int GiveOrTakeMaterial(MaterialData material, int quantity)
     {
         int _quantity = quantity;
         foreach(Industrise curIndustrise in industriseLink)
@@ -222,7 +222,7 @@ public class LoadingBay : Parcel
         return _quantity;
     }
 
-    public bool CanUnload(Materials material)
+    public bool CanUnload(MaterialData material)
     {
         foreach(Industrise curIndustrise in industriseLink)
         {
@@ -234,7 +234,7 @@ public class LoadingBay : Parcel
         return false;
     }
 
-    public int TryToInteract(Materials material, int materialQuantityGive)
+    public int TryToInteract(MaterialData material, int materialQuantityGive)
     {
         int materialHasNotGiven = materialQuantityGive;
         foreach(Industrise curIndustrise in industriseLink)

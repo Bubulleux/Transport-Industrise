@@ -1,0 +1,74 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using System.Threading.Tasks;
+
+public class DebugManager : MonoBehaviour
+{
+    /*
+     * F1: Get parcel Info
+     * F2: Make auto Construct
+     * F3: Give Money
+     * F4: Interact whith Industrise
+     * F5: Create & Serialize Save
+     * F6: LoadSave
+     * F7:
+     * F8:
+     * F9:
+     * F10:
+     * F11:
+     * F12:
+     */
+
+    // Update is called once per frame
+    public Task operation;
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.F1))
+        {
+            MapManager.map.GetParcel(PlayerControler.GetMoussePos().ToVec2Int()).DebugParcel();
+        }
+
+        if (Input.GetKeyDown(KeyCode.F2))
+        {
+            AutoCreatore.MakeAuto(PlayerControler.GetMoussePos().ToVec2Int());
+        }
+        if (Input.GetKeyDown(KeyCode.F3))
+        {
+            GameManager.Money += 200000;
+        }
+
+        if (Input.GetKeyDown(KeyCode.F4) && MapManager.map.GetparcelType(PlayerControler.GetMoussePos().ToVec2Int()) == typeof(LoadingBay))
+        {
+            LoadingBay loadingBay = MapManager.map.GetParcel<LoadingBay>(PlayerControler.GetMoussePos().ToVec2Int());
+            foreach (KeyValuePair<MaterialData, int> curMaterial in loadingBay.GetMaterialInput())
+            {
+                int materialSuccessful = loadingBay.TryToInteract(curMaterial.Key, 20);
+                Debug.Log($"Try to give 20 {curMaterial.Key}, material Successful: {materialSuccessful}, now Loading Material: {loadingBay.GetMaterialInput()[curMaterial.Key]}");
+            }
+            foreach (KeyValuePair<MaterialData, int> curMaterial in loadingBay.GetMaterialOutpute())
+            {
+                int materialSuccessful = -loadingBay.TryToInteract(curMaterial.Key, -20);
+                Debug.Log($"Try to take 20 {curMaterial.Key}, material Successful: {materialSuccessful}, now Loading Material: {loadingBay.GetMaterialOutpute()[curMaterial.Key]}");
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.F5))
+        {
+            Save save = new Save();
+            operation = save.SerializeAndSave();
+        }
+
+        if (Input.GetKeyDown(KeyCode.F6))
+        {
+            Save save = new Save();
+            operation = save.LoadAndDeserialize();
+        }
+
+        if (operation != null && operation.Status == TaskStatus.Faulted)
+        {
+            Debug.LogException(operation.Exception);
+            operation = null;
+        }
+    }
+}
