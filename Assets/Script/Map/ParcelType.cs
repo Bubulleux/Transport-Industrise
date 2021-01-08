@@ -256,6 +256,8 @@ public class LoadingBay : Parcel
                     materialHasNotGiven = 0;
                 }
             }
+            Debug.Log(curIndustrise.materialsOutpute.ContainsKey(material));
+            Debug.Log(curIndustrise.materialsOutpute[material] != 0);
             if (materialHasNotGiven < 0 && curIndustrise.materialsOutpute.ContainsKey(material) && curIndustrise.materialsOutpute[material] != 0)
             {
                 curIndustrise.materialsOutpute[material] += materialHasNotGiven;

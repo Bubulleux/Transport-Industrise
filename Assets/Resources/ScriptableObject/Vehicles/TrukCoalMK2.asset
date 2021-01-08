@@ -16,4 +16,6 @@ MonoBehaviour:
   description: Best truck ever.
   speed: 3
   price: 1000
-  materialCanTransport: 00000000
+  maxMaterialTransport: 0
+  materialCanTransport:
+  - {fileID: 11400000, guid: f2d162b20451b4948839ba9dc8659539, type: 2}
