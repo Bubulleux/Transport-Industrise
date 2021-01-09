@@ -84,7 +84,7 @@ public class RouteCreatorWindow : WindowContent
     public void Finish()
     {
         functionFinish(route);
-        GetComponent<Window>().Close();
+        Close();
     }
 }
 

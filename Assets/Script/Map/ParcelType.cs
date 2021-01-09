@@ -237,6 +237,7 @@ public class LoadingBay : Parcel
     public int TryToInteract(MaterialData material, int materialQuantityGive)
     {
         int materialHasNotGiven = materialQuantityGive;
+        Debug.Log("material has no Given" + materialHasNotGiven);
         foreach(Industrise curIndustrise in industriseLink)
         {
             if (materialHasNotGiven == 0)
@@ -256,8 +257,6 @@ public class LoadingBay : Parcel
                     materialHasNotGiven = 0;
                 }
             }
-            Debug.Log(curIndustrise.materialsOutpute.ContainsKey(material));
-            Debug.Log(curIndustrise.materialsOutpute[material] != 0);
             if (materialHasNotGiven < 0 && curIndustrise.materialsOutpute.ContainsKey(material) && curIndustrise.materialsOutpute[material] != 0)
             {
                 curIndustrise.materialsOutpute[material] += materialHasNotGiven;
@@ -273,6 +272,9 @@ public class LoadingBay : Parcel
             }
 
         }
-        return materialQuantityGive - materialHasNotGiven;
+        int materialGive = materialQuantityGive - materialHasNotGiven;
+        GameManager.Money += materialGive * (materialGive < 0 ? material.buyPrice : material.sellPrice);
+        Debug.Log("Materal Return " + materialGive);
+        return materialGive;
     }
 }

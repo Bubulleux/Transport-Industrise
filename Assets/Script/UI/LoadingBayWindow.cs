@@ -39,7 +39,7 @@ public class LoadingBayWindow : WindowContent
             foreach (KeyValuePair<MaterialData, float> curMaterial in loadingBay.GetMaterialRatio(i != 0))
             {
                 Transform _go = Instantiate(outputList.Find("Template"));
-                _go.SetParent(outputList);
+                _go.SetParent(i == 0 ? outputList : inputList);
                 _go.Find("Material").GetComponent<Text>().text = curMaterial.Key.ToString();
                 _go.Find("Quantity").GetComponent<Text>().text = materialQuantity[curMaterial.Key].ToString();
                 _go.Find("ProgressBar").GetComponent<RectTransform>().sizeDelta = new Vector2(curMaterial.Value * 200, _go.Find("ProgressBar").GetComponent<RectTransform>().sizeDelta.y);

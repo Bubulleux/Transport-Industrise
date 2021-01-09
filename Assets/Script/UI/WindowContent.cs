@@ -11,4 +11,9 @@ public class WindowContent : MonoBehaviour
             return transform.parent.GetComponent<Window>();
         }
     }
+
+    public void Close()
+    {
+        WindowParente.Close();
+    }
 }

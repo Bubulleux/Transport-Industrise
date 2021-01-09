@@ -211,8 +211,9 @@ public class VehicleContoler : MonoBehaviour
             {
                 if (MapManager.map.GetParcel<LoadingBay>(VehiclePos).GetMaterialOutpute()[curMaterial] != 0)
                 {
-                    int materialSucessful = MapManager.map.GetParcel<LoadingBay>(VehiclePos).TryToInteract(materialCurTransport, materialQuantity - vehicleData.maxMaterialTransport);
+                    int materialSucessful = MapManager.map.GetParcel<LoadingBay>(VehiclePos).TryToInteract(curMaterial, materialQuantity - vehicleData.maxMaterialTransport);
                     materialQuantity -= materialSucessful;
+                    materialCurTransport = curMaterial;
                     await Task.Delay(2000);
                     return;
                 }
