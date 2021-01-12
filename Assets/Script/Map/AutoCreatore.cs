@@ -16,14 +16,22 @@ public static class AutoCreatore
         {
             MapManager.map.AddConstruction(origine + new Vector2Int(0, i), new Road());
         }
-        Industrise indus1 = MapManager.map.CreatIndustrise(origine + new Vector2Int(-50, 0));
-        Industrise indus2 = MapManager.map.CreatIndustrise(origine + new Vector2Int(0, 50));
-        indus1.industriseData = FIleSys.GetAllInstances<IndustriseData>()[0];
-        indus2.industriseData = FIleSys.GetAllInstances<IndustriseData>()[1];
-        indus1.materialProductionRatio = 200;
-        indus2.materialProductionRatio = 200;
-        indus1.SetInputeOutpure();
-        indus2.SetInputeOutpure();
+        for (int i = -15; i <= 15; i+= 15)
+        {
+
+            Industrise indus = MapManager.map.CreatIndustrise(origine + new Vector2Int(-35, i));
+            indus.industriseData = FIleSys.GetAllInstances<IndustriseData>()[0];
+            indus.materialProductionRatio = 200;
+            indus.SetInputeOutpure();
+        }
+        for (int i = -15; i <= 15; i+= 15)
+        {
+            Industrise indus = MapManager.map.CreatIndustrise(origine + new Vector2Int(i, 35));
+            indus.industriseData = FIleSys.GetAllInstances<IndustriseData>()[1];
+            indus.materialProductionRatio = 200;
+            indus.SetInputeOutpure();
+        }
+        
         MapManager.map.AddConstruction(origine + new Vector2Int(-31, 1), new LoadingBay());
         MapManager.map.AddConstruction(origine + new Vector2Int(0, 31), new LoadingBay());
         Depot depot = MapManager.map.parcels[origine.x, origine.y] as Depot;

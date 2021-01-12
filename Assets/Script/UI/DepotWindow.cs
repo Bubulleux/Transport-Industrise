@@ -59,10 +59,13 @@ public class DepotWindow : WindowContent
                     VehicleContoler vehicle = depot.BuyVehicle(curVehicle);
                     if (groupesDropdown.value != Group.groups.Count)
                     {
-                        Debug.Log("vehicle Groupe Set");
                         vehicle.MyGroup = Group.groups[groupesDropdown.value];
                     }
                 });
+                _go.Find("Buy").GetComponent<ButtonInteractMoney>().condiction = delegate()
+                {
+                    return GameManager.Money >= curVehicle.price;
+                };
                 _go.gameObject.SetActive(true);
             }
         }

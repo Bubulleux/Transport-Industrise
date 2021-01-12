@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Coal
   m_EditorClassIdentifier: 
   name: Coal
-  buyPrice: 0
-  sellPrice: 1
+  buyPrice: 5
+  sellPrice: 20

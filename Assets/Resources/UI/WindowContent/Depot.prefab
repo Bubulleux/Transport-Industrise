@@ -1591,6 +1591,7 @@ GameObject:
   - component: {fileID: 4869479005593521628}
   - component: {fileID: 4582401369869171468}
   - component: {fileID: 3527667576515198999}
+  - component: {fileID: 440761307313099423}
   - component: {fileID: 8062536236939853782}
   m_Layer: 5
   m_Name: Buy
@@ -1655,6 +1656,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &440761307313099423
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 829403958034758774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd59abd833fe3eb49b444c25c5182829, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &8062536236939853782
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2063,7 +2076,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 190, y: -61.02}
+  m_AnchoredPosition: {x: 190, y: -20}
   m_SizeDelta: {x: 380, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2357916580228916329

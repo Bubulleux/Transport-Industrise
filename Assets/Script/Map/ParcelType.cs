@@ -66,9 +66,14 @@ public class Depot : Parcel
 
     public VehicleContoler BuyVehicle(VehicleData vehicle)
     {
+        if (vehicle.price > GameManager.Money)
+        {
+            return null;
+        }
         GameObject _go = Object.Instantiate(Resources.Load("Vehicle") as GameObject);
         _go.transform.position = new Vector3(pos.x , 0f, pos.y);
         _go.GetComponent<VehicleContoler>().vehicleData = vehicle;
+        GameManager.Money -= vehicle.price;
         return _go.GetComponent<VehicleContoler>();
     }
     public override void Interact()
@@ -87,7 +92,7 @@ public class LoadingBay : Parcel
     {
         foreach(Industrise curIndustrise in MapManager.map.industrises)
         {
-            if (Vector2Int.Distance(pos, curIndustrise.MasterPos) <= 20)
+            if (Vector2Int.Distance(pos, curIndustrise.MasterPos) <= 30)
             {
                 industriseLink.Add(curIndustrise);
             }
