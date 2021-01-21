@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 public  class Map
 {
     [JsonProperty]
-    public Parcel[,] parcels = new Parcel[1000, 1000];
+    public Parcel[,] parcels;
     public Vector2Int Size { get => new Vector2Int(parcels.GetLength(0), parcels.GetLength(1)); }
     [JsonProperty]
     public List<City> citys = new List<City>();
@@ -16,10 +16,16 @@ public  class Map
     public List<Industrise> industrises =  new List<Industrise>();
 
 
-    public bool[,] chunkNeedTextureUpdate = new bool[20, 20];
-    public bool[,] chunkNeedMeshUpdate = new bool[20, 20];
-    public List<Parcel> importParcels = new List<Parcel>();
+    public bool[,] chunkNeedTextureUpdate;
+    public bool[,] chunkNeedMeshUpdate;
+    public List<Parcel> importParcels;
 
+    public Map(Vector2Int chunkSize)
+    {
+        parcels = new Parcel[chunkSize.x * 50, chunkSize.y * 50];
+        chunkNeedTextureUpdate = new bool[chunkSize.x, chunkSize.y];
+        chunkNeedMeshUpdate = new bool[chunkSize.x, chunkSize.y];
+    }
 
     public async Task GenerateMap(MapSettingData mapSetting)
     {

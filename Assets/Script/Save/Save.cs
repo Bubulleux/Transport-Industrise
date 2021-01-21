@@ -10,6 +10,7 @@ using System.Xml.Serialization;
 [JsonObject(MemberSerialization.OptOut)]
 public class Save
 {
+    public string name;
     public Map map;
     public List<VehicleContoler> vehicles;
     public List<Group> group;
@@ -21,20 +22,36 @@ public class Save
         //Formatting = Formatting.Indented
     };
     [JsonIgnore]
-    public string path = "/Save";
+    public string Path { get { return "/Save/" + name; } }
 
 
     public Save()
     {
+        name = GameManager.saveName;
         map = MapManager.map;
         vehicles = VehicleManager.Vehicles;
         group = Group.groups;
     }
 
+    public Save(string saveName)
+    {
+        name = saveName;
+    }
+
     public async Task SerializeAndSave()
     {
-        await SerializeAndSaveMap();
-        Debug.Log("Finish");
+        Debug.Log("Saving Started");
+        Task operation = SerializeAndSaveMap();
+        await Task.Delay(1000);
+        while(!operation.IsFaulted && !operation.IsCompleted)
+        {
+            await Task.Delay(100);
+        }
+        if (operation.IsFaulted)
+        {
+            Debug.LogException(operation.Exception);
+        }
+        Debug.Log($"Finish {operation.Status} {operation.IsCompleted}, {operation.IsFaulted}");
     }
 
     private async Task SerializeAndSaveMap()
@@ -67,14 +84,22 @@ public class Save
             await AsyncTask.DelayIfNeed(1);
         }
         timer.DebugTime("List => Array ");
-        FIleSys.SaveFile(path + "/mapForme.dat", mapForm);
-        FIleSys.SaveFile(path + "/mapConstruction.dat", parcelsJsonArray);
+        FIleSys.SaveFile(Path + "/mapForme.dat", mapForm);
+        FIleSys.SaveFile(Path + "/mapConstruction.dat", parcelsJsonArray);
     }
 
     public async Task LoadAndDeserialize()
     {
-        await LoadAndDeserializeMap();
-        LoadSave();
+        Task operation = LoadAndDeserializeMap();
+        while(!operation.IsCompleted && !operation.IsFaulted)
+        {
+            await Task.Delay(100);
+        }
+        if (operation.IsFaulted)
+        {
+            Debug.LogException(operation.Exception);
+        }
+        //LoadSave();
         Debug.Log("Finish");
 
     }
@@ -82,17 +107,30 @@ public class Save
     {
         Timer timer = new Timer();
         //map = new Map();
-        int[] mapForme = FIleSys.OpenFile<int[]>(path + "/mapForme.dat");
-        string[] parcelsJson = FIleSys.OpenFile<string[]>(path + "/mapConstruction.dat");
+        int[] mapForme = FIleSys.OpenFile<int[]>(Path + "/mapForme.dat");
+        string[] parcelsJson = FIleSys.OpenFile<string[]>(Path + "/mapConstruction.dat");
         timer.DebugTime("Load File");
+        map = new Map(new Vector2Int(20, 20));
         for (int i = 0; i < mapForme.Length; i += 4)
         {
             int x = (i / 4) % map.Size.x;
             int y = (i  / 4 - x ) / map.Size.x;
-            map.parcels[x, y] = new Parcel(new Vector2Int(x, y));
+            try
+            {
+                map.parcels[x, y] = new Parcel(new Vector2Int(x, y));
+            }
+            catch (System.Exception)
+            {
+
+                Debug.Log($"[{x}, {y}], map size [{map.Size.x}, {map.Size.y}]");
+            }
             for (int j = 0; j < 4; j++)
             {
                 map.parcels[x, y].corner[j] = mapForme[i + j];
+            }
+            if (i % 100000 == 0)
+            {
+                Debug.Log(i);
             }
             await AsyncTask.DelayIfNeed(1);
         }

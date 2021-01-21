@@ -9,10 +9,6 @@ public class AsyncTask : MonoBehaviour
     public static DateTime lastRender;
     private static double maxTimeWait = 0.03d;
 
-    void Start()
-    {
-        DontDestroyOnLoad(gameObject);
-    }
 
     private void FixedUpdate()
     {

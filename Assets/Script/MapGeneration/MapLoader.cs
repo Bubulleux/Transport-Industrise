@@ -7,7 +7,8 @@ using UnityEngine.UI;
 
 public class MapLoader : MonoBehaviour
 {
-    private Task<Map> operation;
+    public static MapLoader instence;
+    public Task operation;
     public static LoadStatus load = LoadStatus.NotStart;
 
     public string LoadingIndicator { set { GameObject.Find("OperationState").GetComponent<Text>().text = value; } }
@@ -15,28 +16,55 @@ public class MapLoader : MonoBehaviour
     public int Width { get =>  MapManager.map.parcels.GetLength(0) / 50;  }
     public int Height { get =>  MapManager.map.parcels.GetLength(1) / 50;  }
 
-    public void Awake()
+
+    private void Awake()
     {
-        if (load != LoadStatus.NotStart)
-        {
-            return;
-        }
-        load = LoadStatus.Loading;
-        DontDestroyOnLoad(gameObject);
-        operation = AsyncLoadMap();
-        
+        instence = this;
     }
 
-    public async Task<Map> AsyncLoadMap()
+    public static void GenerateMap(string saveName)
+    {
+        instence.operation = instence.AsyncGeneratedMap(saveName);
+    }
+
+    public static void LoadSave(string saveName)
+    {
+        instence.operation = instence.AsyncLoadSave(saveName);
+    }
+
+    public async Task AsyncGeneratedMap(string saveName)
     {
         await AsyncLoadScene(1);
 
         LoadingIndicator = "Generate Map";
-        Map _mapdata = new Map();
+        Map _mapdata = new Map(new Vector2Int(20, 20));
         await _mapdata.GenerateMap(FIleSys.GetAllInstances<MapSettingData>()[0]);
         MapManager.map = _mapdata;
+        GameManager.saveName = saveName;
 
+        await LoadGame();
 
+        new Save().SerializeAndSave();
+
+        load = LoadStatus.Done;
+    }
+
+    public async Task AsyncLoadSave(string saveName)
+    {
+        await AsyncLoadScene(1);
+        LoadingIndicator = "Load Save: " + saveName;
+        Save save = new Save(saveName);
+        await save.LoadAndDeserialize();
+
+        MapManager.map = save.map;
+        GameManager.saveName = save.name;
+
+        await LoadGame();
+        load = LoadStatus.Done;
+    }
+
+    public async Task LoadGame()
+    {
         Mesh[,] meshs = await LoadEveryMesh();
 
         Texture2D[,] textures = await LoadEveryTexture();
@@ -45,10 +73,6 @@ public class MapLoader : MonoBehaviour
 
         MapManager.instence.CreateChunck(meshs, textures);
         MapManager.instence.enabled = true;
-
-        load = LoadStatus.Done;
-        Destroy(gameObject);
-        return _mapdata;
     }
 
     public async Task<Texture2D[,]> LoadEveryTexture()

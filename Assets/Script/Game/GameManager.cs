@@ -5,6 +5,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instence;
+    public static string saveName;
 
     [SerializeField]
     private long money = 0;
