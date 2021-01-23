@@ -7,7 +7,7 @@ using System;
 public class AsyncTask : MonoBehaviour
 {
     public static DateTime lastRender;
-    private static double maxTimeWait = 0.03d;
+    private static double maxTimeWait = 0.5d;
 
 
     private void FixedUpdate()

@@ -75,7 +75,6 @@ public class MeshData
             verticesArray[i] = verticies[i];
             uvsArray[i] = uvs[i];
         }
-        await AsyncTask.DelayIfNeed(1);
         for (int i = 0; i < triangles.Count; i++)
         {
             triangleArray[i] = triangles[i];

@@ -54,6 +54,7 @@ public class MapLoader : MonoBehaviour
         await AsyncLoadScene(1);
         LoadingIndicator = "Load Save: " + saveName;
         Save save = new Save(saveName);
+        await Task.Delay(1);
         await save.LoadAndDeserialize();
 
         MapManager.map = save.map;
@@ -93,6 +94,7 @@ public class MapLoader : MonoBehaviour
     public async Task<Mesh[,]> LoadEveryMesh()
     {
         Mesh[,] chunks = new Mesh[Width, Height];
+        await Task.Delay(1);
 
         for (int y = 0; y < Height; y++)
         {
@@ -100,8 +102,13 @@ public class MapLoader : MonoBehaviour
             {
                 LoadingIndicator = $"Loading Mesh {y * Height + x}/{Height * Width}";
                 chunks[x, y] = await MeshGenerator.AsyncGetChunkMesh(new Vector2Int(x, y), MapManager.map);
+                if ((y * Height + x) % 50 == 0)
+                {
+                    await Task.Delay(1);
+                }
             }
         }
+        await Task.Delay(1);
         return chunks;
     }
 
