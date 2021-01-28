@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class VehicleContoler : MonoBehaviour
 {
+    
     public VehicleData vehicleData;
     public string Id { 
         get 
@@ -84,7 +85,7 @@ public class VehicleContoler : MonoBehaviour
 
     void Update()
     {
-        if (asyncUpdateOperation.Status == TaskStatus.Faulted)
+        if (asyncUpdateOperation != null  && asyncUpdateOperation.Status == TaskStatus.Faulted)
         {
             Debug.LogException(asyncUpdateOperation.Exception);
             asyncUpdateOperation = AsyncUpdate();
@@ -113,7 +114,7 @@ public class VehicleContoler : MonoBehaviour
                         state = VehicleStat.OnWay;
                     }
                 }
-                if (path == null)
+                if (path == null || path.Count == 0)
                 {
                     path = PathFinder.FindPath(VehiclePos, MyRoute.points[RoutePointGo]);
                     if (path == null)
@@ -153,7 +154,6 @@ public class VehicleContoler : MonoBehaviour
         //await Task.Delay(Mathf.FloorToInt(1000f / vehicleData.speed));
         state = VehicleStat.OnWay;
         path = null;
-        Debug.Log("Path: " + (path != null));
     }
 
     public async Task DriveAlong()
@@ -193,7 +193,6 @@ public class VehicleContoler : MonoBehaviour
             state = VehicleStat.Stuck;
             //return;
         }
-        Debug.Log(state);
     }
 
     private async Task Load()

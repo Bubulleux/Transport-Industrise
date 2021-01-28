@@ -74,7 +74,7 @@ public class MapManager : MonoBehaviour
     void FixedUpdate()
     {
         UpdateMap();
-        if (MapLoader.load == MapLoader.LoadStatus.Done)
+        if (GameLoader.load == GameLoader.LoadStatus.Done)
         {
             UpdateMap(); 
             foreach (Industrise curIndustrise in map.industrises)

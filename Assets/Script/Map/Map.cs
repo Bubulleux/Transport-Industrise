@@ -18,7 +18,7 @@ public  class Map
 
     public bool[,] chunkNeedTextureUpdate;
     public bool[,] chunkNeedMeshUpdate;
-    public List<Parcel> importParcels;
+    public List<Parcel> importParcels = new List<Parcel>();
 
     public Map(Vector2Int chunkSize)
     {

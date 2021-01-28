@@ -34,7 +34,7 @@ public class Parcel
         string parcelJson = Save.GetJson(MapManager.map.GetParcel(pos));
         Debug.Log(parcelJson);
     }
-
+    
     public static Parcel CopyClass(Parcel copyClass,Parcel pastClass)
     {
         pastClass.pos = copyClass.pos;
@@ -87,6 +87,7 @@ public class Depot : Parcel
 [JsonObject(MemberSerialization.OptOut)]
 public class LoadingBay : Parcel
 {
+    [JsonIgnore]
     public List<Industrise> industriseLink = new List<Industrise>();
     public override void Initialaze()
     {

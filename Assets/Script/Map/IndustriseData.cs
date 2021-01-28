@@ -8,6 +8,6 @@ public class IndustriseData : ScriptableObject
     public string name;
     public MaterialData[] materialInpute;
     public MaterialData[] materialOutpute;
-    public Color color;
+    public Color32 color;
     public float height;
 }

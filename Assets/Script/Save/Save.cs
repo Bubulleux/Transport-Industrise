@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
+using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
+using Object = UnityEngine.Object;
 
 [JsonObject(MemberSerialization.OptOut)]
 public class Save
@@ -38,23 +40,15 @@ public class Save
         name = saveName;
     }
 
-    public async Task SerializeAndSave()
+    public async Task SaveGame()
     {
         Debug.Log("Saving Started");
-        Task operation = SerializeAndSaveMap();
-        await Task.Delay(1000);
-        while(!operation.IsFaulted && !operation.IsCompleted)
-        {
-            await Task.Delay(100);
-        }
-        if (operation.IsFaulted)
-        {
-            Debug.LogException(operation.Exception);
-        }
-        Debug.Log($"Finish {operation.Status} {operation.IsCompleted}, {operation.IsFaulted}");
+        await SaveMap();
+        SaveGroups();
+        await AsyncTask.MonitorTask(SaveVehicle());
     }
 
-    private async Task SerializeAndSaveMap()
+    private async Task SaveMap()
     {
         Timer timer = new Timer();
         List<string> parcelsJsonList = new List<string>();
@@ -65,16 +59,25 @@ public class Save
             {
                 if (map.GetparcelType(new Vector2Int(x, y)) != typeof(Parcel))
                 {
-                    parcelsJsonList.Add(GetJson(map.GetParcel(new Vector2Int(x, y))));
+                    Parcel parcel = map.GetParcel(new Vector2Int(x, y));
+                    try
+                    {
+                        parcelsJsonList.Add(GetJson(parcel));
+                    }
+                    catch
+                    {
+                        parcel.DebugParcel();
+                    }
                 }
                 for (int i = 0; i < 4; i++)
                 {
                     mapForm[(y * map.Size.x + x) * 4 + i] = map.GetParcel<Parcel>(new Vector2Int(x, y)).corner[i];
                 }
-                //await AsyncTask.DelayIfNeed(1);
             }
         }
+        await Task.Delay(1);
         timer.DebugTime("Creat Forme and JSON");
+        await Task.Delay(1);
         //Debug.LogError("Finish");
         //return;
         string[] parcelsJsonArray = new string[parcelsJsonList.Count];
@@ -84,32 +87,64 @@ public class Save
             //await AsyncTask.DelayIf(i, 100, 1);
             //await AsyncTask.DelayIfNeed(1);
         }
+        await Task.Delay(1);
         timer.DebugTime("List => Array ");
-        FIleSys.SaveFile(Path + "/mapForme.dat", mapForm);
-        FIleSys.SaveFile(Path + "/mapConstruction.dat", parcelsJsonArray);
+        FIleSys.SaveFile(Path + "/mapForme.bin", mapForm);
+        FIleSys.SaveFile(Path + "/mapConstruction.bin", parcelsJsonArray);
     }
 
-    public async Task LoadAndDeserialize()
+    private async Task SaveVehicle()
     {
-        Task operation = LoadAndDeserializeMap();
-        while(!operation.IsCompleted && !operation.IsFaulted)
+        string[] vehiclesJson = new string[vehicles.Count];
+        for (int i = 0; i < vehicles.Count; i++)
         {
-            await Task.Delay(100);
+            vehiclesJson[i] = GetJson(VehicleDateStruct.GetStruct(vehicles[i]));
         }
-        if (operation.IsFaulted)
-        {
-            Debug.LogException(operation.Exception);
-        }
-        //LoadSave();
-        Debug.Log("Finish");
-
+        await Task.Delay(1);
+        FIleSys.SaveFile(Path + "/vehicles.bin", vehiclesJson);
     }
-    private async Task LoadAndDeserializeMap()
+
+    private void SaveGroups()
+    {
+        string[] groupsJson = new string[Group.groups.Count];
+        for (int i = 0; i < groupsJson.Length; i++)
+        {
+            groupsJson[i] = GetJson(Group.groups[i]);
+        }
+        FIleSys.SaveFile(Path + "/groups.bin", groupsJson);
+    }
+
+    private void SaveIndustrise()
+    {
+        string[] industriseJson = new string[map.industrises.Count];
+        for (int i = 0; i < industriseJson.Length; i++)
+        {
+            Industrise curIndustrise = map.industrises[i];
+            Dictionary<string, object> industriseDic = new Dictionary<string, object>();
+            industriseDic.Add("pos", curIndustrise.MasterPos);
+            industriseDic.Add("materialPoduction", curIndustrise.materialProductionRatio);
+            industriseDic.Add("industriseData", Array.IndexOf(FIleSys.GetAllInstances<IndustriseData>(), curIndustrise.industriseData));
+
+            industriseJson[i] = GetJson(industriseDic);
+        }
+    }
+
+    public async Task LoadGame()
+    {
+        await LoadeMap();
+        LoadGroups();
+        Debug.Log("Finish");
+    }
+    public void LoadGameSeconde()
+    {
+        LoadVehicles();
+    }
+    private async Task LoadeMap()
     {
         Timer timer = new Timer();
         //map = new Map();
-        int[] mapForme = FIleSys.OpenFile<int[]>(Path + "/mapForme.dat");
-        string[] parcelsJson = FIleSys.OpenFile<string[]>(Path + "/mapConstruction.dat");
+        int[] mapForme = FIleSys.OpenFile<int[]>(Path + "/mapForme.bin");
+        string[] parcelsJson = FIleSys.OpenFile<string[]>(Path + "/mapConstruction.bin");
         timer.DebugTime("Load File");
         map = new Map(new Vector2Int(20, 20));
         await Task.Delay(1);
@@ -130,11 +165,32 @@ public class Save
         {
             Parcel curParcel = GetObject<Parcel>(parcelsJson[i]);
             map.parcels[curParcel.pos.x, curParcel.pos.y] = curParcel;
+            map.importParcels.Add(curParcel);
         }
         timer.DebugTime("Load Construction");
     }
 
-    public void LoadSave()
+    private void LoadVehicles()
+    {
+        string[] vehiclesJson = FIleSys.OpenFile<string[]>(Path + "/vehicles.bin");
+        foreach(string curVehicleJson in vehiclesJson)
+        {
+            GameObject _go = Object.Instantiate(Resources.Load("Vehicle") as GameObject);
+            GetObject<VehicleDateStruct>(curVehicleJson).SetVehiclePorpertise(_go.GetComponent<VehicleContoler>());
+        }
+    }
+
+    private void LoadGroups()
+    {
+        string[] groupsJson = FIleSys.OpenFile<string[]>(Path + "/groups.bin");
+        Group.groups.Clear();
+        foreach(string curGroupsJson in groupsJson)
+        {
+            Group.groups.Add(GetObject<Group>(curGroupsJson));
+        }
+    }
+
+    public void ApplySave()
     {
         MapManager.map = map;
         MapManager.instence.UpdateEveryChunck();
@@ -147,5 +203,41 @@ public class Save
     public static T GetObject<T>(string json)
     {
         return JsonConvert.DeserializeObject<T>(json, setting);
+    }
+
+    private struct VehicleDateStruct
+    {
+        public int vehicleData;
+        public float damage;
+        public Route myRoute;
+        public int RoutePointGo;
+        public Vector2Int pos;
+        public int myGroup;
+        public int vehicleState;
+        
+        public static VehicleDateStruct GetStruct(VehicleContoler vehicle)
+        {
+            return new VehicleDateStruct
+            {
+                vehicleData = Array.IndexOf(FIleSys.GetAllInstances<VehicleData>(), vehicle.vehicleData),
+                damage = vehicle.damage,
+                myRoute = vehicle.MyRoute,
+                RoutePointGo = vehicle.RoutePointGo,
+                pos = vehicle.VehiclePos,
+                myGroup = vehicle.MyGroup != null ? Group.groups.IndexOf(vehicle.MyGroup) : -1,
+                vehicleState = (int)vehicle.state,
+            };
+
+        }
+        public void SetVehiclePorpertise(VehicleContoler vehicle)
+        {
+            vehicle.vehicleData = FIleSys.GetAllInstances<VehicleData>()[vehicleData];
+            vehicle.damage = damage;
+            vehicle.MyRoute = myRoute;
+            vehicle.RoutePointGo = RoutePointGo;
+            vehicle.VehiclePos = pos;
+            vehicle.MyGroup = Group.groups[myGroup];
+            vehicle.state = (VehicleContoler.VehicleStat)vehicleState;
+        }
     }
 }

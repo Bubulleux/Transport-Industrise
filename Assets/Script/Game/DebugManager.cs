@@ -11,7 +11,7 @@ public class DebugManager : MonoBehaviour
      * F3: Give Money
      * F4: Interact whith Industrise
      * F5: Create & Serialize Save
-     * F6: LoadSave
+     * F6:
      * F7:
      * F8:
      * F9:
@@ -21,7 +21,6 @@ public class DebugManager : MonoBehaviour
      */
 
     // Update is called once per frame
-    public Task operation;
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.F1))
@@ -56,19 +55,9 @@ public class DebugManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F5))
         {
             Save save = new Save();
-            operation = save.SerializeAndSave();
+            AsyncTask.MonitorTask(save.SaveGame());
         }
 
-        if (Input.GetKeyDown(KeyCode.F6))
-        {
-            Save save = new Save();
-            operation = save.LoadAndDeserialize();
-        }
 
-        if (operation != null && operation.Status == TaskStatus.Faulted)
-        {
-            Debug.LogException(operation.Exception);
-            operation = null;
-        }
     }
 }

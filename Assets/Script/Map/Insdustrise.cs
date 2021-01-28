@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
+[JsonObject(MemberSerialization.OptOut)]
 public class Industrise
 {
     public IndustriseData industriseData;

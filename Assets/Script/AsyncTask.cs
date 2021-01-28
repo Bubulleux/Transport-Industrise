@@ -22,4 +22,16 @@ public class AsyncTask : MonoBehaviour
         }
     }
 
+    public static async Task MonitorTask(Task task)
+    {
+        while(!task.IsCompleted && !task.IsFaulted)
+        {
+            await Task.Delay(1);
+        }
+        if(task.IsFaulted)
+        {
+            Debug.LogException(task.Exception);
+        }
+    }
+
 }

@@ -37,7 +37,7 @@ public class MainMenu : MonoBehaviour
             Transform curSaveObj = Instantiate(template).transform;
             curSaveObj.SetParent(template.transform.parent);
             curSaveObj.Find("SaveName").GetComponent<Text>().text = curSave;
-            curSaveObj.Find("Load").GetComponent<Button>().onClick.AddListener(delegate { MapLoader.LoadSave(curSave); });
+            curSaveObj.Find("Load").GetComponent<Button>().onClick.AddListener(delegate { GameLoader.LoadSave(curSave); });
             curSaveObj.gameObject.SetActive(true);
         }
     }
@@ -62,6 +62,6 @@ public class MainMenu : MonoBehaviour
     public void NewGame()
     {
         string saveName = newGameMenuContente.Find("SaveName").GetComponentInChildren<InputField>().text;
-        MapLoader.GenerateMap(saveName);
+        GameLoader.GenerateMap(saveName);
     }
 }
