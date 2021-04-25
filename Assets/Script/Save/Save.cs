@@ -146,6 +146,7 @@ public class Save
     public async Task LoadGame()
     {
         await LoadeMap();
+        LoadIndustrise();
         LoadGroups();
         Debug.Log("Finish");
     }
