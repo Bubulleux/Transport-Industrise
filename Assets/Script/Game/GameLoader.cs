@@ -29,7 +29,7 @@ public class GameLoader : MonoBehaviour
 
     public static void LoadSave(string saveName)
     {
-        instence.operation = instence.AsyncLoadSave(saveName);
+        AsyncTask.MonitorTask(instence.AsyncLoadSave(saveName));
     }
 
     public async Task AsyncCreatGame(string saveName)

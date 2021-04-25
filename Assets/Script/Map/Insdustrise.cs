@@ -21,15 +21,28 @@ public class Industrise
         MasterPos = _pos;
         IndustriseData[] allIndustriseData = FIleSys.GetAllInstances<IndustriseData>();
         industriseData = allIndustriseData[Random.Range(0, allIndustriseData.Length)];
+        MakeBuilding(_mapData);
+        materialProductionRatio = Random.Range(0.8f, 3f);
+        SetInputeOutpure();
+    }
+
+    public Industrise(Vector2Int _pos, Map _mapData, IndustriseData _data)
+	{
+        MasterPos = _pos;
+        industriseData = _data;
+        MakeBuilding(_mapData);
+        SetInputeOutpure();
+	}
+
+    private void MakeBuilding(Map _mapData)
+    {
         for (int y = -1; y <= 2; y++)
         {
             for (int x = -1; x <= 2; x++)
             {
-                _mapData.AddBuilding(MasterPos +  new Vector2Int(x, y), industriseData.height, industriseData.color);
+                _mapData.AddBuilding(MasterPos + new Vector2Int(x, y), industriseData.height, industriseData.color);
             }
         }
-        materialProductionRatio = Random.Range(0.8f, 3f);
-        SetInputeOutpure();
     }
     public void SetInputeOutpure()
     {

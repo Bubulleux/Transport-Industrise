@@ -146,7 +146,6 @@ public class Save
     public async Task LoadGame()
     {
         await LoadeMap();
-        LoadIndustrise();
         LoadGroups();
         Debug.Log("Finish");
     }
@@ -189,12 +188,10 @@ public class Save
     private void LoadVehicles()
     {
         string[] vehiclesJson = FIleSys.OpenFile<string[]>(Path + "/vehicles.bin");
-        Debug.Log(vehiclesJson.Length);
         foreach(string curVehicleJson in vehiclesJson)
         {
             GameObject _go = Object.Instantiate(Resources.Load("Vehicle") as GameObject);
             GetObject<VehicleDateStruct>(curVehicleJson).SetVehiclePorpertise(_go.GetComponent<VehicleContoler>());
-            Debug.Log(curVehicleJson);
         }
     }
 
@@ -215,21 +212,26 @@ public class Save
         for (int i = 0; i < industriseJson.Length; i++)
         {
             Dictionary<string, object> industriseValue = GetObject<Dictionary<string, object>>(industriseJson[i]);
-            Debug.Log(industriseJson[i]);
-            Debug.Log((Vector2Int)industriseValue["pos"]);
-            Industrise curIndustrise = new Industrise((Vector2Int)industriseValue["pos"], map)
+
+            Industrise curIndustrise = new Industrise((Vector2Int)industriseValue["pos"], map, FIleSys.GetAllInstances<IndustriseData>()[(Int64)(industriseValue["industriseData"])]);
+            curIndustrise.materialProductionRatio = (float)((double)industriseValue["materialPoduction"]);
+
+            if (industriseValue.ContainsKey("inpute"))
             {
-                materialProductionRatio = (float)industriseValue["materialPoduction"],
-                industriseData = FIleSys.GetAllInstances<IndustriseData>()[(int)industriseValue["industriseData"]]
-            };
-            foreach (KeyValuePair<int, int> curMaterial in (Dictionary<int, int>)industriseValue["inpute"])
-            {
-                curIndustrise.materialsInpute.Add(materialList[curMaterial.Key], curMaterial.Value);
+                foreach (KeyValuePair<int, int> curMaterial in (Dictionary<int, int>)industriseValue["inpute"])
+                {
+                    curIndustrise.materialsInpute[materialList[curMaterial.Key]] = curMaterial.Value;
+                }
             }
-            foreach (KeyValuePair<int, int> curMaterial in (Dictionary<int, int>)industriseValue["outpute"])
+
+            if (industriseValue.ContainsKey("outpute"))
             {
-                curIndustrise.materialsOutpute.Add(materialList[curMaterial.Key], curMaterial.Value);
+                foreach (KeyValuePair<int, int> curMaterial in (Dictionary<int, int>)industriseValue["outpute"])
+                {
+                    curIndustrise.materialsOutpute[materialList[curMaterial.Key]] = curMaterial.Value;
+                }
             }
+
             map.industrises.Add(curIndustrise);
         }
     }
