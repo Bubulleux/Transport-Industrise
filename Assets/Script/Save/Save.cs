@@ -44,6 +44,7 @@ public class Save
     {
         Debug.Log("Saving Started");
         await SaveMap();
+        SaveIndustrise();
         SaveGroups();
         await AsyncTask.MonitorTask(SaveVehicle());
     }
@@ -124,14 +125,28 @@ public class Save
             industriseDic.Add("pos", curIndustrise.MasterPos);
             industriseDic.Add("materialPoduction", curIndustrise.materialProductionRatio);
             industriseDic.Add("industriseData", Array.IndexOf(FIleSys.GetAllInstances<IndustriseData>(), curIndustrise.industriseData));
-
+            for (int j = 0; j < 1; j++)
+            {
+                Dictionary<int, int> material = new Dictionary<int, int>();
+                Dictionary<MaterialData, int> source = j == 0 ? curIndustrise.materialsInpute : curIndustrise.materialsOutpute;
+                MaterialData[] materialList = FIleSys.GetAllInstances<MaterialData>();
+                foreach (KeyValuePair<MaterialData, int> curMaterial in source)
+                {
+                    material.Add(Array.IndexOf(materialList, curMaterial.Key), curMaterial.Value);
+                }
+                industriseDic.Add(j == 0 ? "inpute" : "outpute", material);
+            }
             industriseJson[i] = GetJson(industriseDic);
         }
+        FIleSys.SaveFile(Path + "/industrise.bin", industriseJson);
     }
+
+    
 
     public async Task LoadGame()
     {
         await LoadeMap();
+        LoadIndustrise();
         LoadGroups();
         Debug.Log("Finish");
     }
@@ -187,6 +202,30 @@ public class Save
         foreach(string curGroupsJson in groupsJson)
         {
             Group.groups.Add(GetObject<Group>(curGroupsJson));
+        }
+    }
+
+    private void LoadIndustrise()
+    {
+        MaterialData[] materialList = FIleSys.GetAllInstances<MaterialData>();
+        string[] industriseJson = FIleSys.OpenFile<string[]>(Path + "/industrise.bin");
+        for (int i = 0; i < industriseJson.Length; i++)
+        {
+            Dictionary<string, object> industriseValue = GetObject<Dictionary<string, object>>(industriseJson[i]);
+            Industrise curIndustrise = new Industrise((Vector2Int)industriseValue["pos"], map)
+            {
+                materialProductionRatio = (float)industriseValue["materialPoduction"],
+                industriseData = FIleSys.GetAllInstances<IndustriseData>()[(int)industriseValue["industriseData"]]
+            };
+            foreach (KeyValuePair<int, int> curMaterial in (Dictionary<int, int>)industriseValue["inpute"])
+            {
+                curIndustrise.materialsInpute.Add(materialList[curMaterial.Key], curMaterial.Value);
+            }
+            foreach (KeyValuePair<int, int> curMaterial in (Dictionary<int, int>)industriseValue["outpute"])
+            {
+                curIndustrise.materialsOutpute.Add(materialList[curMaterial.Key], curMaterial.Value);
+            }
+            map.industrises.Add(curIndustrise);
         }
     }
 
