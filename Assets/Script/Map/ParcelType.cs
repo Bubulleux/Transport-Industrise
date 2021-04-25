@@ -88,17 +88,21 @@ public class Depot : Parcel
 public class LoadingBay : Parcel
 {
     [JsonIgnore]
-    public List<Industrise> industriseLink = new List<Industrise>();
+    public List<Industrise> industriseLink { get {
+            List<Industrise> returnList = new List<Industrise>();
+            foreach (Industrise curIndustrise in MapManager.map.industrises)
+            {
+                if (Vector2Int.Distance(pos, curIndustrise.MasterPos) <= 30)
+                {
+                    returnList.Add(curIndustrise);
+                }
+            }
+            return returnList;
+        } 
+    }
     public override void Initialaze()
     {
-        foreach(Industrise curIndustrise in MapManager.map.industrises)
-        {
-            if (Vector2Int.Distance(pos, curIndustrise.MasterPos) <= 30)
-            {
-                industriseLink.Add(curIndustrise);
-            }
-        }
-        Debug.Log($"Industrise link: {industriseLink.Count}");
+       
     }
     public override void DebugParcel()
     {

@@ -55,7 +55,7 @@ public class GameLoader : MonoBehaviour
         LoadingIndicator = "Load Save: " + saveName;
         Save save = new Save(saveName);
         await Task.Delay(1);
-        await save.LoadGame();
+        await AsyncTask.MonitorTask(save.LoadGame());
 
         MapManager.map = save.map;
         GameManager.saveName = save.name;
