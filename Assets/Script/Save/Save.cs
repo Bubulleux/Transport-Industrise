@@ -46,6 +46,7 @@ public class Save
         await SaveMap();
         SaveIndustrise();
         SaveGroups();
+        SaveStatistique();
         await AsyncTask.MonitorTask(SaveVehicle());
     }
 
@@ -105,6 +106,13 @@ public class Save
         FIleSys.SaveFile(Path + "/vehicles.bin", vehiclesJson);
     }
 
+    private void SaveStatistique()
+    {
+        Dictionary<string, object> statistiques = new Dictionary<string, object>();
+        statistiques.Add("money", GameManager.Money);
+        FIleSys.SaveFile(Path + "/statistique.bin", GetJson(statistiques));
+	}
+
     private void SaveGroups()
     {
         string[] groupsJson = new string[Group.groups.Count];
@@ -151,6 +159,7 @@ public class Save
     }
     public void LoadGameSeconde()
     {
+        LoadStatistique();
         LoadIndustrise();
         LoadVehicles();
     }
@@ -194,6 +203,12 @@ public class Save
             GetObject<VehicleDateStruct>(curVehicleJson).SetVehiclePorpertise(_go.GetComponent<VehicleContoler>());
         }
     }
+
+    private void LoadStatistique()
+	{
+        Dictionary<string, object> statistiques = GetObject<Dictionary<string, object>>(FIleSys.OpenFile<string>(Path + "/statistique.bin"));
+        GameManager.Money = (long)statistiques["money"];
+	}
 
     private void LoadGroups()
     {
