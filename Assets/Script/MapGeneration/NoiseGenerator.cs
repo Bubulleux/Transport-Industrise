@@ -50,20 +50,26 @@ public static class NoiseGenerator
         {
             for (int x = 0; x < mapWidth; x++)
             {
-                int distAtLimit = x;
-                int[] distAteveryLimit = { y, mapHeight - y, mapWidth - x };
-                foreach (var limit in distAteveryLimit)
-                {
-                    if (limit < distAtLimit)
-                    {
-                        distAtLimit = limit;
-                    }
-                }
+                int distAtLimit = GetLimitDist(new Vector2Int(x, y), new Vector2Int(mapWidth, mapHeight));
                 noise[x, y] = Mathf.InverseLerp(minNoiseHeight, maxNoiseHeight, noise[x, y]);
                 noise[x, y] = Mathf.Floor(curveOfHeight.Evaluate(noise[x, y]) * limitCurv.Evaluate(distAtLimit));
                 //noise[x, y] = Mathf.Floor(noise[x, y] * 6);
             }
         }
         return noise;
+    }
+
+    public static int GetLimitDist(Vector2Int pos, Vector2Int size)
+	{
+        int distAtLimit = pos.x;
+        int[] distAteveryLimit = { pos.y, size.y - pos.y, size.x - pos.x };
+        foreach (var limit in distAteveryLimit)
+        {
+            if (limit < distAtLimit)
+            {
+                distAtLimit = limit;
+            }
+        }
+        return distAtLimit;
     }
 }
