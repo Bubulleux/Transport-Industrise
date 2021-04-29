@@ -40,7 +40,10 @@ public class Industrise
         {
             for (int x = -1; x <= 2; x++)
             {
-                _mapData.AddBuilding(MasterPos + new Vector2Int(x, y), industriseData.height, industriseData.color);
+                if (_mapData.GetParcel(new Vector2Int(x, y) + MasterPos).IsInWater)
+                    continue;
+                Vector2Int pos = new Vector2Int(x, y);
+                _mapData.GetParcel(pos + MasterPos).color = industriseData.color;
             }
         }
     }

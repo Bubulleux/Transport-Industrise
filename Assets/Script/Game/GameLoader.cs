@@ -8,7 +8,6 @@ using UnityEngine.UI;
 public class GameLoader : MonoBehaviour
 {
     public static GameLoader instence;
-    public Task operation;
     public static LoadStatus load = LoadStatus.NotStart;
 
     public string LoadingIndicator { set { GameObject.Find("OperationState").GetComponent<Text>().text = value; } }
@@ -24,7 +23,7 @@ public class GameLoader : MonoBehaviour
 
     public static void GenerateMap(string saveName)
     {
-        instence.operation = instence.AsyncCreatGame(saveName);
+         AsyncTask.MonitorTask(instence.AsyncCreatGame(saveName));
     }
 
     public static void LoadSave(string saveName)
@@ -123,11 +122,7 @@ public class GameLoader : MonoBehaviour
 
     private void Update()
     {
-        if (operation != null && load == LoadStatus.Loading && operation.Status == TaskStatus.Faulted)
-        {
-            load = LoadStatus.Faulted;
-            Debug.LogError($"message: {operation.Exception.Message}, \n source: {operation.Exception.Source}, \n\n comple: {operation.Exception}");
-        }
+
     }
 
     public enum LoadStatus

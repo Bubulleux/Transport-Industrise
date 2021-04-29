@@ -6,8 +6,12 @@ using Newtonsoft.Json;
 [JsonObject(MemberSerialization.OptOut)]
 public class Depot : Parcel
 {
+	public override void Initialaze()
+	{
+        color = Color.red;
+	}
 
-    public VehicleContoler BuyVehicle(VehicleData vehicle)
+	public VehicleContoler BuyVehicle(VehicleData vehicle)
     {
         if (vehicle.price > GameManager.Money)
         {
@@ -24,4 +28,6 @@ public class Depot : Parcel
         base.Interact();
         WindowsOpener.OpenDepotWindow(this);
     }
+
+    
 }

@@ -7,4 +7,9 @@ using Newtonsoft.Json;
 public class Road : Parcel
 {
     public bool[] direction = new bool[4];
+
+	public override void Initialaze()
+	{
+		color = Color.black;
+	}
 }

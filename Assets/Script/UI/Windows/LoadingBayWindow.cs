@@ -35,14 +35,14 @@ public class LoadingBayWindow : WindowContent
 
         for (int i = 0; i < 2; i++)
         {
-            Dictionary<MaterialData, int> materialQuantity = i == 0 ? loadingBay.GetMaterialOutpute() : loadingBay.GetMaterialInput();
-            foreach (KeyValuePair<MaterialData, float> curMaterial in loadingBay.GetMaterialRatio(i != 0))
+            Dictionary<MaterialData, LoadingBay.MaterialInfo> materialQuantity = loadingBay.GetMaterial(i != 0);
+            foreach (KeyValuePair<MaterialData, LoadingBay.MaterialInfo> curMaterial in loadingBay.GetMaterial(i != 0))
             {
                 Transform _go = Instantiate(outputList.Find("Template"));
                 _go.SetParent(i == 0 ? outputList : inputList);
                 _go.Find("Material").GetComponent<Text>().text = curMaterial.Key.ToString();
                 _go.Find("Quantity").GetComponent<Text>().text = materialQuantity[curMaterial.Key].ToString();
-                _go.Find("ProgressBar").GetComponent<RectTransform>().sizeDelta = new Vector2(curMaterial.Value * 200, _go.Find("ProgressBar").GetComponent<RectTransform>().sizeDelta.y);
+                _go.Find("ProgressBar").GetComponent<RectTransform>().sizeDelta = new Vector2(curMaterial.Value.Filling * 200, _go.Find("ProgressBar").GetComponent<RectTransform>().sizeDelta.y);
                 _go.gameObject.SetActive(true);
             }
         }

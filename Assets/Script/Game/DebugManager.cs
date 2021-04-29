@@ -40,15 +40,15 @@ public class DebugManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F4) && MapManager.map.GetparcelType(PlayerControler.GetMoussePos().ToVec2Int()) == typeof(LoadingBay))
         {
             LoadingBay loadingBay = MapManager.map.GetParcel<LoadingBay>(PlayerControler.GetMoussePos().ToVec2Int());
-            foreach (KeyValuePair<MaterialData, int> curMaterial in loadingBay.GetMaterialInput())
+            foreach (KeyValuePair<MaterialData, LoadingBay.MaterialInfo> curMaterial in loadingBay.GetMaterial(true))
             {
                 int materialSuccessful = loadingBay.TryToInteract(curMaterial.Key, 20);
-                Debug.Log($"Try to give 20 {curMaterial.Key}, material Successful: {materialSuccessful}, now Loading Material: {loadingBay.GetMaterialInput()[curMaterial.Key]}");
+                Debug.Log($"Try to give 20 {curMaterial.Key}, material Successful: {materialSuccessful}, now Loading Material: {loadingBay.GetMaterial(true)[curMaterial.Key]}");
             }
-            foreach (KeyValuePair<MaterialData, int> curMaterial in loadingBay.GetMaterialOutpute())
+            foreach (KeyValuePair<MaterialData, LoadingBay.MaterialInfo> curMaterial in loadingBay.GetMaterial(false))
             {
                 int materialSuccessful = -loadingBay.TryToInteract(curMaterial.Key, -20);
-                Debug.Log($"Try to take 20 {curMaterial.Key}, material Successful: {materialSuccessful}, now Loading Material: {loadingBay.GetMaterialOutpute()[curMaterial.Key]}");
+                Debug.Log($"Try to take 20 {curMaterial.Key}, material Successful: {materialSuccessful}, now Loading Material: {loadingBay.GetMaterial(false)[curMaterial.Key]}");
             }
         }
 

@@ -7,6 +7,5 @@ using Newtonsoft.Json;
 public class Building : Parcel
 {
     public float height;
-    public Color32 color;
 }
 

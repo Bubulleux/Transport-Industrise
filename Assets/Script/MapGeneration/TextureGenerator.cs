@@ -17,33 +17,10 @@ public static class TextureGenerator
             {
                 int x = chunk.x * 50 + _x;
                 int y = chunk.y * 50 + _y;
-
-                if (map.parcels[x, y].seeTerrain)
-                {
-                    Color color;
-                    if (map.parcels[x, y].GetType() == typeof(Road))
-                    {
-                        color = Color.black;
-                    }
-                    else if (map.parcels[x, y].GetType() == typeof(Depot))
-                    {
-                        color = new Color(0.7f, 0.1f, 0f);
-                    }
-                    else if (map.parcels[x, y].GetType() == typeof(Building))
-                    {
-                        color = ((Building)map.parcels[x, y]).color;
-                    }
-                    else if (map.parcels[x, y].GetType() == typeof(LoadingBay))
-                    {
-                        color = Color.white;
-                    }
-                    else
-                    {
-                        color = Color.green;
-                    }
-                    colors[_y * 50 + _x] = color;
-
-                }
+                Vector2Int pos = new Vector2Int(x, y);
+                if (!map.GetParcel(pos).seeTerrain)
+                    Debug.Log("Dont See Terrain");
+                colors[_y * 50 + _x] = map.GetParcel(pos).seeTerrain?  (Color)map.GetParcel(pos).color : new Color(255, 0, 255);
             }
         }
         await AsyncTask.DelayIfNeed(1);

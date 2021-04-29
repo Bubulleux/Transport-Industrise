@@ -208,7 +208,7 @@ public class VehicleContoler : MonoBehaviour
         {
             foreach(MaterialData curMaterial in vehicleData.materialCanTransport)
             {
-                if (MapManager.map.GetParcel<LoadingBay>(VehiclePos).GetMaterialOutpute()[curMaterial] != 0)
+                if (MapManager.map.GetParcel<LoadingBay>(VehiclePos).GetMaterial(false)[curMaterial].quantity > 0)
                 {
                     int materialSucessful = MapManager.map.GetParcel<LoadingBay>(VehiclePos).TryToInteract(curMaterial, materialQuantity - vehicleData.maxMaterialTransport);
                     materialQuantity -= materialSucessful;
@@ -230,7 +230,7 @@ public class VehicleContoler : MonoBehaviour
             {
                 foreach (MaterialData curMaterialVehicle in vehicleData.materialCanTransport)
                 {
-                    if (loadingBay.GetMaterial(curMaterialVehicle) > 0)
+                    if (loadingBay.GetMaterial(false).ContainsKey(curMaterialVehicle) && loadingBay.GetMaterial(false)[curMaterialVehicle].quantity > 0)
                     {
                         return Action.load;
                     }

@@ -177,12 +177,8 @@ public  class Map
     { 
         if (parcels[pos.x, pos.y].GetType() == typeof(Parcel))
         {
-            Building building = new Building
-            {
-                color = color,
-                height = height
-            };
-            parcels[pos.x, pos.y] = Parcel.CopyClass(parcels[pos.x, pos.y], building);
+            parcels[pos.x, pos.y] = Parcel.CopyClass(parcels[pos.x, pos.y], new Dwelling());
+            GetParcel(pos).color = color;
             //parcels[pos.x, pos.y].seeTerrain = false;
             UpdateChunkMesh(Mathf.FloorToInt(pos.x / 50), Mathf.FloorToInt(pos.y / 50));
             return true;
