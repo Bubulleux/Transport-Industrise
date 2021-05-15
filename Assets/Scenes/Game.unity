@@ -2265,6 +2265,8 @@ MonoBehaviour:
       m_Image: {fileID: 0}
     - m_Text: Loading Bay
       m_Image: {fileID: 0}
+    - m_Text: Bus Stop
+      m_Image: {fileID: 0}
     - m_Text: Destroy
       m_Image: {fileID: 0}
   m_OnValueChanged:

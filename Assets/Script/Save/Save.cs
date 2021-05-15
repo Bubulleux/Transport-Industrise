@@ -286,7 +286,6 @@ public class Save
                 RoutePointGo = vehicle.RoutePointGo,
                 pos = vehicle.VehiclePos,
                 myGroup = vehicle.MyGroup != null ? Group.groups.IndexOf(vehicle.MyGroup) : -1,
-                vehicleState = (int)vehicle.state,
             };
 
         }
@@ -298,7 +297,6 @@ public class Save
             vehicle.RoutePointGo = RoutePointGo;
             vehicle.VehiclePos = pos;
             vehicle.MyGroup = Group.groups[myGroup];
-            vehicle.state = (VehicleContoler.VehicleStat)vehicleState;
         }
     }
 }

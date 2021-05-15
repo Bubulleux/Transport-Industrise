@@ -5,6 +5,7 @@ using UnityEngine;
 public class Dwelling : Parcel
 {
 	public int dwell;
+	private BusStop busStop;
 	public override void Initialaze()
 	{
 		color = Color.gray;

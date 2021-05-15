@@ -49,4 +49,13 @@ public class Parcel
         return pastClass;
     }
 
+    public void EnableUpdate(bool enable)
+	{
+        if (enable && !MapManager.map.updatedParcel.Contains(this))
+            MapManager.map.updatedParcel.Add(this);
+        else if (!enable && MapManager.map.updatedParcel.Contains(this))
+            MapManager.map.updatedParcel.Remove(this);
+	}
+
+    public virtual void Update() { }
 }

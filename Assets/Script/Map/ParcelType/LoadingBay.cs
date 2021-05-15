@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 
 [JsonObject(MemberSerialization.OptOut)]
-public class LoadingBay : Parcel
+public class LoadingBay : Road
 {
 	public LoadingBayType loadingBayType;
 	public enum LoadingBayType
@@ -15,7 +15,7 @@ public class LoadingBay : Parcel
 	}
 
 	[JsonIgnore]
-	public List<Industrise> industriseLink
+	public List<Industrise> IndustriseLink
 	{
 		get
 		{
@@ -30,10 +30,12 @@ public class LoadingBay : Parcel
 			return returnList;
 		}
 	}
+
 	public override void Initialaze()
 	{
 		color = Color.white;
 	}
+
 	public override void DebugParcel()
 	{
 		base.DebugParcel();
@@ -50,16 +52,17 @@ public class LoadingBay : Parcel
 		Debug.Log(result);
 
 	}
+
 	public override void Interact()
 	{
 		base.Interact();
 		WindowsOpener.OpenLoadingBay(this);
 	}
 
-	public Dictionary<MaterialData, MaterialInfo> GetMaterial(bool getInput)
+	public virtual Dictionary<MaterialData, MaterialInfo> GetMaterial(bool getInput)
 	{
 		Dictionary<MaterialData, MaterialInfo> resulte = new Dictionary<MaterialData, MaterialInfo>();
-		foreach (Industrise curIndustrise in industriseLink)
+		foreach (Industrise curIndustrise in IndustriseLink)
 		{
 			foreach (KeyValuePair<MaterialData, int> curMaterial in getInput ? curIndustrise.materialsInpute : curIndustrise.materialsOutpute)
 			{
@@ -85,34 +88,34 @@ public class LoadingBay : Parcel
 		return resulte;
 	}
 
-	public virtual int GiveOrTakeMaterial(MaterialData material, int quantity)
-	{
-		int _quantity = quantity;
-		foreach (Industrise curIndustrise in industriseLink)
-		{
-			if (curIndustrise.materialsInpute.ContainsKey(material))
-			{
-				curIndustrise.materialsInpute[material] += _quantity;
-				_quantity = 0;
-				if (curIndustrise.materialsInpute[material] - Industrise.maxMaterialCanStock > 0)
-				{
-					_quantity = curIndustrise.materialsInpute[material] - Industrise.maxMaterialCanStock;
-					curIndustrise.materialsInpute[material] = Industrise.maxMaterialCanStock;
-				}
+	//public virtual int GiveOrTakeMaterial(MaterialData material, int quantity)
+	//{
+	//	int _quantity = quantity;
+	//	foreach (Industrise curIndustrise in IndustriseLink)
+	//	{
+	//		if (curIndustrise.materialsInpute.ContainsKey(material))
+	//		{
+	//			curIndustrise.materialsInpute[material] += _quantity;
+	//			_quantity = 0;
+	//			if (curIndustrise.materialsInpute[material] - Industrise.maxMaterialCanStock > 0)
+	//			{
+	//				_quantity = curIndustrise.materialsInpute[material] - Industrise.maxMaterialCanStock;
+	//				curIndustrise.materialsInpute[material] = Industrise.maxMaterialCanStock;
+	//			}
 
-				if (curIndustrise.materialsInpute[material] < 0)
-				{
-					quantity = curIndustrise.materialsInpute[material];
-					curIndustrise.materialsInpute[material] = 0;
-				}
-			}
-		}
-		return _quantity;
-	}
+	//			if (curIndustrise.materialsInpute[material] < 0)
+	//			{
+	//				quantity = curIndustrise.materialsInpute[material];
+	//				curIndustrise.materialsInpute[material] = 0;
+	//			}
+	//		}
+	//	}
+	//	return _quantity;
+	//}
 
 	public virtual bool CanUnload(MaterialData material)
 	{
-		foreach (Industrise curIndustrise in industriseLink)
+		foreach (Industrise curIndustrise in IndustriseLink)
 		{
 			if (curIndustrise.materialsInpute.ContainsKey(material) && curIndustrise.materialsInpute[material] != Industrise.maxMaterialCanStock)
 			{
@@ -126,7 +129,7 @@ public class LoadingBay : Parcel
 	{
 		int materialHasNotGiven = materialQuantityGive;
 		Debug.Log("material has no Given" + materialHasNotGiven);
-		foreach (Industrise curIndustrise in industriseLink)
+		foreach (Industrise curIndustrise in IndustriseLink)
 		{
 			if (materialHasNotGiven == 0)
 			{

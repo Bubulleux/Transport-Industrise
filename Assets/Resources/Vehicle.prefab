@@ -174,7 +174,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7241145679737677943}
-  - component: {fileID: 4369044092545916373}
+  - component: {fileID: 388130055800646212}
   m_Layer: 0
   m_Name: Vehicle
   m_TagString: Vehicle
@@ -197,7 +197,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4369044092545916373
+--- !u!114 &388130055800646212
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -206,13 +206,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 6471750208347895323}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 266c1332a7ec2964889f9de9c652b56d, type: 3}
+  m_Script: {fileID: 11500000, guid: a2c5a4fda904378459dc7d6ecfd96b79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   vehicleData: {fileID: 0}
   damage: 0
   path: []
+  engineEnable: 0
   vehicleAnimation: {fileID: 200737158898514841}
-  state: 0
-  materialCurTransport: 0
+  materialCurTransport: {fileID: 0}
   materialQuantity: 0

@@ -57,7 +57,7 @@ public class RouteCreatorWindow : WindowContent
                 return;
             }
             System.Type type = MapManager.map.parcels[pos.x, pos.y].GetType();
-            if (type == typeof(Depot) || type == typeof(LoadingBay))
+            if (type == typeof(Depot) || type == typeof(LoadingBay) || type == typeof(BusStop))
             {
                 route.points.Add(pos);
                 UpdateList();

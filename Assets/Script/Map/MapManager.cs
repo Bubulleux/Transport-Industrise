@@ -71,7 +71,13 @@ public class MapManager : MonoBehaviour
         }
     }
 
-    void FixedUpdate()
+	private void Update()
+	{
+        foreach (Parcel curParcel in map.updatedParcel)
+            curParcel.Update();
+	}
+
+	void FixedUpdate()
     {
         UpdateMap();
         if (GameLoader.load == GameLoader.LoadStatus.Done)

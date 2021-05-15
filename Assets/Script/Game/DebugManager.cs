@@ -9,7 +9,7 @@ public class DebugManager : MonoBehaviour
      * F1: Get parcel Info
      * F2: Make auto Construct
      * F3: Give Money
-     * F4: Interact whith Industrise
+     * F4: Interact Debug
      * F5: Create & Serialize Save
      * F6:
      * F7:
@@ -43,13 +43,20 @@ public class DebugManager : MonoBehaviour
             foreach (KeyValuePair<MaterialData, LoadingBay.MaterialInfo> curMaterial in loadingBay.GetMaterial(true))
             {
                 int materialSuccessful = loadingBay.TryToInteract(curMaterial.Key, 20);
-                Debug.Log($"Try to give 20 {curMaterial.Key}, material Successful: {materialSuccessful}, now Loading Material: {loadingBay.GetMaterial(true)[curMaterial.Key]}");
+                Debug.Log($"Try to give 20 {curMaterial.Key}, material Successful: {materialSuccessful}, now Loading Material: {loadingBay.GetMaterial(true)[curMaterial.Key].quantity}");
             }
             foreach (KeyValuePair<MaterialData, LoadingBay.MaterialInfo> curMaterial in loadingBay.GetMaterial(false))
             {
                 int materialSuccessful = -loadingBay.TryToInteract(curMaterial.Key, -20);
-                Debug.Log($"Try to take 20 {curMaterial.Key}, material Successful: {materialSuccessful}, now Loading Material: {loadingBay.GetMaterial(false)[curMaterial.Key]}");
+                Debug.Log($"Try to take 20 {curMaterial.Key}, material Successful: {materialSuccessful}, now Loading Material: {loadingBay.GetMaterial(false)[curMaterial.Key].quantity}");
             }
+        }
+        if (Input.GetKeyDown(KeyCode.F4) && MapManager.map.GetparcelType(PlayerControler.GetMoussePos().ToVec2Int()) == typeof(BusStop))
+        {
+            BusStop busStop = MapManager.map.GetParcel<BusStop>(PlayerControler.GetMoussePos().ToVec2Int());
+            int materialSuccessful = busStop.TryToInteract(BusStop.PeopleMatarial, -20);
+            Debug.Log($"{materialSuccessful}, now Loading Material: {busStop.GetMaterial(false)[BusStop.PeopleMatarial].quantity}");
+
         }
 
         if (Input.GetKeyDown(KeyCode.F5))
