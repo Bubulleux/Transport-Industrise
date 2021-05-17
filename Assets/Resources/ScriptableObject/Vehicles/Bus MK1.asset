@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 060e4c1d823fb6a4ba3a0add33161e87, type: 3}
   m_Name: Bus MK1
   m_EditorClassIdentifier: 
-  model: 
-  description: 
-  speed: 0
-  price: 0
-  maxMaterialTransport: 0
-  materialCanTransport: []
+  model: Bus MK1
+  description: Vroum
+  speed: 30
+  price: 1000
+  maxMaterialTransport: 50
+  materialCanTransport:
+  - {fileID: 11400000, guid: 1396c99beb58b9e48943bd398e3aeeb9, type: 2}
