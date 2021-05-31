@@ -8,6 +8,7 @@ public class TerresteVehicle : VehicleContoler
 
 	public override void ReturnInDepot()
 	{
+		vehicleStoped = true;
 		if (MapManager.map.GetparcelType(VehiclePos) == typeof(Depot))
 		{
 			return;
@@ -59,7 +60,7 @@ public class TerresteVehicle : VehicleContoler
 
 	public override void AnimeVehicle()
 	{
-		if (path.Count == 0 || (path.Count == 1 && VehiclePos == path[0]))
+		if (path == null || path.Count == 0 || (path.Count == 1 && VehiclePos == path[0]))
 		{
 			return;
 		}

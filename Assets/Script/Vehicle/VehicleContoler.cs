@@ -17,11 +17,12 @@ public class VehicleContoler : MonoBehaviour
 	private bool vehicleNeedRestar = false;
 
 	public bool engineEnable = false;
+	public bool vehicleStoped = true;
 	public Animator vehicleAnimation;
 
 	public List<Vector2Int> path = new List<Vector2Int>();
 	private int routePointGo;
-	public int RoutePointGo { get => routePointGo; set { routePointGo = value; routePointGo %= MyRoute.points.Count; } }
+	public int RoutePointGo { get => routePointGo; set { routePointGo = value; Debug.Log(MyRoute.points.Count); routePointGo %= MyRoute.points.Count; } }
 
 	private Group myGroup = null;
 	public Group MyGroup
@@ -110,6 +111,7 @@ public class VehicleContoler : MonoBehaviour
 		}
 		path = null;
 		engineEnable = true;
+		vehicleStoped = false;
 	}
 
 	public virtual void DriveAlong()
@@ -120,7 +122,7 @@ public class VehicleContoler : MonoBehaviour
 			return;
 		}
 
-		if (path == null || path.Count == 0)
+		if (!vehicleStoped && (path == null || path.Count == 0))
 		{
 			if (path != null)
 				DoSomething();
@@ -129,6 +131,9 @@ public class VehicleContoler : MonoBehaviour
 				engineEnable = false;
 			return;
 		}
+		else if (path == null || path.Count == 0)
+			return;
+
 		AnimeVehicle();
 		VehiclePos = path[0];
 		path.RemoveAt(0);
@@ -171,7 +176,7 @@ public class VehicleContoler : MonoBehaviour
 
 	public void SetRestart(float time)
 	{
-		if (time == 0f)
+		if (time == 0f || vehicleStoped)
 			return;
 		restartCooldown = time;
 		vehicleNeedRestar = true;
