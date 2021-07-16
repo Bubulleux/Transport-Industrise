@@ -1,8 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Script.MapGeneration;
+using Random = UnityEngine.Random;
 
 [JsonObject(MemberSerialization.OptIn)]
 public  class Map
@@ -27,22 +30,48 @@ public  class Map
 		chunkNeedTextureUpdate = new bool[chunkSize.x, chunkSize.y];
 		chunkNeedMeshUpdate = new bool[chunkSize.x, chunkSize.y];
 	}
-
+	
+	
+	
 	public async Task GenerateMap(MapSettingData mapSetting)
 	{
 		parcels = new Parcel[1000, 1000];
 		await Task.Delay(10);
 		citys = new List<City>();
 		industrises = new List<Industrise>();
-		float[,] mapNoise = NoiseGenerator.GenerNoise(1001, 1001, 60, 3, 6, 0.1f, Random.Range(1, 10000), mapSetting.heightCurv, mapSetting.limitWaterCurv);
-		for (int y = 0; y < parcels.GetLength(1); y++)
+		var mapNoise = NoiseGenerator.GenerNoise(1001, 1001, 60, 3, 6, 0.1f, Random.Range(1, 10000), mapSetting.heightCurv, mapSetting.limitWaterCurv);
+
+		var biomesNoise = new Dictionary<BiomeData, float[,]>();
+		foreach (var biome in FIleSys.GetAllInstances<BiomeData>())
 		{
-			for (int x = 0; x < parcels.GetLength(0); x++)
+			var noiseBiome = NoiseGenerator.GenerNoise(1000, 1000, 100, 2, 6, 0.1f, Random.Range(1, 99999));
+			biomesNoise.Add(biome, noiseBiome);
+		}
+		
+		for (var y = 0; y < parcels.GetLength(1); y++)
+		{
+			for (var x = 0; x < parcels.GetLength(0); x++)
 			{
+				BiomeData parcelBiome = null;
+				foreach (var value in biomesNoise)
+				{
+					if (parcelBiome == null)
+					{
+						parcelBiome = value.Key;
+						continue;
+					}
+					if (biomesNoise[parcelBiome][x, y] * parcelBiome.coef < value.Value[x, y] * value.Key.coef)
+					{
+						parcelBiome = value.Key;
+					}
+				}
+				
 				parcels[x, y] = new Parcel(new Vector2Int(x, y))
 				{
-					corner = new int[4] { Mathf.FloorToInt(mapNoise[x, y]), Mathf.FloorToInt(mapNoise[x + 1, y]), Mathf.FloorToInt(mapNoise[x, y + 1]), Mathf.FloorToInt(mapNoise[x + 1, y + 1]) }
+					corner = new int[4] { Mathf.FloorToInt(mapNoise[x, y]), Mathf.FloorToInt(mapNoise[x + 1, y]), Mathf.FloorToInt(mapNoise[x, y + 1]), Mathf.FloorToInt(mapNoise[x + 1, y + 1]) },
+					biome = parcelBiome,
 				};
+				parcels[x, y].Initialaze();
 			}
 		}
 		await Task.Delay(10);
@@ -51,7 +80,7 @@ public  class Map
 			await Task.Delay(10);;
 			CreatCity(Random.Range(100, 900), Random.Range(100, 900));
 		}
-		for (int i = 0; i < 50; i++)
+		for (var i = 0; i < 50; i++)
 		{
 			CreatIndustrise(new Vector2Int(Random.Range(100, 900), Random.Range(100, 900)));
 			await Task.Delay(10);
@@ -74,7 +103,7 @@ public  class Map
 
 	public bool CreatCity(int x, int y)
 	{
-		foreach (City _city in citys)
+		foreach (var _city in citys)
 		{
 			if (Vector2Int.Distance(new Vector2Int(x, y), _city.MasterPos) < 100f)
 			{
@@ -84,7 +113,7 @@ public  class Map
 		//Transform _go = new GameObject().transform;
 		//_go.position = new Vector3(x, 0f, y);
 		//_go.parent = GameObject.Find("Citys").transform;
-		City city = new City(new Vector2Int(x, y), this)
+		var city = new City(new Vector2Int(x, y), this)
 		{
 			name = "City " + citys.Count,
 			inhabitantsNumber = Random.Range(100, 1999)
@@ -95,14 +124,14 @@ public  class Map
 
 	public Industrise CreatIndustrise(Vector2Int pos)
 	{
-		foreach (City _city in citys)
+		foreach (var _city in citys)
 		{
 			if (Vector2Int.Distance(pos, _city.MasterPos) < 50f)
 			{
 				return null;
 			}
 		}
-		foreach (Industrise _industrise in industrises)
+		foreach (var _industrise in industrises)
 		{
 			if (Vector2Int.Distance(pos, _industrise.MasterPos) < 10f)
 			{
@@ -113,7 +142,7 @@ public  class Map
 		//_go.position = new Vector3(x, 0f, y);
 		//_go.parent = GameObject.Find("Instrises").transform;
 		//_go.name = "Industrise " + industrises.Count;
-		Industrise Industrise = new Industrise(pos, this);
+		var Industrise = new Industrise(pos, this);
 		industrises.Add(Industrise);
 		return Industrise;
 	}
@@ -127,16 +156,16 @@ public  class Map
 		}
 		if (parcels[pos.x, pos.y].GetType() == typeof(Parcel))
 		{
-			for (int j = 0; j < MapManager.parcelAroundCorner.Length; j++)
+			for (var j = 0; j < MapManager.parcelAroundCorner.Length; j++)
 			{
 				if (MapManager.parcelAroundCorner[j].x == 0 || MapManager.parcelAroundCorner[j].y == 0)
 				{
 					continue;
 				}
-				int _countRoad = 0;
-				for (int h = -1; h <= 1; h++)
+				var _countRoad = 0;
+				for (var h = -1; h <= 1; h++)
 				{
-					int _j = (j + h) % MapManager.parcelAroundCorner.Length;
+					var _j = (j + h) % MapManager.parcelAroundCorner.Length;
 					if (_j == -1)
 					{
 						_j = MapManager.parcelAroundCorner.Length - 1;
@@ -153,7 +182,7 @@ public  class Map
 			}
 			//Instantiate(roadPrefab, new Vector3(pos.x, parcels[pos.x, pos.y].corner[0], pos.y), Quaternion.identity, transform);
 			parcels[pos.x, pos.y] = Parcel.CopyClass(parcels[pos.x, pos.y], new Road());
-			for (int i = 0; i < MapManager.parcelAround.Length; i++)
+			for (var i = 0; i < MapManager.parcelAround.Length; i++)
 			{
 				if (parcels[MapManager.parcelAroundCorner[i].x + pos.x, MapManager.parcelAroundCorner[i].y + pos.y].GetType() != typeof(Parcel) && parcels[MapManager.parcelAroundCorner[i].x + pos.x, MapManager.parcelAroundCorner[i].y + pos.y].GetType() == typeof(Road))
 				{
@@ -211,7 +240,7 @@ public  class Map
 
 	public void Color(Vector2Int pos, Color color)
 	{
-		Building building = new Building
+		var building = new Building
 		{
 			color = color,
 			height = 0
@@ -233,17 +262,17 @@ public  class Map
 
 	public T[] GetImpotantParcel<T>() where T : Parcel
 	{
-		List<T> parcelsList = new List<T>();
-		foreach(Parcel curParcel in importParcels)
+		var parcelsList = new List<T>();
+		foreach(var curParcel in importParcels)
 		{
 			if (curParcel.GetType() == typeof(T))
 			{
 				parcelsList.Add(curParcel as T);
 			}
 		}
-		T[] parcelArray = new T[parcelsList.Count];
+		var parcelArray = new T[parcelsList.Count];
 
-		for (int i = 0; i < parcelsList.Count; i++)
+		for (var i = 0; i < parcelsList.Count; i++)
 			parcelArray[i] = parcelsList[i];
 		
 		return parcelArray;

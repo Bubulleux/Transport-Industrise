@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
+using Script.MapGeneration;
 
 [JsonObject(MemberSerialization.OptOut)]
 public class Parcel
@@ -11,8 +13,9 @@ public class Parcel
     //public object construction = null;
     public bool seeTerrain = true;
     public Parcel parent;
+    public BiomeData biome;
 
-    public Color32 color = Color.green;
+    public Color32 color =  Color.magenta;
 
     public bool IsInWater { get { return corner[0] < 1 || corner[1] < 1 || corner[2] < 1 || corner[3] < 1; } }
 
@@ -24,7 +27,7 @@ public class Parcel
 
     public virtual void Initialaze()
     {
-
+        color = biome.color;
     }
 
     public virtual void Interact()

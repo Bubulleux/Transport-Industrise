@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class NoiseGenerator 
 {
-    public static float[,] GenerNoise(int mapWidth, int mapHeight,float scale, int octave, float lacunarity, float persistance, int seed, AnimationCurve curveOfHeight, AnimationCurve limitCurv)
+    public static float[,] GenerNoise(int mapWidth, int mapHeight,float scale, int octave, float lacunarity, float persistance, int seed)
     {
         float[,] noise = new float[mapWidth, mapHeight];
         float maxNoiseHeight = float.MinValue;
@@ -50,14 +50,30 @@ public static class NoiseGenerator
         {
             for (int x = 0; x < mapWidth; x++)
             {
-                int distAtLimit = GetLimitDist(new Vector2Int(x, y), new Vector2Int(mapWidth, mapHeight));
                 noise[x, y] = Mathf.InverseLerp(minNoiseHeight, maxNoiseHeight, noise[x, y]);
-                noise[x, y] = Mathf.Floor(curveOfHeight.Evaluate(noise[x, y]) * limitCurv.Evaluate(distAtLimit));
-                //noise[x, y] = Mathf.Floor(noise[x, y] * 6);
             }
         }
         return noise;
     }
+
+    public static float[,] GenerNoise(int mapWidth, int mapHeight, float scale, int octave, float lacunarity,
+        float persistance, int seed, AnimationCurve curveOfHeight, AnimationCurve limitCurv)
+    {
+        
+         var noise = GenerNoise(mapWidth, mapHeight, scale, octave, lacunarity, persistance, seed);
+         for (int y = 0; y < mapHeight; y++)
+         {
+             for (int x = 0; x < mapWidth; x++)
+             {
+                 int distAtLimit = GetLimitDist(new Vector2Int(x, y), new Vector2Int(mapWidth, mapHeight));
+                 noise[x, y] = Mathf.Floor(curveOfHeight.Evaluate(noise[x, y]) * limitCurv.Evaluate(distAtLimit));
+                 //noise[x, y] = Mathf.Floor(noise[x, y] * 6);
+             }
+         }
+
+         return noise;
+    }
+
 
     public static int GetLimitDist(Vector2Int pos, Vector2Int size)
 	{
