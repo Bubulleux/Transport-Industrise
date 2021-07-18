@@ -58,9 +58,11 @@ public class BusStop : LoadingBay
 
 	public override Dictionary<MaterialData, MaterialInfo> GetMaterial(bool getInput)
 	{
-		if (!getInput)
-			return new Dictionary<MaterialData, MaterialInfo>() { { PeopleMatarial, new MaterialInfo() { isInput = false, maxQuantity = maxPeopleWaiting, quantity = PeopleWait } } };
-		return new Dictionary<MaterialData, MaterialInfo>();
+		return new Dictionary<MaterialData, MaterialInfo>() { { PeopleMatarial, new MaterialInfo() { 
+			isInput = getInput,
+			maxQuantity = getInput ? 9999 : maxPeopleWaiting,
+			quantity = getInput ? 0 : PeopleWait,
+		} } };
 	}
 
 	public override void Initialaze()

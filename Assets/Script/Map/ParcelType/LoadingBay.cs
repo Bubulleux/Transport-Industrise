@@ -128,7 +128,7 @@ public class LoadingBay : Road
 	public virtual int TryToInteract(MaterialData material, int materialQuantityGive)
 	{
 		int materialHasNotGiven = materialQuantityGive;
-		Debug.Log("material has no Given" + materialHasNotGiven);
+		//Debug.Log("material has no Given" + materialHasNotGiven);
 		foreach (Industrise curIndustrise in IndustriseLink)
 		{
 			if (materialHasNotGiven == 0)
@@ -165,7 +165,7 @@ public class LoadingBay : Road
 		}
 		int materialGive = materialQuantityGive - materialHasNotGiven;
 		GameManager.Money += materialGive * (materialGive < 0 ? material.buyPrice : material.sellPrice);
-		Debug.Log("Materal Return " + materialGive);
+		//Debug.Log("Materal Return " + materialGive);
 		return materialGive;
 	}
 

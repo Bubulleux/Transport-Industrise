@@ -37,8 +37,14 @@ public class DebugManager : MonoBehaviour
             GameManager.Money += 200000;
         }
 
-        if (Input.GetKeyDown(KeyCode.F4) && MapManager.map.GetparcelType(PlayerControler.GetMoussePos().ToVec2Int()) == typeof(LoadingBay))
+        if (Input.GetKeyDown(KeyCode.F4))
         {
+            System.Type parcelType = MapManager.map.GetparcelType(PlayerControler.GetMoussePos().ToVec2Int());
+            if (parcelType != typeof(LoadingBay) && parcelType != typeof(BusStop))
+            {
+                return;
+            }
+            
             LoadingBay loadingBay = MapManager.map.GetParcel<LoadingBay>(PlayerControler.GetMoussePos().ToVec2Int());
             foreach (KeyValuePair<MaterialData, LoadingBay.MaterialInfo> curMaterial in loadingBay.GetMaterial(true))
             {
@@ -51,13 +57,13 @@ public class DebugManager : MonoBehaviour
                 Debug.Log($"Try to take 20 {curMaterial.Key}, material Successful: {materialSuccessful}, now Loading Material: {loadingBay.GetMaterial(false)[curMaterial.Key].quantity}");
             }
         }
-        if (Input.GetKeyDown(KeyCode.F4) && MapManager.map.GetparcelType(PlayerControler.GetMoussePos().ToVec2Int()) == typeof(BusStop))
-        {
-            BusStop busStop = MapManager.map.GetParcel<BusStop>(PlayerControler.GetMoussePos().ToVec2Int());
-            int materialSuccessful = busStop.TryToInteract(BusStop.PeopleMatarial, -20);
-            Debug.Log($"{materialSuccessful}, now Loading Material: {busStop.GetMaterial(false)[BusStop.PeopleMatarial].quantity}");
-
-        }
+        // if (Input.GetKeyDown(KeyCode.F4) && MapManager.map.GetparcelType(PlayerControler.GetMoussePos().ToVec2Int()) == typeof(BusStop))
+        // {
+        //     BusStop busStop = MapManager.map.GetParcel<BusStop>(PlayerControler.GetMoussePos().ToVec2Int());
+        //     int materialSuccessful = busStop.TryToInteract(BusStop.PeopleMatarial, -20);
+        //     Debug.Log($"{materialSuccessful}, now Loading Material: {busStop.GetMaterial(false)[BusStop.PeopleMatarial].quantity}");
+        //
+        // }
 
         if (Input.GetKeyDown(KeyCode.F5))
         {

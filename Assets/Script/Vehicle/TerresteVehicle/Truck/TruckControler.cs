@@ -12,14 +12,17 @@ public class TruckControler : TerresteVehicle
 	public override float Load()
 	{
 		LoadingBay loadingBay = MapManager.map.GetParcel<LoadingBay>(VehiclePos);
-
+		//Debug.Log("Load Call");
+		var timeStop = 0f;
+		
 		if (materialQuantity != 0 && loadingBay.CanUnload(materialCurTransport))
 		{
 			int materialSucessful = loadingBay.TryToInteract(materialCurTransport, materialQuantity);
 			materialQuantity -= materialSucessful;
-			return 2f;
+			timeStop += 2f;
 		}
-		else
+		
+		if (materialQuantity == 0)
 		{
 			foreach (MaterialData curMaterial in vehicleData.materialCanTransport)
 			{
@@ -28,10 +31,10 @@ public class TruckControler : TerresteVehicle
 					int materialSucessful = loadingBay.TryToInteract(curMaterial, materialQuantity - vehicleData.maxMaterialTransport);
 					materialQuantity -= materialSucessful;
 					materialCurTransport = curMaterial;
-					return 2f;
+					timeStop += 2f;
 				}
 			}
 		}
-		return 0f;
+		return timeStop;
 	}
 }

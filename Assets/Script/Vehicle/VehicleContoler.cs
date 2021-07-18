@@ -22,7 +22,7 @@ public class VehicleContoler : MonoBehaviour
 
 	public List<Vector2Int> path = new List<Vector2Int>();
 	private int routePointGo;
-	public int RoutePointGo { get => routePointGo; set { routePointGo = value; Debug.Log(MyRoute.points.Count); routePointGo %= MyRoute.points.Count; } }
+	public int RoutePointGo { get => routePointGo; set { routePointGo = value; routePointGo %= MyRoute.points.Count; } }
 
 	private Group myGroup = null;
 	public Group MyGroup
@@ -96,7 +96,7 @@ public class VehicleContoler : MonoBehaviour
 		}
 		if (restartCooldown > 0f)
 			restartCooldown -= Time.deltaTime;
-		else if (vehicleNeedRestar == true)
+		else if (vehicleNeedRestar)
 		{
 			engineEnable = true;
 			vehicleNeedRestar = false;
@@ -125,7 +125,10 @@ public class VehicleContoler : MonoBehaviour
 		if (!vehicleStoped && (path == null || path.Count == 0))
 		{
 			if (path != null)
+			{
+				path = null;
 				DoSomething();
+			}
 			path = GetPath();
 			if (path == null)
 				engineEnable = false;
@@ -137,7 +140,7 @@ public class VehicleContoler : MonoBehaviour
 		AnimeVehicle();
 		VehiclePos = path[0];
 		path.RemoveAt(0);
-		damage += 0.02f;
+		//damage += 0.02f;
 		driveCooldown = 1f / (float)vehicleData.speed;
 	}
 

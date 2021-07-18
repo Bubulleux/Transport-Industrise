@@ -5,7 +5,13 @@ using System;
 
 public class TerresteVehicle : VehicleContoler
 {
+	
+	public new ParticleSystem particleSystem;
 
+	private void Start()
+	{
+		particleSystem.Stop();
+	}
 	public override void ReturnInDepot()
 	{
 		vehicleStoped = true;
@@ -45,7 +51,7 @@ public class TerresteVehicle : VehicleContoler
 	public override void DoSomething()
 	{
 		base.DoSomething();
-		if (MapManager.map.GetparcelType(VehiclePos) == typeof(LoadingBay))
+		if (MapManager.map.GetparcelType(VehiclePos) == typeof(LoadingBay) || MapManager.map.GetparcelType(VehiclePos) == typeof(BusStop))
 		{
 			float time = Load();
 			SetRestart(time);
@@ -64,6 +70,7 @@ public class TerresteVehicle : VehicleContoler
 		{
 			return;
 		}
+
 		Vector2Int posBefor;
 		Vector2Int posGo;
 		if (VehiclePos == path[0])
@@ -110,10 +117,12 @@ public class TerresteVehicle : VehicleContoler
 		if (VehiclePos == path[0])
 		{
 			animation = "Start";
+			particleSystem.Play();
 		}
 		else if (path.Count == 1)
 		{
 			animation = "Stop";
+			particleSystem.Stop();
 		}
 		vehicleAnimation.Play(animation, 0, 0f);
 		//vehicleAnimation.SetInteger("Direction", dirAnime);
