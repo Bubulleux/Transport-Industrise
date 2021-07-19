@@ -77,6 +77,7 @@ public class GameLoader : MonoBehaviour
 
     public async Task<Texture2D[,]> LoadEveryTexture()
     {
+        Debug.Log("Load Texture");
         Texture2D[,] chunks = new Texture2D[Width, Height];
 
         for (int y = 0; y < Height; y++)
@@ -84,7 +85,7 @@ public class GameLoader : MonoBehaviour
             for (int x = 0; x < Width; x++)
             {
                 LoadingIndicator = $"Loading Texture {y * Height + x}/{Height*Width}";
-                chunks[x, y] = await TextureGenerator.AsyncGetChunkTexture(new Vector2Int(x, y), MapManager.map);
+                chunks[x, y] = TextureGenerator.GetChunkTexture(new Vector2Int(x, y), MapManager.map);
             }
         }
         return chunks;

@@ -18,6 +18,8 @@ public  class Map
 	[JsonProperty]
 	public List<Industrise> industrises =  new List<Industrise>();
 
+	public  const int ChuckSize = 50;
+
 
 	public bool[,] chunkNeedTextureUpdate;
 	public bool[,] chunkNeedMeshUpdate;

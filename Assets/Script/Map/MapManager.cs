@@ -12,8 +12,7 @@ public class MapManager : MonoBehaviour
     public GameObject buildingPrefab;
     //public float[,] mapHeight;
 
-    public Mesh[,] mapMeshs;
-    public Texture2D[,] mapTexture;
+    
     public GameObject[,] gfxsMap = new GameObject[20, 20];
     public GameObject gfxMapPrefab;
 
@@ -109,7 +108,16 @@ public class MapManager : MonoBehaviour
         {
             for (int x = 0; x < 20; x++)
             {
-
+                if (!gfxsMap[x, y].GetComponent<Renderer>().isVisible)
+                {
+                    if (gfxsMap[x, y].activeSelf)
+                        gfxsMap[x, y].SetActive(false);
+                    continue;
+                }
+                if(!gfxsMap[x, y].activeSelf)
+                {
+                    gfxsMap[x, y].SetActive(true);
+                }
                 if (map.chunkNeedTextureUpdate[x, y] || map.chunkNeedMeshUpdate[x, y])
                 {
                     if (map.chunkNeedMeshUpdate[x, y])
@@ -119,7 +127,7 @@ public class MapManager : MonoBehaviour
                     }
                     if (map.chunkNeedTextureUpdate[x, y])
                     {
-                        TextureGenerator.AsyncGenerateTextureChunk(new Vector2Int(x,y) , map, gfxsMap[x, y]);
+                        TextureGenerator.GenerateTextureChunk(new Vector2Int(x,y) , map, gfxsMap[x, y]);
                         map.chunkNeedTextureUpdate[x, y] = false;
                     }
                     mapHasBeenUpdate = true;
