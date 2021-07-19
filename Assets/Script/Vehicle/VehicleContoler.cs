@@ -190,10 +190,3 @@ public class VehicleContoler : MonoBehaviour
 	public virtual void AnimeVehicle() { }
 	public virtual void GoToAnotherPoint() { }
 }
-public static class Vector3Extension
-{
-	public static Vector2Int ToVec2Int(this Vector3 vec)
-	{
-		return new Vector2Int(Mathf.FloorToInt(vec.x), Mathf.FloorToInt(vec.z));
-	}
-}

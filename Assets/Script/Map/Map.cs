@@ -89,10 +89,18 @@ public  class Map
 
 	public T GetParcel<T>(Vector2Int pos) where T : Parcel
 	{
-		return parcels[pos.x, pos.y] as T;
+		Parcel parcel = GetParcel(pos);
+		if ( parcel is T)
+			return parcel as T;
+		return null;
 	}
-	public Parcel GetParcel(Vector2Int pos) 
+	public Parcel GetParcel(Vector2Int pos)
 	{
+		if (pos.x < 0 || pos.x >= parcels.GetLength(0) ||
+		    pos.y < 0 || pos.y >= parcels.GetLength(1))
+		{
+			return new Parcel(pos, this);
+		}
 		return parcels[pos.x, pos.y];
 	}
 
@@ -240,6 +248,7 @@ public  class Map
 		}
 		parcels[pos.x, pos.y] = Parcel.CopyClass(parcels[pos.x, pos.y], new Parcel());
 		UpdateChunkTexture(Mathf.FloorToInt(pos.x / 50), Mathf.FloorToInt(pos.y / 50));
+		UpdateObjectMesh(Mathf.FloorToInt(pos.x / 50), Mathf.FloorToInt(pos.y / 50));
 		importParcels.Remove(parcels[pos.x, pos.y]);
 		return true;
 	}

@@ -1,23 +1,46 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class CamControler : MonoBehaviour
 {
+    [SerializeField]
+    private float upSpeed = 1f;
+
+    private Vector3 futurPos;
+
+    private void Start()
+    {
+        futurPos = transform.position;
+    }
+
     void Update()
     {
         if (!PlayerControler.PointerIsOverUI())
         {
-            transform.position = transform.position + Vector3.up * Input.mouseScrollDelta.y * -5;
+            futurPos +=  Vector3.up * (Input.mouseScrollDelta.y * -1 * futurPos.y * 0.1f);
         }
-        if (transform.position.y > 200)
+        if (futurPos.y > 200)
+            futurPos = new Vector3(futurPos.x, 200f, futurPos.z);
+        futurPos += (Vector3.forward * Input.GetAxis("Vertical") + Vector3.right * Input.GetAxis("Horizontal")) * 
+                    (Time.deltaTime * futurPos.y * 1f * (Input.GetKey(KeyCode.LeftShift) ? 3 : 1));
+
+        float minCam = MapManager.map.GetParcel(futurPos.ToVec2Int()).corner.Max() + 1;
+        if (futurPos.y < minCam)
         {
-            transform.position = new Vector3(transform.position.x, 200f, transform.position.z);
+            futurPos = new Vector3(futurPos.x, minCam, futurPos.z);
         }
-        if (transform.position.y < 3)
-        {
-            transform.position = new Vector3(transform.position.x, 3f, transform.position.z);
-        }
-        transform.position = transform.position + (Vector3.forward * Input.GetAxis("Vertical") + Vector3.right * Input.GetAxis("Horizontal")) * Time.deltaTime * transform.position.y * 1f;
+
+        var position = transform.position;
+        var diffPos = futurPos - position;
+        Vector3 velocity = diffPos.normalized *
+                           ((1 + diffPos.magnitude * 5f) * Time.deltaTime);
+        if (diffPos.magnitude < velocity.magnitude)
+            transform.position = futurPos;
+        else
+            transform.position += velocity;
+
     }
 }

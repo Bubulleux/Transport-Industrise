@@ -27,10 +27,11 @@ public class Chuck : MonoBehaviour
 		
 		MeshFilterComponente.mesh = mesh;
 		ColliderComponente.sharedMesh = mesh;
-		RendererComponente.sharedMaterial = new Material(Shader.Find("Standard"))
-		{
-			mainTexture = texture,
-		};
+		// RendererComponente.sharedMaterial = new Material(Shader.Find("Standard"))
+		// {
+		// 	mainTexture = texture,
+		// };
+		RendererComponente.material.mainTexture = texture;
 		UpdateObject();
 	}
 	
