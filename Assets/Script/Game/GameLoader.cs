@@ -43,7 +43,7 @@ public class GameLoader : MonoBehaviour
 
         await LoadGame();
 
-        new Save().SaveGame();
+        //new Save().SaveGame();
 
         load = LoadStatus.Done;
     }
@@ -101,7 +101,7 @@ public class GameLoader : MonoBehaviour
             for (int x = 0; x < Width; x++)
             {
                 LoadingIndicator = $"Loading Mesh {y * Height + x}/{Height * Width}";
-                chunks[x, y] = await MeshGenerator.AsyncGetChunkMesh(new Vector2Int(x, y), MapManager.map);
+                chunks[x, y] = MeshGenerator.GetChunkMesh(new Vector2Int(x, y), MapManager.map);
                 if ((y * Height + x) % 50 == 0)
                 {
                     await Task.Delay(1);

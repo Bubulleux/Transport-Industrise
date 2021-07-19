@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 public static class MeshGenerator
 {
     
-    public static async Task AsyncGenerateChunk(Vector2Int chunk, Map map, GameObject chunkGo)
+    public static async Task GenerateChunk(Vector2Int chunk, Map map, GameObject chunkGo)
     {
-        var mesh = await AsyncGetChunkMesh(chunk, map);
+        var mesh = GetChunkMesh(chunk, map);
         chunkGo.GetComponent<MeshFilter>().mesh = mesh;
         chunkGo.GetComponent<MeshCollider>().sharedMesh = mesh;
     }
 
-    public static async Task<Mesh> AsyncGetChunkMesh(Vector2Int chunk, Map map)
+    public static Mesh GetChunkMesh(Vector2Int chunk, Map map)
     {
         var meshData = new MeshData();
         for (var _y = 0; _y < 50; _y++)

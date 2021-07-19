@@ -21,19 +21,17 @@ public  class Map
 	public  const int ChuckSize = 50;
 
 
-	public bool[,] chunkNeedTextureUpdate;
-	public bool[,] chunkNeedMeshUpdate;
+	
 	public List<Parcel> importParcels = new List<Parcel>();
 	public List<Parcel> updatedParcel = new List<Parcel>();
+
+	public MapManager Manager;
 
 	public Map(Vector2Int chunkSize)
 	{
 		parcels = new Parcel[chunkSize.x * 50, chunkSize.y * 50];
-		chunkNeedTextureUpdate = new bool[chunkSize.x, chunkSize.y];
-		chunkNeedMeshUpdate = new bool[chunkSize.x, chunkSize.y];
 	}
-	
-	
+
 	
 	public async Task GenerateMap(MapSettingData mapSetting)
 	{
@@ -68,7 +66,7 @@ public  class Map
 					}
 				}
 				
-				parcels[x, y] = new Parcel(new Vector2Int(x, y))
+				parcels[x, y] = new Parcel(new Vector2Int(x, y), this)
 				{
 					corner = new int[4] { Mathf.FloorToInt(mapNoise[x, y]), Mathf.FloorToInt(mapNoise[x + 1, y]), Mathf.FloorToInt(mapNoise[x, y + 1]), Mathf.FloorToInt(mapNoise[x + 1, y + 1]) },
 					biome = parcelBiome,
@@ -101,6 +99,11 @@ public  class Map
 	public System.Type GetparcelType(Vector2Int pos)
 	{
 		return parcels[pos.x, pos.y].GetType();
+	}
+
+	public bool ParcelIs<T>(Vector2Int pos)
+	{
+		return GetParcel(pos) is T;
 	}
 
 	public bool CreatCity(int x, int y)
@@ -184,15 +187,16 @@ public  class Map
 			}
 			//Instantiate(roadPrefab, new Vector3(pos.x, parcels[pos.x, pos.y].corner[0], pos.y), Quaternion.identity, transform);
 			parcels[pos.x, pos.y] = Parcel.CopyClass(parcels[pos.x, pos.y], new Road());
-			for (var i = 0; i < MapManager.parcelAround.Length; i++)
+			foreach (var neightbourPos in MapManager.parcelAround)
 			{
-				if (parcels[MapManager.parcelAroundCorner[i].x + pos.x, MapManager.parcelAroundCorner[i].y + pos.y].GetType() != typeof(Parcel) && parcels[MapManager.parcelAroundCorner[i].x + pos.x, MapManager.parcelAroundCorner[i].y + pos.y].GetType() == typeof(Road))
+				if (GetparcelType(pos + neightbourPos) == typeof(Road))
 				{
-					GetParcel<Road>(pos).direction[i] = true;
+					GetParcel<Road>(pos + neightbourPos).UpdateRoadObject();
 				}
 			}
 			//parcels[pos.x, pos.y].seeTerrain = false;
 			UpdateChunkTexture(Mathf.FloorToInt(pos.x / 50), Mathf.FloorToInt(pos.y / 50));
+			UpdateObjectMesh(Mathf.FloorToInt(pos.x / 50), Mathf.FloorToInt(pos.y / 50));
 			//if (mapHeight[pos.x, pos.y] != mapHeight[pos.x, pos.y + 1] || mapHeight[pos.x + 1 , pos.y] != mapHeight[pos.x + 1 , pos.y + 1] || mapHeight[pos.x, pos.y] != mapHeight[pos.x + 1, pos.y])
 			//{
 			//    mapHeight[pos.x, pos.y + 1] = mapHeight[pos.x, pos.y];
@@ -254,12 +258,19 @@ public  class Map
 
 	public void UpdateChunkTexture(int x, int y)
 	{
-		chunkNeedTextureUpdate[x, y] = true;
+		if (Manager)
+			Manager.ChuckObjects[x, y].NeedTextureUpdate = true;
 	}
 
 	public void UpdateChunkMesh(int x, int y)
 	{
-		chunkNeedMeshUpdate[x, y] = true;
+		if (Manager)
+			Manager.ChuckObjects[x, y].NeedMeshUpdate = true;
+	}
+	public void UpdateObjectMesh(int x, int y)
+	{
+		if (Manager)
+			Manager.ChuckObjects[x, y].NeedObjectUpdate = true;
 	}
 
 	public T[] GetImpotantParcel<T>() where T : Parcel

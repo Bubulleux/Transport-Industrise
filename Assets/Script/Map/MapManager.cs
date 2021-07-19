@@ -13,12 +13,11 @@ public class MapManager : MonoBehaviour
     //public float[,] mapHeight;
 
     
-    public GameObject[,] gfxsMap = new GameObject[20, 20];
+    public Chuck[,] ChuckObjects = new Chuck[20, 20];
     public GameObject gfxMapPrefab;
 
 
     public static Map map;
-
     public delegate void MapUpdateEventDelegate();
     public event MapUpdateEventDelegate MapUpdateEvent;
 
@@ -53,19 +52,13 @@ public class MapManager : MonoBehaviour
 
     public void CreateChunck(Mesh[,] meshs, Texture2D[,] texrures)
     {
-        for (int y = 0; y < gfxsMap.GetLength(0); y++)
+        map.Manager = this;
+        for (int y = 0; y < ChuckObjects.GetLength(0); y++)
         {
-            for (int x = 0; x < gfxsMap.GetLength(0); x++)
-            {
-                gfxsMap[x, y] = Instantiate(gfxMapPrefab, Vector3.zero, Quaternion.identity, GameObject.Find("Chunks").transform);
-                gfxsMap[x, y].GetComponent<MeshFilter>().mesh = meshs[x, y];
-                gfxsMap[x, y].GetComponent<MeshCollider>().sharedMesh = meshs[x, y];
-                gfxsMap[x, y].GetComponent<Renderer>().sharedMaterial = new Material(Shader.Find("Standard"))
-                {
-                    mainTexture = texrures[x, y]
-                };
-                map.chunkNeedMeshUpdate[x, y] = false;
-                map.chunkNeedTextureUpdate[x, y] = false;
+            for (int x = 0; x < ChuckObjects.GetLength(0); x++)
+            { 
+                ChuckObjects[x, y] = Instantiate(gfxMapPrefab, Vector3.zero, Quaternion.identity, GameObject.Find("Chunks").transform).GetComponent<Chuck>(); 
+                ChuckObjects[x, y].Initialize(new Vector2Int(x, y), meshs[x, y], texrures[x, y]);
             }
         }
     }
@@ -95,8 +88,7 @@ public class MapManager : MonoBehaviour
         {
             for (int x = 0; x < 20; x++)
             {
-                map.chunkNeedMeshUpdate[x, y] = true;
-                map.chunkNeedTextureUpdate[x, y] = true;
+                ChuckObjects[x, y].UpdateChuck(true);
             }
         }
     }
@@ -108,30 +100,7 @@ public class MapManager : MonoBehaviour
         {
             for (int x = 0; x < 20; x++)
             {
-                if (!gfxsMap[x, y].GetComponent<Renderer>().isVisible)
-                {
-                    if (gfxsMap[x, y].activeSelf)
-                        gfxsMap[x, y].SetActive(false);
-                    continue;
-                }
-                if(!gfxsMap[x, y].activeSelf)
-                {
-                    gfxsMap[x, y].SetActive(true);
-                }
-                if (map.chunkNeedTextureUpdate[x, y] || map.chunkNeedMeshUpdate[x, y])
-                {
-                    if (map.chunkNeedMeshUpdate[x, y])
-                    {
-                        MeshGenerator.AsyncGenerateChunk(new Vector2Int(x,y), map, gfxsMap[x, y]);
-                        map.chunkNeedMeshUpdate[x, y] = false;
-                    }
-                    if (map.chunkNeedTextureUpdate[x, y])
-                    {
-                        TextureGenerator.GenerateTextureChunk(new Vector2Int(x,y) , map, gfxsMap[x, y]);
-                        map.chunkNeedTextureUpdate[x, y] = false;
-                    }
-                    mapHasBeenUpdate = true;
-                }
+                ChuckObjects[x, y].UpdateChuck(false);
             }
         }
         if (mapHasBeenUpdate)

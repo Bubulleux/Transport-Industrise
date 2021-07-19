@@ -176,7 +176,7 @@ public class Save
         {
             int x = (i / 4) % map.Size.x;
             int y = (i  / 4 - x ) / map.Size.x;
-            map.parcels[x, y] = new Parcel(new Vector2Int(x, y));
+            map.parcels[x, y] = new Parcel(new Vector2Int(x, y), map);
             for (int j = 0; j < 4; j++)
             {
                 map.parcels[x, y].corner[j] = mapForme[i + j];

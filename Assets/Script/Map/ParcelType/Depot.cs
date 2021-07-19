@@ -28,6 +28,6 @@ public class Depot : Parcel
         base.Interact();
         WindowsOpener.OpenDepotWindow(this);
     }
-
+    
     
 }
