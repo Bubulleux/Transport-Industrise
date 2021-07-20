@@ -1,12 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public static class VehiclePathFinder 
+namespace Script.Vehicle
 {
-    public static List<Vector2Int> FindPath(Vector2Int start, params Vector2Int[] finish)
+    public static class VehiclePathFinder 
     {
-        Dictionary<Vector2Int, int> parcelDistOfStart = new Dictionary<Vector2Int, int>();
-        return null;
+        public static List<Vector2Int> FindPath(Vector2Int start, params Vector2Int[] finish)
+        {
+            Dictionary<Vector2Int, int> parcelDistOfStart = new Dictionary<Vector2Int, int>();
+            return null;
+        }
     }
 }

@@ -1,33 +1,36 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Script.Mapping.ParcelType;
 using UnityEngine;
 
-public static class VehicleManager 
+namespace Script.Vehicle
 {
-
-    public static List<VehicleContoler> Vehicles
+    public static class VehicleManager 
     {
-        get
+
+        public static List<VehicleContoler> Vehicles
+        {
+            get
+            {
+                List<VehicleContoler> returnValue = new List<VehicleContoler>();
+                foreach(GameObject curVehicle in GameObject.FindGameObjectsWithTag("Vehicle"))
+                {
+                    returnValue.Add(curVehicle.GetComponent<VehicleContoler>());
+                }
+                return returnValue;
+            }
+        }
+
+        public static List<VehicleContoler> GetVehicleByPos(Parcel parcel)
         {
             List<VehicleContoler> returnValue = new List<VehicleContoler>();
-            foreach(GameObject curVehicle in GameObject.FindGameObjectsWithTag("Vehicle"))
+            foreach(VehicleContoler curVehicle in Vehicles)
             {
-                returnValue.Add(curVehicle.GetComponent<VehicleContoler>());
+                if (curVehicle.VehiclePos == parcel.pos)
+                {
+                    returnValue.Add(curVehicle);
+                }
             }
             return returnValue;
         }
-    }
-
-    public static List<VehicleContoler> GetVehicleByPos(Parcel parcel)
-    {
-        List<VehicleContoler> returnValue = new List<VehicleContoler>();
-        foreach(VehicleContoler curVehicle in Vehicles)
-        {
-            if (curVehicle.VehiclePos == parcel.pos)
-            {
-                returnValue.Add(curVehicle);
-            }
-        }
-        return returnValue;
     }
 }

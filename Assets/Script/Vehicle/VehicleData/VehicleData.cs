@@ -1,14 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-[CreateAssetMenu(fileName = "Vehicle", menuName = "MyGame/Vehicle")]
-public class VehicleData : ScriptableObject
+namespace Script.Vehicle.VehicleData
 {
-    public string model;
-    public string description;
-    public float speed;
-    public int price;
-    public int maxMaterialTransport;
-    public MaterialData[] materialCanTransport;
+    [CreateAssetMenu(fileName = "Vehicle", menuName = "MyGame/Vehicle")]
+    public class VehicleData : ScriptableObject
+    {
+        public string model;
+        public string description;
+        public float speed;
+        public int price;
+        public int maxMaterialTransport;
+        public MaterialData[] materialCanTransport;
+    }
 }

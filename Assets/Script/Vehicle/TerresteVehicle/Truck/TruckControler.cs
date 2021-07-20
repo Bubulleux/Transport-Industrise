@@ -1,40 +1,40 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System.Threading.Tasks;
-using System;
+﻿using Script.Mapping;
+using Script.Mapping.ParcelType;
 
-public class TruckControler : TerresteVehicle
+namespace Script.Vehicle.TerresteVehicle.Truck
 {
-	public MaterialData materialCurTransport;
-	public int materialQuantity;
-
-	public override float Load()
+	public class TruckControler : TerresteVehicle
 	{
-		LoadingBay loadingBay = MapManager.map.GetParcel<LoadingBay>(VehiclePos);
-		//Debug.Log("Load Call");
-		var timeStop = 0f;
-		
-		if (materialQuantity != 0 && loadingBay.CanUnload(materialCurTransport))
+		public MaterialData materialCurTransport;
+		public int materialQuantity;
+
+		public override float Load()
 		{
-			int materialSucessful = loadingBay.TryToInteract(materialCurTransport, materialQuantity);
-			materialQuantity -= materialSucessful;
-			timeStop += 2f;
-		}
+			LoadingBay loadingBay = MapManager.map.GetParcel<LoadingBay>(VehiclePos);
+			//Debug.Log("Load Call");
+			var timeStop = 0f;
 		
-		if (materialQuantity == 0)
-		{
-			foreach (MaterialData curMaterial in vehicleData.materialCanTransport)
+			if (materialQuantity != 0 && loadingBay.CanUnload(materialCurTransport))
 			{
-				if (loadingBay.GetMaterial(false).ContainsKey(curMaterial) && loadingBay.GetMaterial(false)[curMaterial].quantity > 0)
+				int materialSucessful = loadingBay.TryToInteract(materialCurTransport, materialQuantity);
+				materialQuantity -= materialSucessful;
+				timeStop += 2f;
+			}
+		
+			if (materialQuantity == 0)
+			{
+				foreach (MaterialData curMaterial in vehicleData.materialCanTransport)
 				{
-					int materialSucessful = loadingBay.TryToInteract(curMaterial, materialQuantity - vehicleData.maxMaterialTransport);
-					materialQuantity -= materialSucessful;
-					materialCurTransport = curMaterial;
-					timeStop += 2f;
+					if (loadingBay.GetMaterial(false).ContainsKey(curMaterial) && loadingBay.GetMaterial(false)[curMaterial].quantity > 0)
+					{
+						int materialSucessful = loadingBay.TryToInteract(curMaterial, materialQuantity - vehicleData.maxMaterialTransport);
+						materialQuantity -= materialSucessful;
+						materialCurTransport = curMaterial;
+						timeStop += 2f;
+					}
 				}
 			}
+			return timeStop;
 		}
-		return timeStop;
 	}
 }

@@ -1,67 +1,68 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using Script.Game;
 using UnityEngine;
 using UnityEngine.UI;
-using System.IO;
 
-public class MainMenu : MonoBehaviour
+namespace Script.UI
 {
-    public GameObject mainMenu;
-
-    public GameObject loadGameMenu;
-    public Transform loadGameMenuContente;
-
-    public GameObject newGameMenu;
-    public Transform newGameMenuContente;
-
-    public void OpenNewGameMenu()
+    public class MainMenu : MonoBehaviour
     {
-        mainMenu.SetActive(false);
-        newGameMenu.SetActive(true);
-    }
+        public GameObject mainMenu;
 
-    public void OpenLoadGameMenu()
-    {
-        mainMenu.SetActive(false);
-        loadGameMenu.SetActive(true);
-        GameObject template = loadGameMenuContente.Find("Template").gameObject;
-        foreach (Transform curChild in loadGameMenuContente)
+        public GameObject loadGameMenu;
+        public Transform loadGameMenuContente;
+
+        public GameObject newGameMenu;
+        public Transform newGameMenuContente;
+
+        public void OpenNewGameMenu()
         {
-            if (curChild.gameObject.activeSelf == true)
+            mainMenu.SetActive(false);
+            newGameMenu.SetActive(true);
+        }
+
+        public void OpenLoadGameMenu()
+        {
+            mainMenu.SetActive(false);
+            loadGameMenu.SetActive(true);
+            GameObject template = loadGameMenuContente.Find("Template").gameObject;
+            foreach (Transform curChild in loadGameMenuContente)
             {
-                Destroy(curChild.gameObject);
+                if (curChild.gameObject.activeSelf == true)
+                {
+                    Destroy(curChild.gameObject);
+                }
+            }
+            foreach (string curSave in FIleSys.GetFolder("/Save"))
+            {
+                Transform curSaveObj = Instantiate(template).transform;
+                curSaveObj.SetParent(template.transform.parent);
+                curSaveObj.Find("SaveName").GetComponent<Text>().text = curSave;
+                curSaveObj.Find("Load").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(delegate { GameLoader.LoadSave(curSave); });
+                curSaveObj.gameObject.SetActive(true);
             }
         }
-        foreach (string curSave in FIleSys.GetFolder("/Save"))
+        public void OpenSetting()
         {
-            Transform curSaveObj = Instantiate(template).transform;
-            curSaveObj.SetParent(template.transform.parent);
-            curSaveObj.Find("SaveName").GetComponent<Text>().text = curSave;
-            curSaveObj.Find("Load").GetComponent<Button>().onClick.AddListener(delegate { GameLoader.LoadSave(curSave); });
-            curSaveObj.gameObject.SetActive(true);
+            Debug.Log("Open Setting");
         }
-    }
-    public void OpenSetting()
-    {
-        Debug.Log("Open Setting");
-    }
 
-    public void QuitGame()
-    {
-        Debug.Log("Quit Game");
-        Application.Quit();
-    }
+        public void QuitGame()
+        {
+            Debug.Log("Quit Game");
+            Application.Quit();
+        }
 
-    public void Cancel()
-    {
-        mainMenu.SetActive(true);
-        loadGameMenu.SetActive(false);
-        newGameMenu.SetActive(false);
-    }
+        public void Cancel()
+        {
+            mainMenu.SetActive(true);
+            loadGameMenu.SetActive(false);
+            newGameMenu.SetActive(false);
+        }
 
-    public void NewGame()
-    {
-        string saveName = newGameMenuContente.Find("SaveName").GetComponentInChildren<InputField>().text;
-        GameLoader.GenerateMap(saveName);
+        public void NewGame()
+        {
+            string saveName = newGameMenuContente.Find("SaveName").GetComponentInChildren<InputField>().text;
+            GameLoader.GenerateMap(saveName);
+        }
     }
 }

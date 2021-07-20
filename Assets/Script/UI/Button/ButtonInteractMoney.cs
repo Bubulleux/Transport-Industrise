@@ -1,14 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
-public class ButtonInteractMoney : MonoBehaviour
+namespace Script.UI.Button
 {
-    public delegate bool Condiction();
-    public Condiction condiction;
-    void Update()
+    public class ButtonInteractMoney : MonoBehaviour
     {
-        GetComponent<Button>().interactable = condiction();
+        public delegate bool Condiction();
+        public Condiction condiction;
+        void Update()
+        {
+            GetComponent<UnityEngine.UI.Button>().interactable = condiction();
+        }
     }
 }

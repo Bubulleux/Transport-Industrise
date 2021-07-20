@@ -1,55 +1,55 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System;
-using UnityEngine;
-using System.IO;
+﻿using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using UnityEngine;
 
-public static class FIleSys
+namespace Script
 {
-    public static T[] GetAllInstances<T>() where T : ScriptableObject
+    public static class FIleSys
     {
-        return Resources.LoadAll<T>("ScriptableObject");
-    }
-
-    public static void SaveFile(string path, object contente)
-    {
-        if (!Directory.Exists(Path.GetDirectoryName(Application.persistentDataPath + path)))
+        public static T[] GetAllInstances<T>() where T : ScriptableObject
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(Application.persistentDataPath + path));
+            return Resources.LoadAll<T>("ScriptableObject");
         }
-        FileStream fileStream = new FileStream(Application.persistentDataPath + path, FileMode.OpenOrCreate);
-        BinaryFormatter binaryFormatter = new BinaryFormatter();
-        binaryFormatter.Serialize(fileStream, contente);
-        fileStream.Close();
-    }
 
-    public static T OpenFile<T>(string path)
-    {
-        if (File.Exists(Application.persistentDataPath + path))
+        public static void SaveFile(string path, object contente)
         {
-            BinaryFormatter binaryFormater = new BinaryFormatter();
-            FileStream fileStream = new FileStream(Application.persistentDataPath + path, FileMode.Open);
-            T contente = (T)binaryFormater.Deserialize(fileStream);
+            if (!Directory.Exists(Path.GetDirectoryName(Application.persistentDataPath + path)))
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(Application.persistentDataPath + path));
+            }
+            FileStream fileStream = new FileStream(Application.persistentDataPath + path, FileMode.OpenOrCreate);
+            BinaryFormatter binaryFormatter = new BinaryFormatter();
+            binaryFormatter.Serialize(fileStream, contente);
             fileStream.Close();
-            return contente;
         }
-        else
-        {
-            Debug.LogError($"{Application.persistentDataPath + path} not found");
-        }
-        return default;
-    }
 
-    public static string[] GetFolder(string path)
-    {
-        string[] folders = Directory.GetDirectories(Application.persistentDataPath + path);
-        string[] foldersCut = new string[folders.Length];
-        for (int i = 0; i < folders.Length; i++)
+        public static T OpenFile<T>(string path)
         {
-            int indexCut = folders[i].IndexOf("\\");
-            foldersCut[i] = folders[i].Substring(indexCut + 1);
+            if (File.Exists(Application.persistentDataPath + path))
+            {
+                BinaryFormatter binaryFormater = new BinaryFormatter();
+                FileStream fileStream = new FileStream(Application.persistentDataPath + path, FileMode.Open);
+                T contente = (T)binaryFormater.Deserialize(fileStream);
+                fileStream.Close();
+                return contente;
+            }
+            else
+            {
+                Debug.LogError($"{Application.persistentDataPath + path} not found");
+            }
+            return default;
         }
-        return foldersCut;
+
+        public static string[] GetFolder(string path)
+        {
+            string[] folders = Directory.GetDirectories(Application.persistentDataPath + path);
+            string[] foldersCut = new string[folders.Length];
+            for (int i = 0; i < folders.Length; i++)
+            {
+                int indexCut = folders[i].IndexOf("\\");
+                foldersCut[i] = folders[i].Substring(indexCut + 1);
+            }
+            return foldersCut;
+        }
     }
 }

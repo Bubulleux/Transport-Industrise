@@ -1,46 +1,47 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
+using Script.Mapping;
 using UnityEngine;
 
-public class CamControler : MonoBehaviour
+namespace Script.Controler
 {
-    [SerializeField]
-    private float upSpeed = 1f;
-
-    private Vector3 futurPos;
-
-    private void Start()
+    public class CamControler : MonoBehaviour
     {
-        futurPos = transform.position;
-    }
+        [SerializeField]
+        private float upSpeed = 1f;
 
-    void Update()
-    {
-        if (!PlayerControler.PointerIsOverUI())
-        {
-            futurPos +=  Vector3.up * (Input.mouseScrollDelta.y * -1 * futurPos.y * 0.1f);
-        }
-        if (futurPos.y > 200)
-            futurPos = new Vector3(futurPos.x, 200f, futurPos.z);
-        futurPos += (Vector3.forward * Input.GetAxis("Vertical") + Vector3.right * Input.GetAxis("Horizontal")) * 
-                    (Time.deltaTime * futurPos.y * 1f * (Input.GetKey(KeyCode.LeftShift) ? 3 : 1));
+        private Vector3 futurPos;
 
-        float minCam = MapManager.map.GetParcel(futurPos.ToVec2Int()).corner.Max() + 1;
-        if (futurPos.y < minCam)
+        private void Start()
         {
-            futurPos = new Vector3(futurPos.x, minCam, futurPos.z);
+            futurPos = transform.position;
         }
 
-        var position = transform.position;
-        var diffPos = futurPos - position;
-        Vector3 velocity = diffPos.normalized *
-                           ((1 + diffPos.magnitude * 5f) * Time.deltaTime);
-        if (diffPos.magnitude < velocity.magnitude)
-            transform.position = futurPos;
-        else
-            transform.position += velocity;
+        void Update()
+        {
+            if (!PlayerControler.PointerIsOverUI())
+            {
+                futurPos +=  Vector3.up * (Input.mouseScrollDelta.y * -1 * futurPos.y * 0.1f);
+            }
+            if (futurPos.y > 200)
+                futurPos = new Vector3(futurPos.x, 200f, futurPos.z);
+            futurPos += (Vector3.forward * Input.GetAxis("Vertical") + Vector3.right * Input.GetAxis("Horizontal")) * 
+                        (Time.deltaTime * futurPos.y * 1f * (Input.GetKey(KeyCode.LeftShift) ? 3 : 1));
 
+            float minCam = MapManager.map.GetParcel(futurPos.ToVec2Int()).corner.Max() + 1;
+            if (futurPos.y < minCam)
+            {
+                futurPos = new Vector3(futurPos.x, minCam, futurPos.z);
+            }
+
+            var position = transform.position;
+            var diffPos = futurPos - position;
+            Vector3 velocity = diffPos.normalized *
+                               ((1 + diffPos.magnitude * 5f) * Time.deltaTime);
+            if (diffPos.magnitude < velocity.magnitude)
+                transform.position = futurPos;
+            else
+                transform.position += velocity;
+
+        }
     }
 }

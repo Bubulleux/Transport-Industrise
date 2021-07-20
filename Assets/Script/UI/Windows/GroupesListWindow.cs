@@ -1,44 +1,46 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using Script.Vehicle;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GroupesListWindow : WindowContent
+namespace Script.UI.Windows
 {
-    public Transform groupesList;
-    public GameObject groupePrefab;
-    void Start()
+    public class GroupesListWindow : WindowContent
     {
-        WindowParente.WindowName = "Groups List";
-        UpdateList();
-    }
-
-    public void ButCreateGroupe()
-    {
-        new Group();
-        UpdateList();
-    }
-    public void UpdateList()
-    {
-        foreach (Transform curChild in groupesList)
+        public Transform groupesList;
+        public GameObject groupePrefab;
+        void Start()
         {
-            if (curChild.gameObject.activeSelf)
-            {
-                Destroy(curChild.gameObject);
-            }
+            WindowParente.WindowName = "Groups List";
+            UpdateList();
         }
-        int i = 0;
-        foreach (Group curGroupe in Group.groups)
+
+        public void ButCreateGroupe()
         {
-            Transform _go = Instantiate(groupePrefab).transform;
-            _go.SetParent(groupesList);
-            _go.Find("Name").GetComponent<Text>().text = curGroupe.name;
-            int _i = i;
-            _go.Find("Start").GetComponent<Button>().onClick.AddListener(delegate { curGroupe.StartEveryVehicle(); });
-            _go.Find("Stop").GetComponent<Button>().onClick.AddListener(delegate { curGroupe.StopEveryVehicle(); });
-            _go.Find("Info").GetComponent<Button>().onClick.AddListener(delegate { WindowsOpener.OpenGroupWindow(curGroupe); });
-            _go.gameObject.SetActive(true);
-            i++;
+            new Group();
+            UpdateList();
+        }
+        public void UpdateList()
+        {
+            foreach (Transform curChild in groupesList)
+            {
+                if (curChild.gameObject.activeSelf)
+                {
+                    Destroy(curChild.gameObject);
+                }
+            }
+            int i = 0;
+            foreach (Group curGroupe in Group.groups)
+            {
+                Transform _go = Instantiate(groupePrefab).transform;
+                _go.SetParent(groupesList);
+                _go.Find("Name").GetComponent<Text>().text = curGroupe.name;
+                int _i = i;
+                _go.Find("Start").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(delegate { curGroupe.StartEveryVehicle(); });
+                _go.Find("Stop").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(delegate { curGroupe.StopEveryVehicle(); });
+                _go.Find("Info").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(delegate { WindowsOpener.OpenGroupWindow(curGroupe); });
+                _go.gameObject.SetActive(true);
+                i++;
+            }
         }
     }
 }

@@ -1,19 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class WindowContent : MonoBehaviour
+namespace Script.UI.Windows
 {
-    public Window WindowParente
+    public class WindowContent : MonoBehaviour
     {
-        get
+        public Window WindowParente
         {
-            return transform.parent.GetComponent<Window>();
+            get
+            {
+                return transform.parent.GetComponent<Window>();
+            }
         }
-    }
 
-    public void Close()
-    {
-        WindowParente.Close();
+        public void Close()
+        {
+            WindowParente.Close();
+        }
     }
 }

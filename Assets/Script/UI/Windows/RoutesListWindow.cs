@@ -1,49 +1,51 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class RoutesListWindow : MonoBehaviour
+namespace Script.UI.Windows
 {
-    public static List<Route> routes = new List<Route>();
-    public Transform routesList;
-    public GameObject routePrefab;
-    void Start()
+    public class RoutesListWindow : MonoBehaviour
     {
-        UpdateList();
-    }
-
-    public void ButCreateRoute()
-    {
-        WindowsOpener.OpenRouteCreatorWindow(delegate (Route route) { routes.Add(route); PrintList(); UpdateList(); });
-    }
-    public void UpdateList()
-    {
-        foreach (Transform curChild in routesList)
+        public static List<Route> routes = new List<Route>();
+        public Transform routesList;
+        public GameObject routePrefab;
+        void Start()
         {
-            if (curChild.gameObject.activeSelf)
+            UpdateList();
+        }
+
+        public void ButCreateRoute()
+        {
+            WindowsOpener.OpenRouteCreatorWindow(delegate (Route route) { routes.Add(route); PrintList(); UpdateList(); });
+        }
+        public void UpdateList()
+        {
+            foreach (Transform curChild in routesList)
             {
-                Destroy(curChild.gameObject);
+                if (curChild.gameObject.activeSelf)
+                {
+                    Destroy(curChild.gameObject);
+                }
+            }
+            int i = 0;
+            foreach (Route curRoute in routes)
+            {
+                Transform _go = Instantiate(routePrefab).transform;
+                _go.SetParent(routesList);
+                _go.Find("Name").GetComponent<Text>().text = curRoute.name;
+                int _i = i;
+                _go.Find("Edit").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(delegate { WindowsOpener.OpenRouteCreatorWindow(delegate (Route route) { routes[_i] = route; UpdateList(); }, curRoute); });
+                _go.Find("Delete").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(delegate { Debug.Log(_i);  routes.RemoveAt(_i); UpdateList(); });
+                _go.gameObject.SetActive(true);
+                i++;
             }
         }
-        int i = 0;
-        foreach (Route curRoute in routes)
+        public void PrintList()
         {
-            Transform _go = Instantiate(routePrefab).transform;
-            _go.SetParent(routesList);
-            _go.Find("Name").GetComponent<Text>().text = curRoute.name;
-            int _i = i;
-            _go.Find("Edit").GetComponent<Button>().onClick.AddListener(delegate { WindowsOpener.OpenRouteCreatorWindow(delegate (Route route) { routes[_i] = route; UpdateList(); }, curRoute); });
-            _go.Find("Delete").GetComponent<Button>().onClick.AddListener(delegate { Debug.Log(_i);  routes.RemoveAt(_i); UpdateList(); });
-            _go.gameObject.SetActive(true);
-            i++;
-        }
-    }
-    public void PrintList()
-    {
-        foreach(Route curRoute in routes)
-        {
-            Debug.Log(curRoute.name);
+            foreach(Route curRoute in routes)
+            {
+                Debug.Log(curRoute.name);
+            }
         }
     }
 }

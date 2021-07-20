@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class TerrestVehicleData : VehicleData
+﻿namespace Script.Vehicle.VehicleData
 {
+	public class TerrestVehicleData : VehicleData
+	{
 	
+	}
 }

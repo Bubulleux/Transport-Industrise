@@ -1,32 +1,33 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class GameManager : MonoBehaviour
+namespace Script.Game
 {
-    public static GameManager instence;
-    public static string saveName;
-
-    [SerializeField]
-    private long money = 0;
-    public static long Money 
+    public class GameManager : MonoBehaviour
     {
-        get { return instence.money; } 
-        set 
+        public static GameManager instence;
+        public static string saveName;
+
+        [SerializeField]
+        private long money = 0;
+        public static long Money 
         {
-            instence.money = value;
-        } 
-    }
+            get { return instence.money; } 
+            set 
+            {
+                instence.money = value;
+            } 
+        }
 
-    void Awake()
-    {
-        instence = this;
-        money = 100000;
-    }
+        void Awake()
+        {
+            instence = this;
+            money = 100000;
+        }
 
-    // Update is called once per frame
-    void Update()
-    {
+        // Update is called once per frame
+        void Update()
+        {
         
+        }
     }
 }

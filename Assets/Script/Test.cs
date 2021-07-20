@@ -1,11 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Newtonsoft.Json;
+﻿using UnityEngine;
 
-public class Test : MonoBehaviour
+namespace Script
 {
+	public class Test : MonoBehaviour
+	{
 
+	}
 }
 
 

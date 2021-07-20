@@ -1,20 +1,21 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class DontDestroyManager : MonoBehaviour
+namespace Script.Game
 {
-    static DontDestroyManager instance;
-    private void Awake()
+    public class DontDestroyManager : MonoBehaviour
     {
-        if (instance == null)
+        static DontDestroyManager instance;
+        private void Awake()
         {
-            instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
+            if (instance == null)
+            {
+                instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
         }
     }
 }

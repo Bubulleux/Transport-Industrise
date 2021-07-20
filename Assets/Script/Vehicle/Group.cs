@@ -1,40 +1,42 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
+using Script.UI.Windows;
 
-[JsonObject(MemberSerialization.OptOut)]
-public class Group
+namespace Script.Vehicle
 {
-    [JsonIgnore]
-    public static List<Group> groups = new List<Group>();
-    public string name;
-    [JsonIgnore]
-    public List<VehicleContoler> vehicles = new List<VehicleContoler>();
-
-    public bool forceRoute;
-    public Route route;
-
-    public Group()
+    [JsonObject(MemberSerialization.OptOut)]
+    public class Group
     {
-        groups.Add(this);
-        name = "Random Groupe";
-    }
+        [JsonIgnore]
+        public static List<Group> groups = new List<Group>();
+        public string name;
+        [JsonIgnore]
+        public List<VehicleContoler> vehicles = new List<VehicleContoler>();
 
+        public bool forceRoute;
+        public Route route;
 
-    public void StartEveryVehicle()
-    {
-        foreach(VehicleContoler curVehicle in vehicles)
+        public Group()
         {
-            curVehicle.StartVehicle();
+            groups.Add(this);
+            name = "Random Groupe";
         }
-    }
 
-    public void StopEveryVehicle()
-    {
-        foreach (VehicleContoler curVehicle in vehicles)
+
+        public void StartEveryVehicle()
         {
-            curVehicle.ReturnInDepot();
+            foreach(VehicleContoler curVehicle in vehicles)
+            {
+                curVehicle.StartVehicle();
+            }
+        }
+
+        public void StopEveryVehicle()
+        {
+            foreach (VehicleContoler curVehicle in vehicles)
+            {
+                curVehicle.ReturnInDepot();
+            }
         }
     }
 }
