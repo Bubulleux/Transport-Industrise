@@ -11,6 +11,8 @@ namespace Script.Controler
 
         private Vector3 futurPos;
 
+        public static Vector3 camPos;
+
         private void Start()
         {
             futurPos = transform.position;
@@ -22,8 +24,8 @@ namespace Script.Controler
             {
                 futurPos +=  Vector3.up * (Input.mouseScrollDelta.y * -1 * futurPos.y * 0.1f);
             }
-            if (futurPos.y > 200)
-                futurPos = new Vector3(futurPos.x, 200f, futurPos.z);
+            if (futurPos.y > 500)
+                futurPos = new Vector3(futurPos.x, 500f, futurPos.z);
             futurPos += (Vector3.forward * Input.GetAxis("Vertical") + Vector3.right * Input.GetAxis("Horizontal")) * 
                         (Time.deltaTime * futurPos.y * 1f * (Input.GetKey(KeyCode.LeftShift) ? 3 : 1));
 
@@ -41,6 +43,7 @@ namespace Script.Controler
                 transform.position = futurPos;
             else
                 transform.position += velocity;
+            camPos = transform.position;
 
         }
     }

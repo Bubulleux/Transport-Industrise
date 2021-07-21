@@ -11,7 +11,7 @@ namespace Script.Mapping.ParcelType
 
 		public override void Initialaze()
 		{
-			color = Color.black;
+			color = new Color(0.06f, 0.06f, 0.06f);
 			UpdateRoadObject();
 		
 		}

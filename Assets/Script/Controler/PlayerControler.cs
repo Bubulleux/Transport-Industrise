@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using Script.Mapping;
 using Script.Mapping.ParcelType;
 using Script.UI.Windows;
@@ -74,43 +75,69 @@ namespace Script.Controler
 		public IEnumerator MakeRoad()
 		{
 			Vector2Int startMouse = GetMoussePos().ToVec2Int();
+			Vector2Int endMouse = GetMoussePos().ToVec2Int();
 			while (Input.GetMouseButton(0))
 			{
 				yield return new WaitForFixedUpdate();
+
+				if (endMouse == GetMoussePos().ToVec2Int())
+					continue;
+				
+				endMouse = GetMoussePos().ToVec2Int();
+				MapManager.Selector.ClearSelection();
+				foreach (var pathCell in GetPathBetweenTwoPoint(startMouse, endMouse, 50))
+				{
+					MapManager.Selector.SelectionParcel(pathCell.Key, Color.black);
+				}
 			}
-			Vector2Int endMouse = GetMoussePos().ToVec2Int();
-			Vector2Int lastPos = startMouse;
-			MapManager.map.AddRoad(startMouse);
+
+			endMouse = GetMoussePos().ToVec2Int();
+			MapManager.Selector.ClearSelection();
+			foreach (var pathCell in GetPathBetweenTwoPoint(startMouse, endMouse, 50))
+			{;
+				MapManager.map.AddRoad(pathCell.Key);
+			}
+			
+		}
+
+		public static Dictionary<Vector2Int, bool> GetPathBetweenTwoPoint(Vector2Int start, Vector2Int stop, int minSizeRoad)
+		{
+			
+			Vector2Int lastPos = start;
+			var path = new Dictionary<Vector2Int, bool>();
+			path.Add(start, true);
 			while (true)
 			{
-				if (lastPos == endMouse)
+				if (lastPos == stop)
 				{
 					break;
 				}
-				float xProgress = Mathf.Abs(lastPos.x - startMouse.x) / (float)Mathf.Abs(startMouse.x - endMouse.x);
-				float yProgress = Mathf.Abs(lastPos.y - startMouse.y) / (float)Mathf.Abs(startMouse.y - endMouse.y);
+				float xProgress = Mathf.Abs(lastPos.x - start.x) / (float)Mathf.Abs(start.x - stop.x);
+				float yProgress = Mathf.Abs(lastPos.y - start.y) / (float)Mathf.Abs(start.y - stop.y);
 				xProgress = (float.IsNaN(xProgress) || float.IsInfinity(xProgress)) ? 1 : xProgress;
 				yProgress = (float.IsNaN(yProgress) || float.IsInfinity(yProgress)) ? 1 : yProgress;
 				if (xProgress < yProgress)
 				{
-					for (int i = 0; i < 50; i++)
+					for (int i = 0; i < minSizeRoad; i++)
 					{
-						lastPos += new Vector2Int(lastPos.x < endMouse.x ? 1 : -1, 0);
-						MapManager.map.AddRoad(lastPos);
-						if (lastPos.x == endMouse.x) { break; }
+						lastPos += new Vector2Int(lastPos.x < stop.x ? 1 : -1, 0);
+						path.Add(lastPos, true);
+						if (lastPos.x == stop.x) { break; }
 					}
 				}
 				else
 				{
-					for (int i = 0; i < 50; i++)
+					for (int i = 0; i < minSizeRoad; i++)
 					{
-						lastPos += new Vector2Int(0, lastPos.y < endMouse.y ? 1 : -1);
-						MapManager.map.AddRoad(lastPos);
-						if (lastPos.y == endMouse.y) { break; }
+						lastPos += new Vector2Int(0, lastPos.y < stop.y ? 1 : -1);
+						path.Add(lastPos, true);
+						if (lastPos.y == stop.y) { break; }
 					}
 				}
 		   
 			}
+			
+			return path;
 		}
 
 		public void SetTool(int tool)

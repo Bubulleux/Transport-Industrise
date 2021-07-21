@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using Script.Controler;
 using Script.MapGeneration;
 using Script.Mapping.ParcelType;
 using UnityEngine;
@@ -19,6 +21,10 @@ namespace Script.Mapping
 
 		private Dictionary<Vector2Int, ChuckObject> Objects = new Dictionary<Vector2Int, ChuckObject>();
 
+		private bool _chuckActive;
+
+		public float camDist;
+
 		public void Initialize(Vector2Int pos, Mesh mesh, Texture2D texture)
 		{
 			Pos = pos;
@@ -32,10 +38,36 @@ namespace Script.Mapping
 			// 	mainTexture = texture,
 			// };
 			RendererComponente.material.mainTexture = texture;
+			_chuckActive = true;
 			UpdateObject();
 		}
-	
-	
+
+
+		private void Update()
+		{
+			camDist = Vector3.Distance(new Vector3((Pos.x + 0.5f) * Map.ChuckSize, 0f, (Pos.y + 0.5f) * Map.ChuckSize),
+				CamControler.camPos);
+			
+			if (camDist > 250 && _chuckActive)
+			{
+				
+				SetChuckActive(false);
+			}
+			if (camDist < 250 && !_chuckActive)
+			{
+				SetChuckActive(true);
+			}
+		}
+
+		private void SetChuckActive(bool enable)
+		{
+			_chuckActive = enable;
+			foreach (Transform child in transform)
+			{
+				child.gameObject.SetActive(enable);
+			}
+		}
+		
 		public void UpdateChuck(bool force)
 		{
 			if (NeedMeshUpdate || force)
@@ -108,20 +140,7 @@ namespace Script.Mapping
 			}
 		}
 
-		private void OnBecameVisible()
-		{
-			foreach (Transform child in transform)
-			{
-				child.gameObject.SetActive(true);
-			}
-		}
-		private void OnBecameInvisible()
-		{
-			foreach (Transform child in transform)
-			{
-				child.gameObject.SetActive(false);
-			}
-		}
+		
 
 		private struct ChuckObject
 		{

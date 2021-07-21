@@ -408,6 +408,36 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 199105288}
   m_CullTransparentMesh: 0
+--- !u!1 &322142617
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 322142618}
+  m_Layer: 0
+  m_Name: BoxOfSelection
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &322142618
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 322142617}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 778757881}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &325272425
 GameObject:
   m_ObjectHideFlags: 0
@@ -864,7 +894,7 @@ MeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 474178633}
   m_Enabled: 1
-  m_CastShadows: 1
+  m_CastShadows: 0
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_MotionVectors: 1
@@ -1217,6 +1247,7 @@ GameObject:
   m_Component:
   - component: {fileID: 778757881}
   - component: {fileID: 778757877}
+  - component: {fileID: 778757878}
   m_Layer: 0
   m_Name: Map
   m_TagString: Untagged
@@ -1242,6 +1273,22 @@ MonoBehaviour:
     type: 3}
   gfxMapPrefab: {fileID: 9056373014444483734, guid: fc597df07bad844459023280c7bbcafe,
     type: 3}
+--- !u!114 &778757878
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 778757876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 344e6313094d4439b0f80f41b31a8f42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SelectBox: {fileID: 9097418126206369426, guid: 15292df797ed6d446b93a0a15a804b14,
+    type: 3}
+  SelectBoxParente: {fileID: 322142618}
+  BoxSelectioCount: 0
 --- !u!4 &778757881
 Transform:
   m_ObjectHideFlags: 0
@@ -1257,6 +1304,7 @@ Transform:
   - {fileID: 943178251}
   - {fileID: 691954910}
   - {fileID: 741834946}
+  - {fileID: 322142618}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1519,8 +1567,8 @@ Camera:
   m_GameObject: {fileID: 963194225}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.043137256, g: 0.32156864, b: 0.5294118, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -1535,7 +1583,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 80
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -1579,6 +1627,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe059210f3a28554e8970e0399a76c2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  upSpeed: 1
 --- !u!1 &1017271937
 GameObject:
   m_ObjectHideFlags: 0

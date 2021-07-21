@@ -13,17 +13,17 @@ namespace Script.Game
      * F2: Make auto Construct
      * F3: Give Money
      * F4: Interact Debug
-     * F5: Create & Serialize Save
-     * F6:
-     * F7:
-     * F8:
-     * F9:
+     * F5: 
+     * F6: Select Parcel
+     * F7: Unselect parcel
+     * F8: Clear Selection
+     * F9: Select Area
      * F10:
      * F11:
      * F12:
      */
-
-        // Update is called once per frame
+        
+        private Vector2Int _startSelection;
         void Update()
         {
             if (Input.GetKeyDown(KeyCode.F1))
@@ -68,10 +68,42 @@ namespace Script.Game
             //
             // }
 
-            if (Input.GetKeyDown(KeyCode.F5))
+            // if (Input.GetKeyDown(KeyCode.F5))
+            // {
+            //     Save.Save save = new Save.Save();
+            //     AsyncTask.MonitorTask(save.SaveGame());
+            // }
+
+            if (Input.GetKeyDown(KeyCode.F6))
             {
-                Save.Save save = new Save.Save();
-                AsyncTask.MonitorTask(save.SaveGame());
+                MapManager.Selector.SelectionParcel(PlayerControler.GetMoussePos().ToVec2Int(),
+                    new Color(Random.value, Random.value, Random.value));
+            }
+            
+            if (Input.GetKeyDown(KeyCode.F7))
+            {
+                MapManager.Selector.UnSelectParcel(PlayerControler.GetMoussePos().ToVec2Int());
+            }
+            
+            if (Input.GetKeyDown(KeyCode.F8))
+            {
+                MapManager.Selector.ClearSelection();
+            }
+            
+            if (Input.GetKeyDown(KeyCode.F9))
+            {
+                _startSelection = PlayerControler.GetMoussePos().ToVec2Int();
+            }
+
+            if (Input.GetKey(KeyCode.F9))
+            {
+                MapManager.Selector.UnSelectColor(Color.green);
+                MapManager.Selector.SelectArea(_startSelection, PlayerControler.GetMoussePos().ToVec2Int(), Color.green);
+            }
+            if (Input.GetKeyUp(KeyCode.F9))
+            {
+                MapManager.Selector.UnSelectColor(Color.green);
+                MapManager.Selector.SelectArea(_startSelection, PlayerControler.GetMoussePos().ToVec2Int(), Color.red);
             }
 
 

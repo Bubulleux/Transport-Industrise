@@ -68,24 +68,24 @@ namespace Script.MapGeneration
 
         public Mesh GetMesh()
         {
-            var verticesArray = new Vector3[verticies.Count];
-            var uvsArray = new Vector2[verticies.Count];
-            var triangleArray = new int[triangles.Count];
-            for (var i = 0; i < verticies.Count; i++)
-            {
-                verticesArray[i] = verticies[i];
-                uvsArray[i] = uvs[i];
-            }
-            for (var i = 0; i < triangles.Count; i++)
-            {
-                triangleArray[i] = triangles[i];
-            }
+            // var verticesArray = new Vector3[verticies.Count];
+            // var uvsArray = new Vector2[verticies.Count];
+            // var triangleArray = new int[triangles.Count];
+            // for (var i = 0; i < verticies.Count; i++)
+            // {
+            //     verticesArray[i] = verticies[i];
+            //     uvsArray[i] = uvs[i];
+            // }
+            // for (var i = 0; i < triangles.Count; i++)
+            // {
+            //     triangleArray[i] = triangles[i];
+            // }
             var mesh = new Mesh
             {
                 indexFormat = UnityEngine.Rendering.IndexFormat.UInt32,
-                vertices = verticesArray,
-                triangles = triangleArray,
-                uv = uvsArray
+                vertices = verticies.ToArray(),
+                triangles = triangles.ToArray(),
+                uv = uvs.ToArray(),
             };
             mesh.RecalculateNormals();
             return mesh;

@@ -7,6 +7,7 @@ namespace Script.Mapping
     public class MapManager : MonoBehaviour
     {
         public static MapManager instence;
+        public static ParcelSelector Selector;
 
         public GameObject roadPrefab;
         public GameObject buildingPrefab;
@@ -48,6 +49,7 @@ namespace Script.Mapping
                 enabled = false;
             }
             instence = this;
+            Selector = GetComponent<ParcelSelector>();
         }
 
         public void CreateChunck(Mesh[,] meshs, Texture2D[,] texrures)

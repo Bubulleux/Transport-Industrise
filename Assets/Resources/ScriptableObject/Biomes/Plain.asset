@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Plain
   m_EditorClassIdentifier: 
   name: Plain
-  color: {r: 0, g: 0.745283, b: 0, a: 1}
+  color: {r: 0, g: 0.5849056, b: 0, a: 1}
   coef: 1

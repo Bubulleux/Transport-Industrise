@@ -86,6 +86,7 @@ namespace Script.MapGeneration
                     distAtLimit = limit;
                 }
             }
+
             return distAtLimit;
         }
     }
