@@ -42,9 +42,9 @@ namespace Script.Mapping.ParcelType
 
         public virtual void DebugParcel()
         {
-            UnityEngine.Debug.Log(pos);
-            string parcelJson = Save.Save.GetJson(MapManager.map.GetParcel(pos));
-            Debug.Log(parcelJson);
+            Debug.Log(pos);
+            //string parcelJson = Save.Save.GetJson(MapManager.map.GetParcel(pos));
+            //Debug.Log(parcelJson);
         }
 
         public static Parcel CopyClass(Parcel copyClass, Parcel pastClass)

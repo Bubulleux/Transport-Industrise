@@ -31,22 +31,12 @@ namespace Script.Mapping
 			return true;
 		}
 
-		public void SelectArea(Vector2Int posA, Vector2Int posB, Color color)
+		public void SelectArea(Vector2Int posA, Vector2Int posB, Color color, bool aroundOnly = true)
 		{
-			ClearSelection();
-			var origin = new Vector2Int(posA.x > posB.x ? posB.x : posA.x, posA.y > posB.y ? posB.y : posA.y);
-			var point = new Vector2Int(posA.x < posB.x ? posB.x : posA.x, posA.y < posB.y ? posB.y : posA.y);
-			for (var y = origin.y; y <= point.y; y++)
+			foreach (var pos in Helper.GetArea(posA, posB, aroundOnly))
 			{
-				for (var x = origin.x; x <= point.x; x++)
-				{
-					var limit = SelectionParcel(new Vector2Int(x, y), color);
-					if (!limit)
-						return;
-				}
+				SelectionParcel(pos, color);
 			}
-			SelectionParcel(origin, Color.magenta);
-			SelectionParcel(point, Color.black);
 		}
 
 		public void UnSelectParcel(Vector2Int pos)
@@ -94,7 +84,7 @@ namespace Script.Mapping
 				{
 					if (_gameObjectList.ContainsKey(parcel.Key))
 					{
-						UpdateBox(parcel.Key, parcel.Value, _gameObjectList[parcel.Key]);
+						//UpdateBox(parcel.Key, parcel.Value, _gameObjectList[parcel.Key]);
 					}
 					else
 					{
@@ -115,14 +105,16 @@ namespace Script.Mapping
 						UpdateBox(parcelNeedObject[0], _parcelSeleced[parcelNeedObject[0]], objectRender.Value);
 						parcelNeedObject.RemoveAt(0);
 					}
-					else if (cachObject < 100)
+					else if (cachObject < 1000)
 					{
-						objectRender.Value.gameObject.SetActive(false);
+						objectRender.Value.enabled = false;
+						UpdateNeighbour(objectRender.Key);
 						cachObject += 1;
 					}
 					else
 					{
 						Destroy(objectRender.Value.transform.parent.gameObject);
+						UpdateNeighbour(objectRender.Key);
 						keyModification.Add(objectRender.Key, new Vector2Int(-1, -1));
 					}
 				}
@@ -131,7 +123,6 @@ namespace Script.Mapping
 				{
 					if (modification.Value != new Vector2Int(-1, -1))
 						_gameObjectList.Add(modification.Value, _gameObjectList[modification.Key]);
-					
 					_gameObjectList.Remove(modification.Key);
 				}
 
@@ -148,7 +139,7 @@ namespace Script.Mapping
 			}
 		}
 
-		public void UpdateBox(Vector2Int pos, Color color,  Renderer renderer)
+		public void UpdateBox(Vector2Int pos, Color color,  Renderer renderer, bool updateRecursion = true)
 		{
 			if (_boxUpdated.Contains(renderer))
 				return;
@@ -199,19 +190,24 @@ namespace Script.Mapping
 			var mesh = meshData.GetMesh();
 			renderer.transform.parent.position = new Vector3(pos.x, 0, pos.y);
 			renderer.material.color = color.ColorSetAlpha(0.7f);
-			renderer.gameObject.SetActive(true);
+			renderer.enabled = true;
 			renderer.GetComponent<MeshFilter>().mesh = mesh;
 
-			// if (updateRecursion)
-			// {
-			// 	foreach (var neighbour in MapManager.parcelAround)
-			// 	{
-			// 		if (_gameObjectList.ContainsKey(pos + neighbour) && _parcelSeleced.ContainsKey(pos + neighbour))
-			// 		{
-			// 			UpdateBox(pos + neighbour, _parcelSeleced[pos + neighbour], _gameObjectList[pos + neighbour], updateRecursion = false);
-			// 		}
-			// 	}
-			// }
+			if (updateRecursion)
+			{
+				UpdateNeighbour(pos);
+			}
+		}
+
+		private void UpdateNeighbour(Vector2Int pos)
+		{
+			foreach (var neighbour in MapManager.parcelAround)
+			{
+				if (_gameObjectList.ContainsKey(pos + neighbour) && _parcelSeleced.ContainsKey(pos + neighbour))
+				{
+					UpdateBox(pos + neighbour, _parcelSeleced[pos + neighbour], _gameObjectList[pos + neighbour], false);
+				}
+			}
 		}
 	}
 }

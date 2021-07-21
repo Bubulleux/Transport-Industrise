@@ -1,17 +1,34 @@
+using System.Collections.Generic;
 using UnityEngine;
 
-namespace Script
+
+public static class Helper
 {
-	public static class Helper
+	public static Vector2Int ToVec2Int(this Vector3 vec)
 	{
-		public static Vector2Int ToVec2Int(this Vector3 vec)
+		return new Vector2Int(Mathf.FloorToInt(vec.x), Mathf.FloorToInt(vec.z));
+	}
+
+	public static Color ColorSetAlpha(this Color color, float alpha)
+	{
+		return new Color(color.r, color.b, color.g, alpha);
+	}
+
+	public static List<Vector2Int> GetArea(Vector2Int posA, Vector2Int posB, bool aroundOnly = false)
+	{
+		var origin = new Vector2Int(posA.x > posB.x ? posB.x : posA.x, posA.y > posB.y ? posB.y : posA.y);
+		var point = new Vector2Int(posA.x < posB.x ? posB.x : posA.x, posA.y < posB.y ? posB.y : posA.y);
+		var area = new List<Vector2Int>();
+		for (var y = origin.y; y <= point.y; y++)
 		{
-			return new Vector2Int(Mathf.FloorToInt(vec.x), Mathf.FloorToInt(vec.z));
+			for (var x = origin.x; x <= point.x; x++)
+			{
+				if (aroundOnly && x != origin.x && y != origin.y && y != point.y && x != point.x )
+					continue;
+				area.Add(new Vector2Int(x, y));
+			}
 		}
 
-		public static Color ColorSetAlpha(this Color color, float alpha)
-		{
-			return new Color(color.r, color.b, color.g, alpha);
-		}
+		return area;
 	}
 }

@@ -71,7 +71,7 @@ namespace Script.Game
 
             Texture2D[,] textures = await LoadEveryTexture();
 
-            await AsyncLoadScene(0);
+            await AsyncLoadScene(2);
 
             MapManager.instence.CreateChunck(meshs, textures);
             MapManager.instence.enabled = true;

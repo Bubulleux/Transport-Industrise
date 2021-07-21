@@ -62,9 +62,9 @@ namespace Script.Mapping
 		private void SetChuckActive(bool enable)
 		{
 			_chuckActive = enable;
-			foreach (Transform child in transform)
+			foreach (var obj in Objects)
 			{
-				child.gameObject.SetActive(enable);
+				obj.Value.RendererComponente.enabled = enable;
 			}
 		}
 		
@@ -135,6 +135,8 @@ namespace Script.Mapping
 
 						curObject.RendererComponente.materials = parcel.MeshMaterial;
 						curObject.MeshComponente.sharedMesh = parcel.ObjectMesh;
+						
+						curObject.RendererComponente.enabled = _chuckActive;
 					}
 				}
 			}

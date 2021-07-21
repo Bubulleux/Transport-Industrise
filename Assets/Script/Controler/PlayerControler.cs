@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Script.Mapping;
 using Script.Mapping.ParcelType;
@@ -11,9 +12,21 @@ namespace Script.Controler
 	{
 		public static PlayerControler instance;
 		public Camera cam;
-		public Tools curTool;
 		public delegate void MainToolRedir(Vector2Int posMouse);
 		public MainToolRedir toolRedirection = null;
+		
+		public Tool curTool;
+		public Tool[] Tools = new[]
+		{
+			new Tool(),
+			new RoadTool(),
+			new ConstructorTool(),
+			new DestroyTool(),
+		};
+
+		private Vector2Int _startDrag = Vector2Int.one * -1;
+		private Vector2Int _lastMoussePos;
+		private Vector2Int _futureLastMoussePos;
 
 		private void Awake()
 		{
@@ -22,44 +35,70 @@ namespace Script.Controler
 	
 		void Update()
 		{
+			var moussePos = GetMoussePos().ToVec2Int();
+			var mousseValid = moussePos != Vector2Int.one * -1;
+			
+			
 			if (Input.GetKeyDown(KeyCode.Escape))
 			{
 				toolRedirection = null;
 			}
-			if (Input.GetMouseButtonDown(0) && GetMoussePos() != Vector3.zero)
+			if (Input.GetMouseButtonDown(0) && mousseValid)
 			{
 				if (toolRedirection == null)
 				{
-					switch (curTool)
-					{
-						case Tools.none:
-							MapManager.map.GetParcel(GetMoussePos().ToVec2Int()).Interact();
-							break;
-						case Tools.road:
-							StartCoroutine(MakeRoad());
-							break;
-						case Tools.depot:
-							MapManager.map.AddConstruction(GetMoussePos().ToVec2Int(), new Depot());
-							break;
-						case Tools.loadingBay:
-							MapManager.map.AddConstruction(GetMoussePos().ToVec2Int(), new LoadingBay());
-							break;
-						case Tools.busStop:
-							MapManager.map.AddConstruction(GetMoussePos().ToVec2Int(), new BusStop());
-							break;
-						case Tools.destroy:
-							MapManager.map.Destroy(GetMoussePos().ToVec2Int());
-							break;
-					}
+					_startDrag = moussePos;
 				}
 				else
 				{
-					toolRedirection(GetMoussePos().ToVec2Int());
+					toolRedirection(moussePos);
 				}
 			
 			}
 
-		
+			if (Input.GetMouseButton(0) && MouseMove() && mousseValid)
+			{
+				if (_startDrag != Vector2Int.one * -1)
+				{
+					curTool.Drag(_startDrag, moussePos);
+				}
+			}
+
+			if (Input.GetMouseButtonUp(0))
+			{
+				if (mousseValid)
+				{
+					if (moussePos != _startDrag && _startDrag != Vector2Int.one * -1)
+					{
+						curTool.StopDrag(_startDrag, moussePos);
+					}
+					else if (moussePos == _startDrag)
+					{
+						curTool.OneClick(moussePos);
+					}
+				}
+				_startDrag = Vector2Int.one * -1;
+			}
+
+			if (Input.GetMouseButtonDown(1))
+			{
+				_startDrag = Vector2Int.one * -1;
+			}
+
+			if (MouseMove() && mousseValid && !Input.GetMouseButton(0))
+			{
+				curTool.MousseOverMap(moussePos);
+			}
+			//Debug.Log($"{moussePos} {MouseMove()} {mousseValid} {_lastMoussePos}");
+			_futureLastMoussePos = GetMoussePos().ToVec2Int();
+		}
+
+		private void LateUpdate()
+		{
+			if (MousseValide())
+			{
+				_lastMoussePos = _futureLastMoussePos;
+			}
 		}
 
 		public static Vector3 GetMoussePos()
@@ -69,80 +108,21 @@ namespace Script.Controler
 			{
 				return hit.point;
 			}
-			return Vector3.zero;
+			return Vector3.one * -1;
 		}
 
-		public IEnumerator MakeRoad()
+		public static bool MousseValide()
 		{
-			Vector2Int startMouse = GetMoussePos().ToVec2Int();
-			Vector2Int endMouse = GetMoussePos().ToVec2Int();
-			while (Input.GetMouseButton(0))
-			{
-				yield return new WaitForFixedUpdate();
-
-				if (endMouse == GetMoussePos().ToVec2Int())
-					continue;
-				
-				endMouse = GetMoussePos().ToVec2Int();
-				MapManager.Selector.ClearSelection();
-				foreach (var pathCell in GetPathBetweenTwoPoint(startMouse, endMouse, 50))
-				{
-					MapManager.Selector.SelectionParcel(pathCell.Key, Color.black);
-				}
-			}
-
-			endMouse = GetMoussePos().ToVec2Int();
-			MapManager.Selector.ClearSelection();
-			foreach (var pathCell in GetPathBetweenTwoPoint(startMouse, endMouse, 50))
-			{;
-				MapManager.map.AddRoad(pathCell.Key);
-			}
-			
+			return GetMoussePos() != Vector3.one * -1;
 		}
 
-		public static Dictionary<Vector2Int, bool> GetPathBetweenTwoPoint(Vector2Int start, Vector2Int stop, int minSizeRoad)
+		public static bool MouseMove()
 		{
-			
-			Vector2Int lastPos = start;
-			var path = new Dictionary<Vector2Int, bool>();
-			path.Add(start, true);
-			while (true)
-			{
-				if (lastPos == stop)
-				{
-					break;
-				}
-				float xProgress = Mathf.Abs(lastPos.x - start.x) / (float)Mathf.Abs(start.x - stop.x);
-				float yProgress = Mathf.Abs(lastPos.y - start.y) / (float)Mathf.Abs(start.y - stop.y);
-				xProgress = (float.IsNaN(xProgress) || float.IsInfinity(xProgress)) ? 1 : xProgress;
-				yProgress = (float.IsNaN(yProgress) || float.IsInfinity(yProgress)) ? 1 : yProgress;
-				if (xProgress < yProgress)
-				{
-					for (int i = 0; i < minSizeRoad; i++)
-					{
-						lastPos += new Vector2Int(lastPos.x < stop.x ? 1 : -1, 0);
-						path.Add(lastPos, true);
-						if (lastPos.x == stop.x) { break; }
-					}
-				}
-				else
-				{
-					for (int i = 0; i < minSizeRoad; i++)
-					{
-						lastPos += new Vector2Int(0, lastPos.y < stop.y ? 1 : -1);
-						path.Add(lastPos, true);
-						if (lastPos.y == stop.y) { break; }
-					}
-				}
-		   
-			}
-			
-			return path;
+			return instance._lastMoussePos != GetMoussePos().ToVec2Int();
 		}
-
 		public void SetTool(int tool)
 		{
-			curTool = (Tools)tool;
+			curTool = Tools[tool];
 			toolRedirection = null;
 		}
 
@@ -150,15 +130,6 @@ namespace Script.Controler
 		{
 			toolRedirection = func;
 			Debug.Log("Redirec Main Tool");
-		}
-		public enum Tools
-		{
-			none,
-			road,
-			depot,
-			loadingBay,
-			busStop,
-			destroy,
 		}
 
 		public static bool PointerIsOverUI()
