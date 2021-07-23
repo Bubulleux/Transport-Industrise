@@ -31,13 +31,13 @@ namespace Script.MapGeneration
                     {
                         var cornerPos = new Vector3[]
                         {
-                            new Vector3(map.parcels[x, y].pos.x, map.parcels[x, y].corner[0], map.parcels[x, y].pos.y),
-                            new Vector3(map.parcels[x, y].pos.x + 1, map.parcels[x, y].corner[1], map.parcels[x, y].pos.y),
-                            new Vector3(map.parcels[x, y].pos.x, map.parcels[x, y].corner[2], map.parcels[x, y].pos.y + 1),
-                            new Vector3(map.parcels[x, y].pos.x + 1, map.parcels[x, y].corner[3], map.parcels[x, y].pos.y + 1)
+                            new Vector3(map.parcels[x, y].pos.x + 1, map.parcels[x, y].corner[0], map.parcels[x, y].pos.y + 1),
+                            new Vector3(map.parcels[x, y].pos.x + 1, map.parcels[x, y].corner[1], map.parcels[x, y].pos.y + 0),
+                            new Vector3(map.parcels[x, y].pos.x + 0, map.parcels[x, y].corner[2], map.parcels[x, y].pos.y + 0),
+                            new Vector3(map.parcels[x, y].pos.x + 0, map.parcels[x, y].corner[3], map.parcels[x, y].pos.y + 1),
                         };
-                        meshData.AddTriangles(new Vector3[] { cornerPos[2], cornerPos[3], cornerPos[0] }, new Vector2Int(chunk.x, chunk.y));
-                        meshData.AddTriangles(new Vector3[] { cornerPos[3], cornerPos[1], cornerPos[0] }, new Vector2Int(chunk.x, chunk.y));
+                        meshData.AddTriangles(new Vector3[] { cornerPos[3], cornerPos[0], cornerPos[1] }, new Vector2Int(chunk.x, chunk.y));
+                        meshData.AddTriangles(new Vector3[] { cornerPos[3], cornerPos[1], cornerPos[2] }, new Vector2Int(chunk.x, chunk.y));
                     }
                 }
             }

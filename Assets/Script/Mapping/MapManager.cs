@@ -29,6 +29,14 @@ namespace Script.Mapping
             new Vector2Int(0, -1),
             new Vector2Int(-1, 0)
         };
+        
+        public static readonly Vector2Int[] cornerAround =
+        {
+            new Vector2Int(1, 1),
+            new Vector2Int(1, 0),
+            new Vector2Int(0, 0),
+            new Vector2Int(0, 1),
+        };
 
         public static readonly Vector2Int[] parcelAroundCorner =
         {
@@ -41,6 +49,7 @@ namespace Script.Mapping
             new Vector2Int(-1, 0),
             new Vector2Int(-1, 1)
         };
+        
 
         private void Awake()
         {

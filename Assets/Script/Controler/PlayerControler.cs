@@ -22,6 +22,7 @@ namespace Script.Controler
 			new RoadTool(),
 			new ConstructorTool(),
 			new DestroyTool(),
+			//new Terraformer(),
 		};
 
 		private Vector2Int _startDrag = Vector2Int.one * -1;

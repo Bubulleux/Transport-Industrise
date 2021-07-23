@@ -165,18 +165,18 @@ namespace Script.Mapping
 			Parcel parcel = MapManager.map.GetParcel(pos);
 			var cornerPos = new Vector3[]
 			{
-				new Vector3(1, parcel.corner[3] + 0.1f, 1),
+				new Vector3(1, parcel.corner[0] + 0.1f, 1),
 				new Vector3(1, parcel.corner[1] + 0.1f, 0),
-				new Vector3(0, parcel.corner[0] + 0.1f, 0),
-				new Vector3(0, parcel.corner[2] + 0.1f, 1),
+				new Vector3(0, parcel.corner[2] + 0.1f, 0),
+				new Vector3(0, parcel.corner[3] + 0.1f, 1),
 			};
 			var cornerPosDown = new Vector3[4];
 			
 			for (int i = 0; i < 4; i++)
 				cornerPosDown[i] = new Vector3(cornerPos[i].x, cornerPos[i].y - 1 ,cornerPos[i].z);
 			
-			meshData.AddTriangles(new Vector3[] { cornerPos[2], cornerPos[3], cornerPos[0] }, Vector2Int.zero);
-			meshData.AddTriangles(new Vector3[] { cornerPos[0], cornerPos[1], cornerPos[2] }, Vector2Int.zero);
+			meshData.AddTriangles(new Vector3[] { cornerPos[3], cornerPos[0], cornerPos[1] }, Vector2Int.zero);
+			meshData.AddTriangles(new Vector3[] { cornerPos[3], cornerPos[1], cornerPos[2] }, Vector2Int.zero);
 
 			for (int i = 0; i < 4; i++)
 			{

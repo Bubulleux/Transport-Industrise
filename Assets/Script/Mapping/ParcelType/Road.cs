@@ -22,6 +22,9 @@ namespace Script.Mapping.ParcelType
 			MeshMaterial = RessourceManager.instence.RoadMaterials;
 			var oneMaterial = false;
 			ObjectPosition = new Vector3(0.5f, corner.Max() + 0.01f, 0.5f);
+
+			var minCorner = corner.Min();
+			var maxCorner = corner.Max();
 			var connections = new[]
 			{
 				map.ParcelIs<Road>(pos + new Vector2Int(1, 0)),
@@ -65,8 +68,15 @@ namespace Script.Mapping.ParcelType
 				            (!connections[0] && connections[1] && !connections[2] && connections[3]):
 				{
 					if (debug) Debug.Log("Road Strainght");
-					ObjectRotation = Quaternion.Euler(0, connections[1] ? 0 : 90, 0);
-					ObjectMesh = RessourceManager.instence.RoadStrainght;
+					if (minCorner == maxCorner)
+					{
+						ObjectRotation = Quaternion.Euler(0, connections[1] ? 0 : 90, 0);
+						ObjectMesh = RessourceManager.instence.RoadStrainght;
+					}
+					else
+					{
+						
+					}
 					break;
 				}
 				case 2:

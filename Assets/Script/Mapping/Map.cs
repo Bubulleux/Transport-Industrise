@@ -70,7 +70,13 @@ namespace Script.Mapping
 				
 					parcels[x, y] = new Parcel(new Vector2Int(x, y), this)
 					{
-						corner = new int[4] { Mathf.FloorToInt(mapNoise[x, y]), Mathf.FloorToInt(mapNoise[x + 1, y]), Mathf.FloorToInt(mapNoise[x, y + 1]), Mathf.FloorToInt(mapNoise[x + 1, y + 1]) },
+						corner = new []
+						{
+							Mathf.FloorToInt(mapNoise[x + 1, y + 1]),
+							Mathf.FloorToInt(mapNoise[x + 1, y + 0]),
+							Mathf.FloorToInt(mapNoise[x + 0, y + 0]),
+							Mathf.FloorToInt(mapNoise[x + 0, y + 1]),
+						},
 						biome = parcelBiome,
 					};
 					parcels[x, y].Initialaze();
@@ -205,8 +211,8 @@ namespace Script.Mapping
 					}
 				}
 				//parcels[pos.x, pos.y].seeTerrain = false;
-				UpdateChunkTexture(Mathf.FloorToInt(pos.x / 50), Mathf.FloorToInt(pos.y / 50));
-				UpdateObjectMesh(Mathf.FloorToInt(pos.x / 50), Mathf.FloorToInt(pos.y / 50));
+				UpdateChunkTexture(pos);
+				UpdateChunkObject(pos);
 				//if (mapHeight[pos.x, pos.y] != mapHeight[pos.x, pos.y + 1] || mapHeight[pos.x + 1 , pos.y] != mapHeight[pos.x + 1 , pos.y + 1] || mapHeight[pos.x, pos.y] != mapHeight[pos.x + 1, pos.y])
 				//{
 				//    mapHeight[pos.x, pos.y + 1] = mapHeight[pos.x, pos.y];
@@ -227,7 +233,7 @@ namespace Script.Mapping
 				GetParcel(pos).color = color;
 				importParcels.Add(GetParcel(pos));
 				//parcels[pos.x, pos.y].seeTerrain = false;
-				UpdateChunkMesh(Mathf.FloorToInt(pos.x / 50), Mathf.FloorToInt(pos.y / 50));
+				UpdateChunkMesh(pos);
 				return true;
 
 			}
@@ -237,7 +243,7 @@ namespace Script.Mapping
 		public bool AddConstruction(Vector2Int pos, Parcel construction)
 		{
 			parcels[pos.x, pos.y] = Parcel.CopyClass(parcels[pos.x, pos.y], construction);
-			UpdateChunkTexture(Mathf.FloorToInt(pos.x / 50), Mathf.FloorToInt(pos.y / 50));
+			UpdateChunkTexture(pos);
 			importParcels.Add(construction);
 			return true;
 		}
@@ -249,8 +255,8 @@ namespace Script.Mapping
 				return false;
 			}
 			parcels[pos.x, pos.y] = Parcel.CopyClass(parcels[pos.x, pos.y], new Parcel());
-			UpdateChunkTexture(Mathf.FloorToInt(pos.x / 50), Mathf.FloorToInt(pos.y / 50));
-			UpdateObjectMesh(Mathf.FloorToInt(pos.x / 50), Mathf.FloorToInt(pos.y / 50));
+			UpdateChunkTexture(pos);
+			UpdateChunkObject(pos);
 			importParcels.Remove(parcels[pos.x, pos.y]);
 			return true;
 		}
@@ -264,26 +270,28 @@ namespace Script.Mapping
 			};
 			parcels[pos.x, pos.y] = Parcel.CopyClass(parcels[pos.x, pos.y], building);
 			//parcels[pos.x, pos.y].seeTerrain = false;
-			UpdateChunkTexture(Mathf.FloorToInt(pos.x / 50), Mathf.FloorToInt(pos.y / 50));
+			UpdateChunkTexture(pos);
 		}
 
-		public void UpdateChunkTexture(int x, int y)
+		
+		public void UpdateChunkTexture(Vector2Int pos)
 		{
 			if (Manager)
-				Manager.ChuckObjects[x, y].NeedTextureUpdate = true;
+				Manager.ChuckObjects[Mathf.FloorToInt(pos.x / 50f), Mathf.FloorToInt(pos.y / 50f)].NeedTextureUpdate = true;
 		}
 
-		public void UpdateChunkMesh(int x, int y)
+		public void UpdateChunkMesh(Vector2Int pos)
 		{
 			if (Manager)
-				Manager.ChuckObjects[x, y].NeedMeshUpdate = true;
+				Manager.ChuckObjects[Mathf.FloorToInt(pos.x / 50f), Mathf.FloorToInt(pos.y / 50f)].NeedMeshUpdate = true;
 		}
-		public void UpdateObjectMesh(int x, int y)
+		public void UpdateChunkObject(Vector2Int pos)
 		{
 			if (Manager)
-				Manager.ChuckObjects[x, y].NeedObjectUpdate = true;
+				Manager.ChuckObjects[Mathf.FloorToInt(pos.x / 50f), Mathf.FloorToInt(pos.y / 50f)].NeedObjectUpdate = true;
 		}
 
+		
 		public T[] GetImpotantParcel<T>() where T : Parcel
 		{
 			var parcelsList = new List<T>();
@@ -301,6 +309,24 @@ namespace Script.Mapping
 		
 			return parcelArray;
 
+		}
+
+		public void SetParcelCorner(Vector2Int pos, int[] corners, int recursion = 0)
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				SetHeight(pos + MapManager.cornerAround[i], corners[i]);
+			}
+		}
+
+		public void SetHeight(Vector2Int pos, int height)
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				GetParcel(pos - MapManager.cornerAround[i]).corner[i] = height;
+				UpdateChunkMesh(pos - MapManager.cornerAround[i]);
+			}
+			
 		}
 	}
 }

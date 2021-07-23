@@ -6,9 +6,10 @@ using UnityEngine;
 public class Tool
 {
 	public string Name { get; set; }
-	public string[] Modes { get; set; }
+	public string[] Modes { get; protected set; }
 	public int modeUsed = 0;
-	public Color toolColor;
+	protected Color toolColor;
+	protected float size;
 
 	public Tool()
 	{
@@ -34,5 +35,12 @@ public class Tool
 	
 	public virtual void StartUsing() { }
 	public virtual void StopUsing() { }
+
+	public virtual void MidelMousseBtn()
+	{
+		size += 0.2f;
+		size %= 1f;
+	}
+
 	
 }
