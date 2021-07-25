@@ -1,74 +1,91 @@
 ﻿using Newtonsoft.Json;
 using Script.MapGeneration;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 namespace Script.Mapping.ParcelType
 {
-    [JsonObject(MemberSerialization.OptOut)]
-    public class Parcel
-    {
-        public Vector2Int pos;
-        public int[] corner = new int[4];
-        //public object construction = null;
-        public bool seeTerrain = true;
-        public Parcel parent;
-        public BiomeData biome;
+	[JsonObject(MemberSerialization.OptOut)]
+	public class Parcel
+	{
+		public Vector2Int pos;
+		public int[] corner = new int[4];
+		//public object construction = null;
+		public bool seeTerrain = true;
+		public BiomeData biome;
 
-        public Color32 color =  Color.magenta;
-        public GameObject gfx;
-        public GameObject prefab;
-        public Map map;
+		public Color32 color =  Color.magenta;
+		public GameObject gfx;
+		public GameObject prefab;
+		public Map map;
+		public Orientation orientation;
 
-        public bool IsInWater { get { return corner[0] < 1 || corner[1] < 1 || corner[2] < 1 || corner[3] < 1; } }
+		public enum Orientation
+		{
+			Right,
+			Down,
+			Left,
+			Up,
+		}
 
-        public Parcel(Vector2Int _pos, Map _map)
-        {
-            pos = _pos;
-            map = _map;
-        }
-        public Parcel() { }
-    
-        public virtual void Initialaze()
-        {
-            color = biome.color;
-        }
+		public bool IsInWater { get { return corner[0] < 1 || corner[1] < 1 || corner[2] < 1 || corner[3] < 1; } }
 
-        public virtual void Interact()
-        {
+		public Parcel(Vector2Int _pos, Map _map)
+		{
+			pos = _pos;
+			map = _map;
+		}
 
-        }
-        
-        public virtual void DebugParcel()
-        {
-            Debug.Log($"{pos} {corner[0]}, {corner[1]}, {corner[2]}, {corner[3]}");
-            
-            //string parcelJson = Save.Save.GetJson(MapManager.map.GetParcel(pos));
-            //Debug.Log(parcelJson);
-        }
+		public Parcel()  { }
+		
+		public virtual void Initialaze()
+		{
+			InitializationSecondary();
+		}
 
-        public static Parcel CopyClass(Parcel copyClass, Parcel pastClass)
-        {
-            pastClass.pos = copyClass.pos;
-            pastClass.corner = copyClass.corner;
-            pastClass.seeTerrain = copyClass.seeTerrain;
-            pastClass.color = copyClass.color;
-            pastClass.map = copyClass.map;
-            pastClass.biome = copyClass.biome;
-            pastClass.Initialaze();
-            
-            if (MapManager.instence)
-                MapManager.instence.ResetGFX(pastClass);
-            return pastClass;
-        }
+		public virtual void InitializationSecondary()
+		{
+			color = biome.color;
+		}
 
-        public void EnableUpdate(bool enable)
-        {
-            if (enable && !MapManager.map.updatedParcel.Contains(this))
-                MapManager.map.updatedParcel.Add(this);
-            else if (!enable && MapManager.map.updatedParcel.Contains(this))
-                MapManager.map.updatedParcel.Remove(this);
-        }
+		public virtual void Interact()
+		{
 
-        public virtual void Update() { }
-    }
+		}
+		
+		public virtual void DebugParcel()
+		{
+			Debug.Log($"{pos} {corner[0]}, {corner[1]}, {corner[2]}, {corner[3]}");
+			
+			//string parcelJson = Save.Save.GetJson(MapManager.map.GetParcel(pos));
+			//Debug.Log(parcelJson);
+		}
+
+		public static Parcel CopyClass(Parcel copyClass, Parcel pastClass)
+		{
+			pastClass.pos = copyClass.pos;
+			pastClass.corner = copyClass.corner;
+			pastClass.seeTerrain = copyClass.seeTerrain;
+			pastClass.color = copyClass.color;
+			pastClass.map = copyClass.map;
+			pastClass.biome = copyClass.biome;
+			pastClass.orientation = copyClass.orientation;
+			pastClass.Initialaze();
+			
+			if (MapManager.instence)
+				MapManager.instence.ResetGFX(pastClass);
+			return pastClass;
+		}
+
+		public void EnableUpdate(bool enable)
+		{
+			if (enable && !MapManager.map.updatedParcel.Contains(this))
+				MapManager.map.updatedParcel.Add(this);
+			else if (!enable && MapManager.map.updatedParcel.Contains(this))
+				MapManager.map.updatedParcel.Remove(this);
+		}
+
+		public virtual void Update() { }
+		
+	}
 }

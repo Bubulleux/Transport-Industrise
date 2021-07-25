@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Script.Game;
+using Script.Mapping;
 using Script.Mapping.ParcelType;
 using UnityEngine;
 
@@ -25,14 +26,16 @@ public class RoadGFX : ParcelGFX
 
 		var minCorner = parcel.corner.Min();
 		var maxCorner = parcel.corner.Max();
-		var connections = new[]
+		var connections = new bool[4];
+
+		for (int i = 0; i < 4; i ++)
 		{
-			parcel.map.ParcelIs<Road>(parcel.pos + new Vector2Int(1, 0)),
-			parcel.map.ParcelIs<Road>(parcel.pos + new Vector2Int(0, 1)),
-			parcel.map.ParcelIs<Road>(parcel.pos + new Vector2Int(-1, 0)),
-			parcel.map.ParcelIs<Road>(parcel.pos + new Vector2Int(0, -1)),
-		};
-	
+			var neightbour = MapManager.parcelAround[i];
+			connections[i] = parcel.map.ParcelIs<Road>(parcel.pos + neightbour) &&
+			                 parcel.map.GetParcel<Road>(parcel.pos + neightbour).CanConnect(parcel.pos);
+
+		}
+		
 		var connectionCount = 0;
 		for (var i = 0; i < 4; i++)
 		{
@@ -53,38 +56,31 @@ public class RoadGFX : ParcelGFX
 				if (connections[0])
 					transform.rotation = Quaternion.Euler(0, 270, 0);
 				if (connections[1])
-					transform.rotation = Quaternion.Euler(0, 180, 0);
+					transform.rotation = Quaternion.Euler(0, 0, 0);
 				if (connections[2])
 					transform.rotation = Quaternion.Euler(0, 90, 0);
 				if (connections[3])
-					transform.rotation = Quaternion.Euler(0, 0, 0);
+					transform.rotation = Quaternion.Euler(0, 180, 0);
 				break;
 			}
 			case 2 when (connections[0] && !connections[1] && connections[2] && !connections[3]) || 
 			            (!connections[0] && connections[1] && !connections[2] && connections[3]):
 			{
-				if (minCorner == maxCorner)
-				{
-					transform.rotation = Quaternion.Euler(0, connections[1] ? 0 : 90, 0);
-					mesh = meshs[2];
-				}
-				else
-				{
-					
-				}
+				transform.rotation = Quaternion.Euler(0, connections[1] ? 0 : 90, 0);
+				mesh = meshs[2];
 				break;
 			}
 			case 2:
 			{
 				mesh = meshs[4];
-				if (connections[2] && connections[3])
-					transform.rotation = Quaternion.Euler(0, 0, 0);
-				if (connections[1] && connections[2])
-					transform.rotation = Quaternion.Euler(0, 90, 0);
 				if (connections[0] && connections[1])
-					transform.rotation = Quaternion.Euler(0, 180, 0);
-				if (connections[3] && connections[0])
 					transform.rotation = Quaternion.Euler(0, 270, 0);
+				if (connections[1] && connections[2])
+					transform.rotation = Quaternion.Euler(0, 0, 0);
+				if (connections[2] && connections[3])
+					transform.rotation = Quaternion.Euler(0, 90, 0);
+				if (connections[3] && connections[0])
+					transform.rotation = Quaternion.Euler(0, 180, 0);
 				break;
 			}
 			case 3:
@@ -93,11 +89,11 @@ public class RoadGFX : ParcelGFX
 				if (!connections[0])
 					transform.rotation = Quaternion.Euler(0, 0, 0);
 				if (!connections[1])
-					transform.rotation = Quaternion.Euler(0, 270, 0);
+					transform.rotation = Quaternion.Euler(0, 90, 0);
 				if (!connections[2])
 					transform.rotation = Quaternion.Euler(0, 180, 0);
 				if (!connections[3])
-					transform.rotation = Quaternion.Euler(0, 90, 0);
+					transform.rotation = Quaternion.Euler(0, 270, 0);
 				break;
 			}
 			case 4:

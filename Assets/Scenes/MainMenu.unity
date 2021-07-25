@@ -3832,7 +3832,8 @@ MonoBehaviour:
   RoadUphill: {fileID: -5713736041427907351, guid: 7ff723e748da31a4e97ac18b049cb7d9,
     type: 3}
   RoadX: {fileID: -1593352577792054828, guid: 7ff723e748da31a4e97ac18b049cb7d9, type: 3}
-  RoadEnd: {fileID: 5006720080491887505, guid: 7ff723e748da31a4e97ac18b049cb7d9, type: 3}
+  RoadEnd: {fileID: -8525393304687684686, guid: 7ff723e748da31a4e97ac18b049cb7d9,
+    type: 3}
   RoadNoExit: {fileID: -2337807585627869063, guid: 7ff723e748da31a4e97ac18b049cb7d9,
     type: 3}
   RoadMaterials:

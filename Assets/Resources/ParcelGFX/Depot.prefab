@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6915941533944627294}
   - component: {fileID: 6975555271383754072}
   - component: {fileID: 2782649846837396602}
+  - component: {fileID: 1895952196402327916}
   m_Layer: 0
   m_Name: Depot
   m_TagString: Untagged
@@ -83,3 +84,15 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1895952196402327916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4012298275679885183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bc913c86e04406ba7341133ad9528b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

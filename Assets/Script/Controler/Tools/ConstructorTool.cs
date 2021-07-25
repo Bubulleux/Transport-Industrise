@@ -1,9 +1,11 @@
+using Script.Controler;
 using Script.Mapping;
 using Script.Mapping.ParcelType;
 using UnityEngine;
 
 public class ConstructorTool : Tool
 {
+	private Parcel.Orientation orientation;
 	public ConstructorTool() : base()
 	{
 		Name = "Constructor";
@@ -33,7 +35,18 @@ public class ConstructorTool : Tool
 				break;
 		}
 
-		MapManager.map.AddConstruction(pos, construction);
+		MapManager.map.AddConstruction(pos, construction, orientation);
 	}
 
+	public override void MidelMousseBtn()
+	{
+		orientation = (Parcel.Orientation)(((int)orientation + 1) % 4);
+		MousseOverMap(PlayerControler.GetMoussePos().ToVec2Int());
+	}
+
+	public override void MousseOverMap(Vector2Int pos)
+	{
+		base.MousseOverMap(pos);
+		MapManager.Selector.SelectionParcel(pos + MapManager.parcelAround[(int) orientation], Color.cyan);
+	}
 }

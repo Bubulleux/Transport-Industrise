@@ -90,6 +90,11 @@ namespace Script.Controler
 			{
 				curTool.MousseOverMap(moussePos);
 			}
+
+			if (Input.GetMouseButtonDown(2))
+			{
+				curTool.MidelMousseBtn();
+			}
 			//Debug.Log($"{moussePos} {MouseMove()} {mousseValid} {_lastMoussePos}");
 			_futureLastMoussePos = GetMoussePos().ToVec2Int();
 		}

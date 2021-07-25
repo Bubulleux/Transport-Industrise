@@ -102,12 +102,17 @@ namespace Script.Mapping
 				return parcel as T;
 			return null;
 		}
-		public Parcel GetParcel(Vector2Int pos)
+		public Parcel GetParcel(Vector2Int pos, bool getChild = false)
 		{
 			if (pos.x < 0 || pos.x >= parcels.GetLength(0) ||
 			    pos.y < 0 || pos.y >= parcels.GetLength(1))
 			{
 				return new Parcel(pos, this);
+			}
+
+			if (!getChild && parcels[pos.x, pos.y].GetType() == typeof(ParcelChild))
+			{
+				return ((ParcelChild)parcels[pos.x, pos.y]).parent;
 			}
 			return parcels[pos.x, pos.y];
 		}
@@ -239,8 +244,9 @@ namespace Script.Mapping
 			return false;
 		}
 
-		public bool AddConstruction(Vector2Int pos, Parcel construction)
+		public bool AddConstruction(Vector2Int pos, Parcel construction, Parcel.Orientation orientation = Parcel.Orientation.Right) 
 		{
+			parcels[pos.x, pos.y].orientation = orientation;
 			parcels[pos.x, pos.y] = Parcel.CopyClass(parcels[pos.x, pos.y], construction);
 			UpdateChunkTexture(pos);
 			importParcels.Add(construction);

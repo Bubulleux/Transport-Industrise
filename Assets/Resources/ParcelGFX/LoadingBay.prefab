@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6704320634069844061}
   - component: {fileID: 7717260658836421933}
   - component: {fileID: 5197617438842399768}
+  - component: {fileID: 4382200835563445940}
   m_Layer: 0
   m_Name: LoadingBay
   m_TagString: Untagged
@@ -86,3 +87,15 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &4382200835563445940
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7784953211621685745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bc913c86e04406ba7341133ad9528b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

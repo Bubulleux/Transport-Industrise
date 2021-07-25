@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using Script.Game;
 using Script.UI.Windows;
@@ -33,10 +34,14 @@ namespace Script.Mapping.ParcelType
 			}
 		}
 
-		public override void Initialaze()
+		
+		public override void InitializationSecondary()
 		{
 			color = Color.white;
+			prefab = Resources.Load<GameObject>("ParcelGFX/LoadingBay");
 		}
+
+		public override void UpdateRoadObject(bool debug = false)  {  }
 
 		public override void DebugParcel()
 		{
@@ -178,6 +183,11 @@ namespace Script.Mapping.ParcelType
 			public bool isInput;
 			public bool IsOutput { get { return !isInput; } set { isInput = !value; } }
 			public float Filling { get { return quantity / (float)maxQuantity; } }
+		}
+		
+		public override bool CanConnect(Vector2Int connectionPos)
+		{
+			return Array.IndexOf(MapManager.parcelAround, connectionPos - pos) == (int)orientation;
 		}
 	}
 }

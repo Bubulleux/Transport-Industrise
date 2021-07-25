@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Script.Game;
 using UnityEngine;
 
@@ -67,10 +68,11 @@ namespace Script.Mapping.ParcelType
 			} } };
 		}
 
-		public override void Initialaze()
+		public override void InitializationSecondary()
 		{
 			color = Color.white;
 			EnableUpdate(true);
+			prefab = Resources.Load<GameObject>("ParcelGFX/BusStop");
 		}
 
 		public override void Update()
@@ -88,6 +90,12 @@ namespace Script.Mapping.ParcelType
 		public override void DebugParcel()
 		{
 			Debug.Log(peopleWait);
+		}
+		
+		public override bool CanConnect(Vector2Int connectionPos)
+		{
+			return base.CanConnect(connectionPos) ||
+			       Array.IndexOf(MapManager.parcelAround, pos - connectionPos) == (int)orientation;
 		}
 	}
 }
