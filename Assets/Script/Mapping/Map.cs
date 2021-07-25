@@ -212,7 +212,6 @@ namespace Script.Mapping
 				}
 				//parcels[pos.x, pos.y].seeTerrain = false;
 				UpdateChunkTexture(pos);
-				UpdateChunkObject(pos);
 				//if (mapHeight[pos.x, pos.y] != mapHeight[pos.x, pos.y + 1] || mapHeight[pos.x + 1 , pos.y] != mapHeight[pos.x + 1 , pos.y + 1] || mapHeight[pos.x, pos.y] != mapHeight[pos.x + 1, pos.y])
 				//{
 				//    mapHeight[pos.x, pos.y + 1] = mapHeight[pos.x, pos.y];
@@ -256,7 +255,6 @@ namespace Script.Mapping
 			}
 			parcels[pos.x, pos.y] = Parcel.CopyClass(parcels[pos.x, pos.y], new Parcel());
 			UpdateChunkTexture(pos);
-			UpdateChunkObject(pos);
 			importParcels.Remove(parcels[pos.x, pos.y]);
 			return true;
 		}
@@ -285,12 +283,6 @@ namespace Script.Mapping
 			if (Manager)
 				Manager.ChuckObjects[Mathf.FloorToInt(pos.x / 50f), Mathf.FloorToInt(pos.y / 50f)].NeedMeshUpdate = true;
 		}
-		public void UpdateChunkObject(Vector2Int pos)
-		{
-			if (Manager)
-				Manager.ChuckObjects[Mathf.FloorToInt(pos.x / 50f), Mathf.FloorToInt(pos.y / 50f)].NeedObjectUpdate = true;
-		}
-
 		
 		public T[] GetImpotantParcel<T>() where T : Parcel
 		{

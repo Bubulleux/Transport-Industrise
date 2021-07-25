@@ -15,10 +15,8 @@ namespace Script.Mapping.ParcelType
         public BiomeData biome;
 
         public Color32 color =  Color.magenta;
-        public Mesh ObjectMesh = null;
-        public Material[] MeshMaterial = null;
-        public Vector3 ObjectPosition = Vector3.zero;
-        public Quaternion ObjectRotation = Quaternion.Euler(Vector3.zero);
+        public GameObject gfx;
+        public GameObject prefab;
         public Map map;
 
         public bool IsInWater { get { return corner[0] < 1 || corner[1] < 1 || corner[2] < 1 || corner[3] < 1; } }
@@ -39,7 +37,7 @@ namespace Script.Mapping.ParcelType
         {
 
         }
-
+        
         public virtual void DebugParcel()
         {
             Debug.Log($"{pos} {corner[0]}, {corner[1]}, {corner[2]}, {corner[3]}");
@@ -57,6 +55,9 @@ namespace Script.Mapping.ParcelType
             pastClass.map = copyClass.map;
             pastClass.biome = copyClass.biome;
             pastClass.Initialaze();
+            
+            if (MapManager.instence)
+                MapManager.instence.ResetGFX(pastClass);
             return pastClass;
         }
 

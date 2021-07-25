@@ -16,6 +16,7 @@ namespace Script.Mapping
     
         public Chuck[,] ChuckObjects = new Chuck[20, 20];
         public GameObject gfxMapPrefab;
+        
 
 
         public static Map map;
@@ -60,7 +61,7 @@ namespace Script.Mapping
             instence = this;
             Selector = GetComponent<ParcelSelector>();
         }
-
+        
         public void CreateChunck(Mesh[,] meshs, Texture2D[,] texrures)
         {
             map.Manager = this;
@@ -72,8 +73,24 @@ namespace Script.Mapping
                     ChuckObjects[x, y].Initialize(new Vector2Int(x, y), meshs[x, y], texrures[x, y]);
                 }
             }
+            InstanceAllGFX();
         }
 
+        private void InstanceAllGFX()
+        {
+            for (int y = 0; y < map.Size.y; y++)
+            {
+                for (int x = 0; x < map.Size.x; x++)
+                {
+                    if (map.GetParcel(new Vector2Int(x, y)).prefab != null)
+                    {
+                        InstenceGFX(map.GetParcel(new Vector2Int(x, y)));
+                    }
+                }
+            }
+        }
+        
+        
         private void Update()
         {
             foreach (Parcel curParcel in map.updatedParcel)
@@ -93,6 +110,46 @@ namespace Script.Mapping
             }
         }
 
+        public void ResetGFX(Parcel parcel)
+        {
+            DestroyGFX(parcel);
+            InstenceGFX(parcel);
+        }
+        
+        public void InstenceGFX(Parcel parcel)
+        {
+            if (parcel.prefab == null)
+                return;
+            var go = Instantiate(parcel.prefab);
+            parcel.gfx = go;
+            if (go.TryGetComponent(out ParcelGFX gfxScript))
+            {
+                gfxScript.parcel = parcel;
+                var pos = GetChuckPos(parcel.pos);
+                ChuckObjects[pos.x, pos.y]._gfx.Add(parcel.pos, go);
+                go.transform.parent = ChuckObjects[pos.x, pos.y].transform;
+                gfxScript.UpdateGFX();
+            }
+        }
+
+        
+        public void DestroyGFX(Parcel parcel)
+        {
+            var pos = GetChuckPos(parcel.pos);
+            if (ChuckObjects[pos.x, pos.y]._gfx.ContainsKey(parcel.pos))
+            {
+                parcel.gfx = null;
+                Destroy(ChuckObjects[pos.x, pos.y]._gfx[parcel.pos]);
+                ChuckObjects[pos.x, pos.y]._gfx.Remove(parcel.pos);
+            }
+        }
+        
+        public static Vector2Int GetChuckPos(Vector2Int pos)
+        {
+            return new Vector2Int(Mathf.FloorToInt(pos.x / (float) Map.ChuckSize),
+                Mathf.FloorToInt(pos.y / (float) Map.ChuckSize));
+        }
+        
         public void UpdateEveryChunck()
         {
             for (int y = 0; y < 20; y++)
