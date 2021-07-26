@@ -15,7 +15,7 @@ namespace Script.UI
         public Dropdown ToolMode;
         void Start()
         {
-            foreach (var tool in PlayerControler.instance.Tools)
+            foreach (var tool in PlayerControler.instance.tools)
             {
                 ToolMenu.options.Add(new Dropdown.OptionData(tool.Name));
             }
@@ -24,27 +24,27 @@ namespace Script.UI
 
         public void SetTool(int tool)
         {
-            PlayerControler.instance.curTool = PlayerControler.instance.Tools[tool];
+            PlayerControler.instance.CurTool = PlayerControler.instance.tools[tool];
             ToolMode.ClearOptions();
-            if (PlayerControler.instance.curTool.Modes != null)
+            if (PlayerControler.instance.CurTool.Modes != null)
             {
-                foreach (var mode in PlayerControler.instance.curTool.Modes)
+                foreach (var mode in PlayerControler.instance.CurTool.Modes)
                 {
                     ToolMode.options.Add(new Dropdown.OptionData(mode));
                 }
                 ToolMode.interactable = true;
-                ToolMode.value = PlayerControler.instance.curTool.modeUsed;
+                ToolMode.value = PlayerControler.instance.CurTool.modeUsed;
             }
             else
                 ToolMode.interactable = false;
 
-            ToolMode.value = PlayerControler.instance.curTool.modeUsed;
+            ToolMode.value = PlayerControler.instance.CurTool.modeUsed;
             ToolMode.RefreshShownValue();
         }
 
         public void SetMode(int mode)
         {
-            PlayerControler.instance.curTool.modeUsed = mode;
+            PlayerControler.instance.CurTool.modeUsed = mode;
         }
 
         // Update is called once per frame

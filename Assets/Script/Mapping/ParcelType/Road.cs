@@ -1,6 +1,8 @@
 ﻿using System.Linq;
 using Newtonsoft.Json;
 using Script.Game;
+using Script.UI.Windows;
+using Script.Vehicle;
 using UnityEngine;
 
 namespace Script.Mapping.ParcelType
@@ -46,6 +48,14 @@ namespace Script.Mapping.ParcelType
 		{
 			UpdateRoadObject(true);
 			//base.DebugParcel();
+		}
+
+		public override void Interact()
+		{
+			foreach (var vehicle in VehicleManager.GetVehicleByPos(this))
+			{
+				WindowsOpener.OpenVehicleWindow(vehicle);
+			}
 		}
 	}
 }

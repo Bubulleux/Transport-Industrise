@@ -19,15 +19,18 @@ namespace Script.Mapping
 
 		public int BoxSelectioCount;
 
-		public bool SelectionParcel(Vector2Int pos, Color color)
+		public bool SelectParcel(Vector2Int pos, Color color, bool force = false)
 		{
 			if (_parcelSeleced.Count >= 2000)
 				return false;
-			if (_parcelSeleced.ContainsKey(pos))
+			
+			if (_parcelSeleced.ContainsKey(pos) && force)
 				_parcelSeleced[pos] = color;
-			else
+			else if (!_parcelSeleced.ContainsKey(pos))
 				_parcelSeleced.Add(pos, color);
+			
 			_updateSelection = true;
+			
 			return true;
 		}
 
@@ -35,7 +38,7 @@ namespace Script.Mapping
 		{
 			foreach (var pos in Helper.GetArea(posA, posB, aroundOnly))
 			{
-				SelectionParcel(pos, color);
+				SelectParcel(pos, color);
 			}
 		}
 
@@ -84,7 +87,7 @@ namespace Script.Mapping
 				{
 					if (_gameObjectList.ContainsKey(parcel.Key))
 					{
-						//UpdateBox(parcel.Key, parcel.Value, _gameObjectList[parcel.Key]);
+						UpdateBox(parcel.Key, parcel.Value, _gameObjectList[parcel.Key]);
 					}
 					else
 					{
@@ -135,6 +138,7 @@ namespace Script.Mapping
 				}
 
 				BoxSelectioCount = _gameObjectList.Count;
+				//Debug.Log($"Update Box {_boxUpdated.Count}");
 				_boxUpdated.Clear();
 			}
 		}

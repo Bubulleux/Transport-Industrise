@@ -7,7 +7,7 @@ namespace Script.Mapping.ParcelType
 {
 	public class BusStop : LoadingBay
 	{
-		public const int busStopActionRadius = 10;
+		public const int busStopActionRadius = 4;
 		private float peopleWait = 0f;
 		public int PeopleWait { get { return Mathf.FloorToInt(peopleWait); } set { peopleWait = value; } }
 		public static MaterialData PeopleMatarial { get { return Resources.Load("ScriptableObject/Materials/People") as MaterialData; } }
@@ -16,19 +16,14 @@ namespace Script.Mapping.ParcelType
 
 		public List<Dwelling> Dwellings { get
 			{
-				List<Dwelling> _dwellings = new List<Dwelling>();
-				for (int y = busStopActionRadius / -2; y < busStopActionRadius / 2; y++)
+				var dwellings = new List<Dwelling>();
+
+				foreach (var posArea in Helper.GetCircleArea(pos, busStopActionRadius))
 				{
-					for (int x = busStopActionRadius / -2; x < busStopActionRadius / 2; x++)
-					{
-						Vector2Int _pos = new Vector2Int(x, y);
-						if (Vector2Int.Distance(_pos, Vector2Int.zero) < busStopActionRadius && MapManager.map.GetparcelType(_pos + pos) == typeof(Dwelling))
-						{
-							_dwellings.Add(MapManager.map.GetParcel<Dwelling>(_pos + pos));
-						}
-					}
+					if (map.ParcelIs<Dwelling>(posArea))
+						dwellings.Add(map.GetParcel<Dwelling>(posArea));
 				}
-				return _dwellings;
+				return dwellings;
 			} 
 		}
 

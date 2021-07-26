@@ -40,13 +40,41 @@ public class ConstructorTool : Tool
 
 	public override void MidelMousseBtn()
 	{
-		orientation = (Parcel.Orientation)(((int)orientation + 1) % 4);
-		MousseOverMap(PlayerControler.GetMoussePos().ToVec2Int());
+	}
+
+	public override void MouseScrool(int scroling)
+	{
+		
+		orientation = (Parcel.Orientation)(((int)orientation + scroling) % 4);
+		if ((int) orientation < 0)
+			orientation += 4;
 	}
 
 	public override void MousseOverMap(Vector2Int pos)
 	{
 		base.MousseOverMap(pos);
-		MapManager.Selector.SelectionParcel(pos + MapManager.parcelAround[(int) orientation], Color.cyan);
+		MapManager.Selector.SelectParcel(pos + MapManager.parcelAround[(int) orientation], Color.cyan);
+		
+		if (modeUsed == 2)
+		{
+			foreach (var posArea in Helper.GetCircleArea(pos, BusStop.busStopActionRadius))
+			{
+				if (MapManager.map.ParcelIs<Dwelling>(posArea))
+				{
+					MapManager.Selector.SelectParcel(posArea, Color.blue);
+				}
+			}
+			
+			foreach (var busStop in MapManager.map.GetImpotantParcel<BusStop>())
+			{
+				MapManager.Selector.SelectParcel(busStop.pos, Color.red);
+				foreach (var dwelling in busStop.Dwellings)
+				{
+					MapManager.Selector.SelectParcel(dwelling.pos, Color.white, true);
+				}
+			}
+		}
+		
+		
 	}
 }

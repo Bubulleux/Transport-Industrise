@@ -12,11 +12,24 @@ namespace Script.Controler
 	{
 		public static PlayerControler instance;
 		public Camera cam;
-		public delegate void MainToolRedir(Vector2Int posMouse);
-		public MainToolRedir toolRedirection = null;
 		
-		public Tool curTool;
-		public Tool[] Tools = new[]
+		public Tool CurTool
+		{
+			get => toolRedirection ?? tools[curToolIndex];
+			set
+			{
+				if (Array.IndexOf(tools, value) != -1)
+				{
+					toolRedirection = null;
+					curToolIndex = Array.IndexOf(tools, value);
+				}
+				else
+					toolRedirection = value;
+			}
+		}
+		private int curToolIndex = 0;
+		private Tool toolRedirection = null;
+		public readonly Tool[] tools = new[]
 		{
 			new Tool(),
 			new RoadTool(),
@@ -25,9 +38,9 @@ namespace Script.Controler
 			//new Terraformer(),
 		};
 
-		private Vector2Int _startDrag = Vector2Int.one * -1;
-		private Vector2Int _lastMoussePos;
-		private Vector2Int _futureLastMoussePos;
+		private Vector2Int startDrag = Vector2Int.one * -1;
+		private Vector2Int lastMoussePos;
+		private Vector2Int futureLastMoussePos;
 
 		private void Awake()
 		{
@@ -46,22 +59,14 @@ namespace Script.Controler
 			}
 			if (Input.GetMouseButtonDown(0) && mousseValid)
 			{
-				if (toolRedirection == null)
-				{
-					_startDrag = moussePos;
-				}
-				else
-				{
-					toolRedirection(moussePos);
-				}
-			
+				startDrag = moussePos;
 			}
 
 			if (Input.GetMouseButton(0) && MouseMove() && mousseValid)
 			{
-				if (_startDrag != Vector2Int.one * -1)
+				if (startDrag != Vector2Int.one * -1)
 				{
-					curTool.Drag(_startDrag, moussePos);
+					CurTool.Drag(startDrag, moussePos);
 				}
 			}
 
@@ -69,41 +74,53 @@ namespace Script.Controler
 			{
 				if (mousseValid)
 				{
-					if (moussePos != _startDrag && _startDrag != Vector2Int.one * -1)
+					if (moussePos != startDrag && startDrag != Vector2Int.one * -1)
 					{
-						curTool.StopDrag(_startDrag, moussePos);
+						CurTool.StopDrag(startDrag, moussePos);
 					}
-					else if (moussePos == _startDrag)
+					else if (moussePos == startDrag)
 					{
-						curTool.OneClick(moussePos);
+						CurTool.OneClick(moussePos);
 					}
 				}
-				_startDrag = Vector2Int.one * -1;
+				startDrag = Vector2Int.one * -1;
 			}
 
 			if (Input.GetMouseButtonDown(1))
 			{
-				_startDrag = Vector2Int.one * -1;
+				startDrag = Vector2Int.one * -1;
 			}
 
 			if (MouseMove() && mousseValid && !Input.GetMouseButton(0))
 			{
-				curTool.MousseOverMap(moussePos);
+				CurTool.MousseOverMap(moussePos);
 			}
 
 			if (Input.GetMouseButtonDown(2))
 			{
-				curTool.MidelMousseBtn();
+				CurTool.MidelMousseBtn();
+				if (mousseValid)
+				{
+					CurTool.MousseOverMap(moussePos);
+					if (Input.GetMouseButton(0))
+						CurTool.Drag(startDrag, moussePos);
+				}
+			}
+
+			if (Input.mouseScrollDelta.y != 0)
+			{
+				CurTool.MouseScrool(Mathf.FloorToInt(Input.mouseScrollDelta.y));
+				CurTool.MousseOverMap(moussePos);
 			}
 			//Debug.Log($"{moussePos} {MouseMove()} {mousseValid} {_lastMoussePos}");
-			_futureLastMoussePos = GetMoussePos().ToVec2Int();
+			futureLastMoussePos = GetMoussePos().ToVec2Int();
 		}
 
 		private void LateUpdate()
 		{
 			if (MousseValide())
 			{
-				_lastMoussePos = _futureLastMoussePos;
+				lastMoussePos = futureLastMoussePos;
 			}
 		}
 
@@ -124,19 +141,9 @@ namespace Script.Controler
 
 		public static bool MouseMove()
 		{
-			return instance._lastMoussePos != GetMoussePos().ToVec2Int();
+			return instance.lastMoussePos != GetMoussePos().ToVec2Int();
 		}
-		public void SetTool(int tool)
-		{
-			curTool = Tools[tool];
-			toolRedirection = null;
-		}
-
-		public void RedirectTool( MainToolRedir func)
-		{
-			toolRedirection = func;
-			Debug.Log("Redirec Main Tool");
-		}
+		
 
 		public static bool PointerIsOverUI()
 		{

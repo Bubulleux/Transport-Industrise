@@ -76,7 +76,7 @@ namespace Script.Game
 
             if (Input.GetKeyDown(KeyCode.F6))
             {
-                MapManager.Selector.SelectionParcel(PlayerControler.GetMoussePos().ToVec2Int(),
+                MapManager.Selector.SelectParcel(PlayerControler.GetMoussePos().ToVec2Int(),
                     new Color(Random.value, Random.value, Random.value));
             }
             

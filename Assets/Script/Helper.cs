@@ -31,4 +31,21 @@ public static class Helper
 
 		return area;
 	}
+
+	public static List<Vector2Int> GetCircleArea(Vector2Int origin, int radius)
+	{
+		var area = new List<Vector2Int>();
+		for (int y = -radius; y <= radius; y++)
+		{
+			for (int x = -radius; x <= radius ; x++)
+			{
+				var pos = new Vector2Int(x, y);
+				if (Vector2Int.Distance(pos, Vector2Int.zero) <= radius)
+				{
+					area.Add(pos + origin);
+				}
+			}
+		}
+		return area;
+	}
 }

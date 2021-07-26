@@ -20,10 +20,7 @@ namespace Script.Controler
 
         void Update()
         {
-            if (!PlayerControler.PointerIsOverUI())
-            {
-                futurPos +=  Vector3.up * (Input.mouseScrollDelta.y * -1 * futurPos.y * 0.1f);
-            }
+            futurPos +=  Vector3.up * (Input.GetAxis("UpDown") * Time.deltaTime * futurPos.y * 5f);
             if (futurPos.y > 500)
                 futurPos = new Vector3(futurPos.x, 500f, futurPos.z);
             futurPos += (Vector3.forward * Input.GetAxis("Vertical") + Vector3.right * Input.GetAxis("Horizontal")) * 

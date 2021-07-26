@@ -9,7 +9,6 @@ public class Tool
 	public string[] Modes { get; protected set; }
 	public int modeUsed = 0;
 	protected Color toolColor;
-	protected float size;
 
 	public Tool()
 	{
@@ -29,18 +28,15 @@ public class Tool
 	public virtual void MousseOverMap(Vector2Int pos) 
 	{ 
 		MapManager.Selector.ClearSelection();
-		MapManager.Selector.SelectionParcel(pos, toolColor);
+		MapManager.Selector.SelectParcel(pos, toolColor);
 		
 	}
 	
 	public virtual void StartUsing() { }
 	public virtual void StopUsing() { }
 
-	public virtual void MidelMousseBtn()
-	{
-		size += 0.2f;
-		size %= 1f;
-	}
-
+	public virtual void MidelMousseBtn() { }
+	
+	public virtual void MouseScrool(int scroling) { }
 	
 }
