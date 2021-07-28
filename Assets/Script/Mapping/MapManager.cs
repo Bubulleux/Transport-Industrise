@@ -95,19 +95,26 @@ namespace Script.Mapping
         {
             foreach (Parcel curParcel in map.updatedParcel)
                 curParcel.Update();
-        }
-
-        void FixedUpdate()
-        {
-            UpdateMap();
             if (GameLoader.load == GameLoader.LoadStatus.Done)
             {
                 UpdateMap(); 
                 foreach (Industrise curIndustrise in map.industrises)
                 {
-                    curIndustrise.Update(Time.fixedDeltaTime);
+                    curIndustrise.Update(Time.deltaTime);
                 }
+                
+                foreach (var city in map.citys)
+                {
+                    city.Update(Time.deltaTime);
+                }
+                //DebugManager.GetCounter("D");
             }
+        }
+
+        void FixedUpdate()
+        {
+            UpdateMap();
+            
         }
 
         public void ResetGFX(Parcel parcel)

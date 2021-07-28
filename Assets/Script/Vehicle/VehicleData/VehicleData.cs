@@ -9,7 +9,7 @@ namespace Script.Vehicle.VehicleData
         public string description;
         public float speed;
         public int price;
-        public int maxMaterialTransport;
-        public MaterialData[] materialCanTransport;
+        public int maxProductTransport;
+        public ProductData[] productCanTransport;
     }
 }

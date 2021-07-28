@@ -2,8 +2,8 @@
 
 namespace Script
 {
-    [CreateAssetMenu(fileName = "Material", menuName = "MyGame/Material")]
-    public class MaterialData : ScriptableObject
+    [CreateAssetMenu(fileName = "Product", menuName = "MyGame/Product")]
+    public class ProductData : ScriptableObject
     {
         public string name;
         public int buyPrice;

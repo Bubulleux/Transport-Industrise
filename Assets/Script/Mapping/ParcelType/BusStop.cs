@@ -10,7 +10,7 @@ namespace Script.Mapping.ParcelType
 		public const int busStopActionRadius = 4;
 		private float peopleWait = 0f;
 		public int PeopleWait { get { return Mathf.FloorToInt(peopleWait); } set { peopleWait = value; } }
-		public static MaterialData PeopleMatarial { get { return Resources.Load("ScriptableObject/Materials/People") as MaterialData; } }
+		public static ProductData PeopleMatarial { get { return Resources.Load("ScriptableObject/Products/People") as ProductData; } }
 		public const int maxPeopleWaiting = 100;
 
 
@@ -27,15 +27,15 @@ namespace Script.Mapping.ParcelType
 			} 
 		}
 
-		public override bool CanUnload(MaterialData material)
+		public override bool CanUnload(ProductData product)
 		{
-			return material == PeopleMatarial;
+			return product == PeopleMatarial;
 		}
 
-		public override int TryToInteract(MaterialData material, int materialQuantityGive)
+		public override int TryToInteract(ProductData product, int materialQuantityGive)
 		{
 			Debug.Log("TryToInteract: " + materialQuantityGive);
-			if (material != PeopleMatarial)
+			if (product != PeopleMatarial)
 				return 0;
 			if (materialQuantityGive > 0)
 				return materialQuantityGive;
@@ -54,13 +54,17 @@ namespace Script.Mapping.ParcelType
 			}
 		}
 
-		public override Dictionary<MaterialData, MaterialInfo> GetMaterial(bool getInput)
+		public override Dictionary<ProductData, Production> GetProductions(bool getInput)
 		{
-			return new Dictionary<MaterialData, MaterialInfo>() { { PeopleMatarial, new MaterialInfo() { 
-				isInput = getInput,
-				maxQuantity = getInput ? 9999 : maxPeopleWaiting,
-				quantity = getInput ? 0 : PeopleWait,
-			} } };
+			return new Dictionary<ProductData, Production>()
+			{
+				{
+					PeopleMatarial, new Production(PeopleMatarial, getInput ? 9999 : maxPeopleWaiting, getInput, 0)
+					{
+						Quantity = getInput ? 0 : PeopleWait,
+					}
+				}
+			};
 		}
 
 		public override void InitializationSecondary()

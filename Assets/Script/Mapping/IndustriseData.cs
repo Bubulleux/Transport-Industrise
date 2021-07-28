@@ -6,8 +6,8 @@ namespace Script.Mapping
     public class IndustriseData : ScriptableObject
     {
         public string name;
-        public MaterialData[] materialInpute;
-        public MaterialData[] materialOutpute;
+        public ProductData[] productIn;
+        public ProductData[] productOut;
         public Color32 color;
         public float height;
     }

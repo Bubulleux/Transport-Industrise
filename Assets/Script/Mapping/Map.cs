@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Script.Game;
 using Script.MapGeneration;
 using Script.Mapping.ParcelType;
 using Script.Vehicle;
@@ -83,11 +84,12 @@ namespace Script.Mapping
 				}
 			}
 			await Task.Delay(10);
-			while (citys.Count < 20)
+			while (citys.Count < 1)
 			{
 				await Task.Delay(10);;
 				CreatCity(Random.Range(100, 900), Random.Range(100, 900));
 			}
+			DebugManager.GetCounter("d");
 			for (var i = 0; i < 50; i++)
 			{
 				CreatIndustrise(new Vector2Int(Random.Range(100, 900), Random.Range(100, 900)));
@@ -131,7 +133,7 @@ namespace Script.Mapping
 		{
 			foreach (var _city in citys)
 			{
-				if (Vector2Int.Distance(new Vector2Int(x, y), _city.MasterPos) < 100f)
+				if (Vector2Int.Distance(new Vector2Int(x, y), _city.masterPos) < 100f)
 				{
 					return false;
 				}
@@ -152,7 +154,7 @@ namespace Script.Mapping
 		{
 			foreach (var _city in citys)
 			{
-				if (Vector2Int.Distance(pos, _city.MasterPos) < 50f)
+				if (Vector2Int.Distance(pos, _city.masterPos) < 50f)
 				{
 					return null;
 				}

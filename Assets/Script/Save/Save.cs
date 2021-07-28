@@ -140,9 +140,9 @@ namespace Script.Save
                 for (int j = 0; j < 1; j++)
                 {
                     Dictionary<int, int> material = new Dictionary<int, int>();
-                    Dictionary<MaterialData, int> source = j == 0 ? curIndustrise.materialsInpute : curIndustrise.materialsOutpute;
-                    MaterialData[] materialList = FIleSys.GetAllInstances<MaterialData>();
-                    foreach (KeyValuePair<MaterialData, int> curMaterial in source)
+                    Dictionary<ProductData, int> source = j == 0 ? curIndustrise.materialsInpute : curIndustrise.materialsOutpute;
+                    ProductData[] materialList = FIleSys.GetAllInstances<ProductData>();
+                    foreach (KeyValuePair<ProductData, int> curMaterial in source)
                     {
                         material.Add(Array.IndexOf(materialList, curMaterial.Key), curMaterial.Value);
                     }
@@ -226,7 +226,7 @@ namespace Script.Save
 
         private void LoadIndustrise()
         {
-            MaterialData[] materialList = FIleSys.GetAllInstances<MaterialData>();
+            ProductData[] materialList = FIleSys.GetAllInstances<ProductData>();
             string[] industriseJson = FIleSys.OpenFile<string[]>(Path + "/industrise.bin");
             for (int i = 0; i < industriseJson.Length; i++)
             {

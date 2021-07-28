@@ -1,12 +1,13 @@
 ﻿using Script.Mapping;
 using Script.Mapping.ParcelType;
+using UnityEngine.Serialization;
 
 namespace Script.Vehicle.TerresteVehicle.Truck
 {
 	public class TruckControler : TerresteVehicle
 	{
-		public MaterialData materialCurTransport;
-		public int materialQuantity;
+		public ProductData productCurTransport;
+		public int productQuantity;
 
 		public override float Load()
 		{
@@ -14,22 +15,22 @@ namespace Script.Vehicle.TerresteVehicle.Truck
 			//Debug.Log("Load Call");
 			var timeStop = 0f;
 		
-			if (materialQuantity != 0 && loadingBay.CanUnload(materialCurTransport))
+			if (productQuantity != 0 && loadingBay.CanUnload(productCurTransport))
 			{
-				int materialSucessful = loadingBay.TryToInteract(materialCurTransport, materialQuantity);
-				materialQuantity -= materialSucessful;
+				int productSuccessful = loadingBay.TryToInteract(productCurTransport, productQuantity);
+				productQuantity -= productSuccessful;
 				timeStop += 2f;
 			}
 		
-			if (materialQuantity == 0)
+			if (productQuantity == 0)
 			{
-				foreach (MaterialData curMaterial in vehicleData.materialCanTransport)
+				foreach (ProductData curProduct in vehicleData.productCanTransport)
 				{
-					if (loadingBay.GetMaterial(false).ContainsKey(curMaterial) && loadingBay.GetMaterial(false)[curMaterial].quantity > 0)
+					if (loadingBay.GetProductions(false).ContainsKey(curProduct) && loadingBay.GetProductions(false)[curProduct].Quantity > 0)
 					{
-						int materialSucessful = loadingBay.TryToInteract(curMaterial, materialQuantity - vehicleData.maxMaterialTransport);
-						materialQuantity -= materialSucessful;
-						materialCurTransport = curMaterial;
+						int productSuccessful = loadingBay.TryToInteract(curProduct, productQuantity - vehicleData.maxProductTransport);
+						productQuantity -= productSuccessful;
+						productCurTransport = curProduct;
 						timeStop += 2f;
 					}
 				}

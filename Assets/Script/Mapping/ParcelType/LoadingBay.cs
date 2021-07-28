@@ -8,26 +8,19 @@ using UnityEngine;
 namespace Script.Mapping.ParcelType
 {
 	[JsonObject(MemberSerialization.OptOut)]
-	public class LoadingBay : Road
+	public partial class LoadingBay : Road
 	{
-		public LoadingBayType loadingBayType;
-		public enum LoadingBayType
-		{
-			LoadingBay,
-			BusStop
-		}
-
 		[JsonIgnore]
-		public List<Industrise> IndustriseLink
+		public List<ParcelProducer> ProductionLink
 		{
 			get
 			{
-				List<Industrise> returnList = new List<Industrise>();
-				foreach (Industrise curIndustrise in MapManager.map.industrises)
+				List<ParcelProducer> returnList = new List<ParcelProducer>();
+				foreach (Vector2Int circlePos in Helper.GetCircleArea(pos, 30))
 				{
-					if (Vector2Int.Distance(pos, curIndustrise.MasterPos) <= 30)
+					if (MapManager.map.ParcelIs<ParcelProducer>(circlePos))
 					{
-						returnList.Add(curIndustrise);
+						returnList.Add(MapManager.map.GetParcel<ParcelProducer>(circlePos));
 					}
 				}
 				return returnList;
@@ -46,15 +39,18 @@ namespace Script.Mapping.ParcelType
 		public override void DebugParcel()
 		{
 			base.DebugParcel();
+			Debug.Log($"Production Linked: {ProductionLink.Count}");
 			string result = "Inpute:";
-			foreach (KeyValuePair<MaterialData, MaterialInfo> curMaterial in GetMaterial(true))
+			foreach (KeyValuePair<ProductData, Production> curProduction in GetProductions(true))
 			{
-				result += $"\n{curMaterial.Key}: {curMaterial.Value.quantity}";
+				result += $"\n{curProduction.Key}: {curProduction.Value.Quantity} {curProduction.Value.quantity} " + 
+						  $"{curProduction.Value.maxQuantity} {curProduction.Value.Filling}";
 			}
 			result += "\nOutpute: ";
-			foreach (KeyValuePair<MaterialData, MaterialInfo> curMaterial in GetMaterial(false))
+			foreach (KeyValuePair<ProductData, Production> curProduction in GetProductions(false))
 			{
-				result += $"\n{curMaterial.Key}: {curMaterial.Value.quantity}";
+				result += $"\n{curProduction.Key}: {curProduction.Value.Quantity} {curProduction.Value.quantity} " +
+						  $"{curProduction.Value.maxQuantity} {curProduction.Value.Filling}";
 			}
 			Debug.Log(result);
 
@@ -66,125 +62,79 @@ namespace Script.Mapping.ParcelType
 			WindowsOpener.OpenLoadingBay(this);
 		}
 
-		public virtual Dictionary<MaterialData, MaterialInfo> GetMaterial(bool getInput)
+		public virtual Dictionary<ProductData, Production> GetProductions(bool getInput)
 		{
-			Dictionary<MaterialData, MaterialInfo> resulte = new Dictionary<MaterialData, MaterialInfo>();
-			foreach (Industrise curIndustrise in IndustriseLink)
+			Dictionary<ProductData, Production> resulte = new Dictionary<ProductData, Production>();
+			foreach (ParcelProducer curIndustrise in ProductionLink)
 			{
-				foreach (KeyValuePair<MaterialData, int> curMaterial in getInput ? curIndustrise.materialsInpute : curIndustrise.materialsOutpute)
+				foreach (var curProduction in curIndustrise.productions)
 				{
-					if (resulte.ContainsKey(curMaterial.Key))
+					if (curProduction.isInput != getInput)
+						continue;
+					if (resulte.ContainsKey(curProduction.data))
 					{
-						resulte[curMaterial.Key] = new MaterialInfo()
-						{
-							quantity = resulte[curMaterial.Key].quantity + curMaterial.Value,
-							maxQuantity = resulte[curMaterial.Key].maxQuantity + Industrise.maxMaterialCanStock,
-						};
+						resulte[curProduction.data] += curProduction;
 					}
 					else
 					{
-						resulte.Add(curMaterial.Key, new MaterialInfo() 
-						{ 
-							quantity = curMaterial.Value,
-							maxQuantity = Industrise.maxMaterialCanStock,
-							isInput = getInput,
-						});
+						resulte.Add(curProduction.data, curProduction);
+					}
+
+					if (curProduction.quantity != 0 && curProduction.quantity != curProduction.maxQuantity)
+					{
+						Debug.Log($"Error {curIndustrise.pos} {curProduction.data} {curProduction.quantity} {curProduction.maxQuantity}");
 					}
 				}
 			}
+
 			return resulte;
 		}
-
-		//public virtual int GiveOrTakeMaterial(MaterialData material, int quantity)
-		//{
-		//	int _quantity = quantity;
-		//	foreach (Industrise curIndustrise in IndustriseLink)
-		//	{
-		//		if (curIndustrise.materialsInpute.ContainsKey(material))
-		//		{
-		//			curIndustrise.materialsInpute[material] += _quantity;
-		//			_quantity = 0;
-		//			if (curIndustrise.materialsInpute[material] - Industrise.maxMaterialCanStock > 0)
-		//			{
-		//				_quantity = curIndustrise.materialsInpute[material] - Industrise.maxMaterialCanStock;
-		//				curIndustrise.materialsInpute[material] = Industrise.maxMaterialCanStock;
-		//			}
-
-		//			if (curIndustrise.materialsInpute[material] < 0)
-		//			{
-		//				quantity = curIndustrise.materialsInpute[material];
-		//				curIndustrise.materialsInpute[material] = 0;
-		//			}
-		//		}
-		//	}
-		//	return _quantity;
-		//}
-
-		public virtual bool CanUnload(MaterialData material)
+		
+		public virtual bool CanUnload(ProductData product)
 		{
-			foreach (Industrise curIndustrise in IndustriseLink)
+			foreach (ParcelProducer curIndustrise in ProductionLink)
 			{
-				if (curIndustrise.materialsInpute.ContainsKey(material) && curIndustrise.materialsInpute[material] != Industrise.maxMaterialCanStock)
+				foreach (var curMaterial in curIndustrise.productions)
 				{
-					return true;
+					if (curMaterial.isInput && curMaterial.data == product)
+					{
+						return true;
+					}
 				}
 			}
 			return false;
 		}
 
-		public virtual int TryToInteract(MaterialData material, int materialQuantityGive)
+		public virtual int TryToInteract(ProductData product, int materialQuantityGive)
 		{
 			int materialHasNotGiven = materialQuantityGive;
 			//Debug.Log("material has no Given" + materialHasNotGiven);
-			foreach (Industrise curIndustrise in IndustriseLink)
+			foreach (ParcelProducer curIndustrise in ProductionLink)
 			{
 				if (materialHasNotGiven == 0)
 				{
 					break;
 				}
-				if (materialHasNotGiven > 0 && curIndustrise.materialsInpute.ContainsKey(material) && curIndustrise.materialsInpute[material] != Industrise.maxMaterialCanStock)
-				{
-					curIndustrise.materialsInpute[material] += materialHasNotGiven;
-					if (curIndustrise.materialsInpute[material] > Industrise.maxMaterialCanStock)
-					{
-						materialHasNotGiven = curIndustrise.materialsInpute[material] - Industrise.maxMaterialCanStock;
-						curIndustrise.materialsInpute[material] = Industrise.maxMaterialCanStock;
-					}
-					else
-					{
-						materialHasNotGiven = 0;
-					}
-				}
-				if (materialHasNotGiven < 0 && curIndustrise.materialsOutpute.ContainsKey(material) && curIndustrise.materialsOutpute[material] != 0)
-				{
-					curIndustrise.materialsOutpute[material] += materialHasNotGiven;
-					if (curIndustrise.materialsOutpute[material] < 0)
-					{
-						materialHasNotGiven = curIndustrise.materialsOutpute[material];
-						curIndustrise.materialsOutpute[material] = 0;
-					}
-					else
-					{
-						materialHasNotGiven = 0;
-					}
-				}
 
+				for (int i = 0; i < curIndustrise.productions.Count; i ++)
+				{
+					var curMaterial = curIndustrise.productions[i];
+					if (((curMaterial.isInput && materialHasNotGiven > 0) ||
+						 (curMaterial.IsOutput && materialHasNotGiven < 0)) &&
+						curMaterial.data == product)
+					{
+						materialQuantityGive = Mathf.FloorToInt(-curMaterial.AddQuantity(materialHasNotGiven));
+					}
+
+					curIndustrise.productions[i] = curMaterial;
+				}
 			}
 			int materialGive = materialQuantityGive - materialHasNotGiven;
-			GameManager.Money += materialGive * (materialGive < 0 ? material.buyPrice : material.sellPrice);
+			GameManager.Money += materialGive * (materialGive < 0 ? product.buyPrice : product.sellPrice);
 			//Debug.Log("Materal Return " + materialGive);
 			return materialGive;
 		}
 
-		public struct MaterialInfo
-		{
-			public int quantity;
-			public int maxQuantity;
-			public bool isInput;
-			public bool IsOutput { get { return !isInput; } set { isInput = !value; } }
-			public float Filling { get { return quantity / (float)maxQuantity; } }
-		}
-		
 		public override bool CanConnect(Vector2Int connectionPos)
 		{
 			return Array.IndexOf(MapManager.parcelAround, connectionPos - pos) == (int)orientation;

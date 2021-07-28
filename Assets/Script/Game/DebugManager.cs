@@ -24,6 +24,8 @@ namespace Script.Game
      */
         
         private Vector2Int _startSelection;
+
+        private static Dictionary<string, int> counters = new Dictionary<string, int>();
         void Update()
         {
             if (Input.GetKeyDown(KeyCode.F1))
@@ -49,36 +51,24 @@ namespace Script.Game
                 }
             
                 LoadingBay loadingBay = MapManager.map.GetParcel<LoadingBay>(PlayerControler.GetMoussePos().ToVec2Int());
-                foreach (KeyValuePair<MaterialData, LoadingBay.MaterialInfo> curMaterial in loadingBay.GetMaterial(true))
+                foreach (KeyValuePair<ProductData, Production> curProduction in loadingBay.GetProductions(true))
                 {
-                    int materialSuccessful = loadingBay.TryToInteract(curMaterial.Key, 20);
-                    Debug.Log($"Try to give 20 {curMaterial.Key}, material Successful: {materialSuccessful}, now Loading Material: {loadingBay.GetMaterial(true)[curMaterial.Key].quantity}");
+                    int productSuccessful = loadingBay.TryToInteract(curProduction.Key, 20);
+                    Debug.Log($"Try to give 20 {curProduction.Key}, product Successful: {productSuccessful}, now Loading Product: {loadingBay.GetProductions(true)[curProduction.Key].Quantity}");
                 }
-                foreach (KeyValuePair<MaterialData, LoadingBay.MaterialInfo> curMaterial in loadingBay.GetMaterial(false))
+                foreach (KeyValuePair<ProductData, Production> curProduction in loadingBay.GetProductions(false))
                 {
-                    int materialSuccessful = -loadingBay.TryToInteract(curMaterial.Key, -20);
-                    Debug.Log($"Try to take 20 {curMaterial.Key}, material Successful: {materialSuccessful}, now Loading Material: {loadingBay.GetMaterial(false)[curMaterial.Key].quantity}");
+                    int productSuccessful = -loadingBay.TryToInteract(curProduction.Key, -20);
+                    Debug.Log($"Try to take 20 {curProduction.Key}, product Successful: {productSuccessful}, now Loading Product: {loadingBay.GetProductions(false)[curProduction.Key].Quantity}");
                 }
             }
-            // if (Input.GetKeyDown(KeyCode.F4) && MapManager.map.GetparcelType(PlayerControler.GetMoussePos().ToVec2Int()) == typeof(BusStop))
-            // {
-            //     BusStop busStop = MapManager.map.GetParcel<BusStop>(PlayerControler.GetMoussePos().ToVec2Int());
-            //     int materialSuccessful = busStop.TryToInteract(BusStop.PeopleMatarial, -20);
-            //     Debug.Log($"{materialSuccessful}, now Loading Material: {busStop.GetMaterial(false)[BusStop.PeopleMatarial].quantity}");
-            //
-            // }
-
-            // if (Input.GetKeyDown(KeyCode.F5))
-            // {
-            //     Save.Save save = new Save.Save();
-            //     AsyncTask.MonitorTask(save.SaveGame());
-            // }
 
             if (Input.GetKeyDown(KeyCode.F6))
             {
                 MapManager.Selector.SelectParcel(PlayerControler.GetMoussePos().ToVec2Int(),
                     new Color(Random.value, Random.value, Random.value));
             }
+            
             
             if (Input.GetKeyDown(KeyCode.F7))
             {
@@ -105,8 +95,20 @@ namespace Script.Game
                 MapManager.Selector.UnSelectColor(Color.green);
                 MapManager.Selector.SelectArea(_startSelection, PlayerControler.GetMoussePos().ToVec2Int(), Color.red);
             }
+        }
 
+        public static int Count(string counterName, int value = 1)
+        {
+            if (!counters.ContainsKey(counterName))
+                counters.Add(counterName, 0);
+            counters[counterName] += value;
+            return counters[counterName];
+        }
 
+        public static void GetCounter(string counterName, bool clear = true)
+        {
+            Debug.Log($"Counter: {counterName}, Value: {counters[counterName]}");
+            counters.Remove(counterName);
         }
     }
 }

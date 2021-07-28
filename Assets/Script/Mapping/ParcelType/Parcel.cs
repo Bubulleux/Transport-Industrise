@@ -19,6 +19,7 @@ namespace Script.Mapping.ParcelType
 		public GameObject prefab;
 		public Map map;
 		public Orientation orientation;
+		public City city;
 
 		public enum Orientation
 		{
@@ -70,6 +71,7 @@ namespace Script.Mapping.ParcelType
 			pastClass.map = copyClass.map;
 			pastClass.biome = copyClass.biome;
 			pastClass.orientation = copyClass.orientation;
+			pastClass.city = copyClass.city;
 			pastClass.Initialaze();
 			
 			if (MapManager.instence)

@@ -8,8 +8,8 @@ namespace Script.Mapping
     public class Industrise
     {
         public IndustriseData industriseData;
-        public Dictionary<MaterialData, int> materialsInpute = new Dictionary<MaterialData, int>();
-        public Dictionary<MaterialData, int> materialsOutpute = new Dictionary<MaterialData, int>();
+        public Dictionary<ProductData, int> materialsInpute = new Dictionary<ProductData, int>();
+        public Dictionary<ProductData, int> materialsOutpute = new Dictionary<ProductData, int>();
         public Vector2Int MasterPos;
         public static int maxMaterialCanStock = 300;
         public float materialProductionRatio;
@@ -49,13 +49,13 @@ namespace Script.Mapping
         }
         public void SetInputeOutpure()
         {
-            materialsInpute = new Dictionary<MaterialData, int>();
-            materialsOutpute = new Dictionary<MaterialData, int>();
-            foreach (MaterialData curMaterial in industriseData.materialInpute)
+            materialsInpute = new Dictionary<ProductData, int>();
+            materialsOutpute = new Dictionary<ProductData, int>();
+            foreach (ProductData curMaterial in industriseData.productIn)
             {
                 materialsInpute.Add(curMaterial, 0);
             }
-            foreach (MaterialData curMaterial in industriseData.materialOutpute)
+            foreach (ProductData curMaterial in industriseData.productOut)
             {
                 materialsOutpute.Add(curMaterial, 0);
             }
@@ -73,27 +73,27 @@ namespace Script.Mapping
 
         public void ProductMaterial()
         {
-            List<MaterialData> listMaterialsInpute = new List<MaterialData>();
-            List<MaterialData> listMaterialsOutpute = new List<MaterialData>();
-            foreach(KeyValuePair<MaterialData, int> curMaterial in materialsInpute)
+            List<ProductData> listMaterialsInpute = new List<ProductData>();
+            List<ProductData> listMaterialsOutpute = new List<ProductData>();
+            foreach(KeyValuePair<ProductData, int> curMaterial in materialsInpute)
             {
                 if (curMaterial.Value != 0)
                 {
                     listMaterialsInpute.Add(curMaterial.Key);
                 }
             }
-            foreach (KeyValuePair<MaterialData, int> curMaterial in materialsOutpute)
+            foreach (KeyValuePair<ProductData, int> curMaterial in materialsOutpute)
             {
                 if (curMaterial.Value != maxMaterialCanStock)
                 {
                     listMaterialsOutpute.Add(curMaterial.Key);
                 }
             }
-            foreach (MaterialData curMaterial in listMaterialsInpute)
+            foreach (ProductData curMaterial in listMaterialsInpute)
             {
                 materialsInpute[curMaterial] -= 1;
             }
-            foreach (MaterialData curMaterial in listMaterialsOutpute)
+            foreach (ProductData curMaterial in listMaterialsOutpute)
             {
                 materialsOutpute[curMaterial] += 1;
             }
