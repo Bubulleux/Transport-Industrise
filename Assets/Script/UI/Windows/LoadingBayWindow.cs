@@ -37,13 +37,13 @@ namespace Script.UI.Windows
 
             for (int i = 0; i < 2; i++)
             {
-                foreach (KeyValuePair<ProductData, Production> curProduction in loadingBay.GetProductions(i != 0))
+                foreach (var curProduction in loadingBay.GetProductions(i != 0))
                 {
                     Transform _go = Instantiate(outputList.GetChild(0));
                     _go.SetParent(i == 0 ? outputList : inputList);
-                    _go.GetChild(1).GetComponent<Text>().text = curProduction.Key.name;
-                    _go.GetChild(2).GetComponent<Text>().text =  $"{curProduction.Value.Quantity}/{curProduction.Value.maxQuantity}";
-                    _go.GetChild(0).GetComponent<RectTransform>().sizeDelta = new Vector2(curProduction.Value.Filling * 200, _go.Find("ProgressBar").GetComponent<RectTransform>().sizeDelta.y);
+                    _go.GetChild(1).GetComponent<Text>().text = curProduction.data.name;
+                    _go.GetChild(2).GetComponent<Text>().text =  $"{curProduction.Quantity}/{curProduction.maxQuantity}";
+                    _go.GetChild(0).GetComponent<RectTransform>().sizeDelta = new Vector2(curProduction.Filling * 200, _go.Find("ProgressBar").GetComponent<RectTransform>().sizeDelta.y);
                     _go.gameObject.SetActive(true);
                 }
             }

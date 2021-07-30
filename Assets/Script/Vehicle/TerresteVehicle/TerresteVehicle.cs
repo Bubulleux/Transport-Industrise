@@ -2,6 +2,7 @@
 using Script.MapGeneration;
 using Script.Mapping;
 using Script.Mapping.ParcelType;
+using Script.Vehicle.TerresteVehicle.Truck;
 using UnityEngine;
 
 namespace Script.Vehicle.TerresteVehicle
@@ -63,7 +64,13 @@ namespace Script.Vehicle.TerresteVehicle
 
 		public virtual float Load()
 		{
-			return 1f;
+			VehicleLoader loader;
+			if (TryGetComponent<VehicleLoader>(out loader))
+			{
+				return loader.Load();
+			}
+
+			return 0f;
 		}
 
 

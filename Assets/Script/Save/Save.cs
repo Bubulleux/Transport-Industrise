@@ -129,28 +129,28 @@ namespace Script.Save
 
         private void SaveIndustrise()
         {
-            string[] industriseJson = new string[map.industrises.Count];
-            for (int i = 0; i < industriseJson.Length; i++)
-            {
-                Industrise curIndustrise = map.industrises[i];
-                Dictionary<string, object> industriseDic = new Dictionary<string, object>();
-                industriseDic.Add("pos", curIndustrise.MasterPos);
-                industriseDic.Add("materialPoduction", curIndustrise.materialProductionRatio);
-                industriseDic.Add("industriseData", Array.IndexOf(FIleSys.GetAllInstances<IndustriseData>(), curIndustrise.industriseData));
-                for (int j = 0; j < 1; j++)
-                {
-                    Dictionary<int, int> material = new Dictionary<int, int>();
-                    Dictionary<ProductData, int> source = j == 0 ? curIndustrise.materialsInpute : curIndustrise.materialsOutpute;
-                    ProductData[] materialList = FIleSys.GetAllInstances<ProductData>();
-                    foreach (KeyValuePair<ProductData, int> curMaterial in source)
-                    {
-                        material.Add(Array.IndexOf(materialList, curMaterial.Key), curMaterial.Value);
-                    }
-                    industriseDic.Add(j == 0 ? "inpute" : "outpute", material);
-                }
-                industriseJson[i] = GetJson(industriseDic);
-            }
-            FIleSys.SaveFile(Path + "/industrise.bin", industriseJson);
+            // string[] industriseJson = new string[map.factories.Count];
+            // for (int i = 0; i < industriseJson.Length; i++)
+            // {
+            //     Industrise curIndustrise = map.factories[i];
+            //     Dictionary<string, object> industriseDic = new Dictionary<string, object>();
+            //     industriseDic.Add("pos", curIndustrise.MasterPos);
+            //     industriseDic.Add("materialPoduction", curIndustrise.materialProductionRatio);
+            //     industriseDic.Add("industriseData", Array.IndexOf(FIleSys.GetAllInstances<IndustriseData>(), curIndustrise.industriseData));
+            //     for (int j = 0; j < 1; j++)
+            //     {
+            //         Dictionary<int, int> material = new Dictionary<int, int>();
+            //         Dictionary<ProductData, int> source = j == 0 ? curIndustrise.materialsInpute : curIndustrise.materialsOutpute;
+            //         ProductData[] materialList = FIleSys.GetAllInstances<ProductData>();
+            //         foreach (KeyValuePair<ProductData, int> curMaterial in source)
+            //         {
+            //             material.Add(Array.IndexOf(materialList, curMaterial.Key), curMaterial.Value);
+            //         }
+            //         industriseDic.Add(j == 0 ? "inpute" : "outpute", material);
+            //     }
+            //     industriseJson[i] = GetJson(industriseDic);
+            // }
+            // FIleSys.SaveFile(Path + "/industrise.bin", industriseJson);
         }
 
     
@@ -226,33 +226,33 @@ namespace Script.Save
 
         private void LoadIndustrise()
         {
-            ProductData[] materialList = FIleSys.GetAllInstances<ProductData>();
-            string[] industriseJson = FIleSys.OpenFile<string[]>(Path + "/industrise.bin");
-            for (int i = 0; i < industriseJson.Length; i++)
-            {
-                Dictionary<string, object> industriseValue = GetObject<Dictionary<string, object>>(industriseJson[i]);
-
-                Industrise curIndustrise = new Industrise((Vector2Int)industriseValue["pos"], map, FIleSys.GetAllInstances<IndustriseData>()[(Int64)(industriseValue["industriseData"])]);
-                curIndustrise.materialProductionRatio = (float)((double)industriseValue["materialPoduction"]);
-
-                if (industriseValue.ContainsKey("inpute"))
-                {
-                    foreach (KeyValuePair<int, int> curMaterial in (Dictionary<int, int>)industriseValue["inpute"])
-                    {
-                        curIndustrise.materialsInpute[materialList[curMaterial.Key]] = curMaterial.Value;
-                    }
-                }
-
-                if (industriseValue.ContainsKey("outpute"))
-                {
-                    foreach (KeyValuePair<int, int> curMaterial in (Dictionary<int, int>)industriseValue["outpute"])
-                    {
-                        curIndustrise.materialsOutpute[materialList[curMaterial.Key]] = curMaterial.Value;
-                    }
-                }
-
-                map.industrises.Add(curIndustrise);
-            }
+            // ProductData[] materialList = FIleSys.GetAllInstances<ProductData>();
+            // string[] industriseJson = FIleSys.OpenFile<string[]>(Path + "/industrise.bin");
+            // for (int i = 0; i < industriseJson.Length; i++)
+            // {
+            //     Dictionary<string, object> industriseValue = GetObject<Dictionary<string, object>>(industriseJson[i]);
+            //
+            // Industrise curIndustrise = new Industrise((Vector2Int)industriseValue["pos"], map, FIleSys.GetAllInstances<IndustriseData>()[(Int64)(industriseValue["industriseData"])]);
+            // curIndustrise.materialProductionRatio = (float)((double)industriseValue["materialPoduction"]);
+            //
+            //     if (industriseValue.ContainsKey("inpute"))
+            //     {
+            //         foreach (KeyValuePair<int, int> curMaterial in (Dictionary<int, int>)industriseValue["inpute"])
+            //         {
+            //             curIndustrise.materialsInpute[materialList[curMaterial.Key]] = curMaterial.Value;
+            //         }
+            //     }
+            //
+            //     if (industriseValue.ContainsKey("outpute"))
+            //     {
+            //         foreach (KeyValuePair<int, int> curMaterial in (Dictionary<int, int>)industriseValue["outpute"])
+            //         {
+            //             curIndustrise.materialsOutpute[materialList[curMaterial.Key]] = curMaterial.Value;
+            //         }
+            //     }
+            //
+            //     map.factories.Add(curIndustrise);
+            // }
         }
 
         public void ApplySave()

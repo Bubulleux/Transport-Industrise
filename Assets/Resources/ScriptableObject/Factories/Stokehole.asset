@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: Stokehole
   m_EditorClassIdentifier: 
   name: Stokehole
-  materialInpute:
+  productIn:
   - {fileID: 11400000, guid: cead8f4cfe12cda4d9563dff6e236b9d, type: 2}
   - {fileID: 11400000, guid: f2d162b20451b4948839ba9dc8659539, type: 2}
-  materialOutpute: []
-  color: {r: 1, g: 0.53296876, b: 0, a: 0}
+  productOut: []
+  color:
+    serializedVersion: 2
+    rgba: 26623
   height: 1

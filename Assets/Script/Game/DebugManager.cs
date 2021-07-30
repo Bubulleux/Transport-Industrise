@@ -51,15 +51,15 @@ namespace Script.Game
                 }
             
                 LoadingBay loadingBay = MapManager.map.GetParcel<LoadingBay>(PlayerControler.GetMoussePos().ToVec2Int());
-                foreach (KeyValuePair<ProductData, Production> curProduction in loadingBay.GetProductions(true))
+                foreach (var curProduction in loadingBay.GetProductions(true))
                 {
-                    int productSuccessful = loadingBay.TryToInteract(curProduction.Key, 20);
-                    Debug.Log($"Try to give 20 {curProduction.Key}, product Successful: {productSuccessful}, now Loading Product: {loadingBay.GetProductions(true)[curProduction.Key].Quantity}");
+                    int productSuccessful = loadingBay.TryToInteract(curProduction.data, 20);
+                    Debug.Log($"Try to give 20 {curProduction.data}, product Successful: {productSuccessful}");
                 }
-                foreach (KeyValuePair<ProductData, Production> curProduction in loadingBay.GetProductions(false))
+                foreach (var curProduction in loadingBay.GetProductions(false))
                 {
-                    int productSuccessful = -loadingBay.TryToInteract(curProduction.Key, -20);
-                    Debug.Log($"Try to take 20 {curProduction.Key}, product Successful: {productSuccessful}, now Loading Product: {loadingBay.GetProductions(false)[curProduction.Key].Quantity}");
+                    int productSuccessful = -loadingBay.TryToInteract(curProduction.data, -20);
+                    Debug.Log($"Try to take 20 {curProduction.data}, product Successful: {productSuccessful}");
                 }
             }
 

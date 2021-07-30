@@ -15,6 +15,18 @@ namespace Script.Mapping.ParcelType
 				productions[i].Update(deltaTime);
 			}
 		}
-		
+
+		public override void DebugParcel()
+		{
+			base.DebugParcel();
+			string result = "Production";
+			foreach (var curProduction in productions)
+			{
+				result += $"\n{curProduction.data}:{curProduction.quantity}/{curProduction.maxQuantity} " + 
+				          $"{curProduction.Filling}, Input:{curProduction.isInput}, {curProduction.production}";
+			}
+			Debug.Log(result);
+			
+		}
 	}
 }

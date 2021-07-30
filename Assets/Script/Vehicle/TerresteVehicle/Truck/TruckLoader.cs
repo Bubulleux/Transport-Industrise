@@ -1,17 +1,18 @@
 ﻿using Script.Mapping;
 using Script.Mapping.ParcelType;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 namespace Script.Vehicle.TerresteVehicle.Truck
 {
-	public class TruckControler : TerresteVehicle
+	public class TruckLoader : VehicleLoader
 	{
 		public ProductData productCurTransport;
 		public int productQuantity;
 
 		public override float Load()
 		{
-			LoadingBay loadingBay = MapManager.map.GetParcel<LoadingBay>(VehiclePos);
+			LoadingBay loadingBay = MapManager.map.GetParcel<LoadingBay>(vehicleControler.VehiclePos);
 			//Debug.Log("Load Call");
 			var timeStop = 0f;
 		
@@ -24,11 +25,13 @@ namespace Script.Vehicle.TerresteVehicle.Truck
 		
 			if (productQuantity == 0)
 			{
-				foreach (ProductData curProduct in vehicleData.productCanTransport)
+				foreach (ProductData curProduct in vehicleControler.vehicleData.productCanTransport)
 				{
-					if (loadingBay.GetProductions(false).ContainsKey(curProduct) && loadingBay.GetProductions(false)[curProduct].Quantity > 0)
+					if (Production.GetProduction(loadingBay.GetProductions(), curProduct, false) != null && 
+					    Production.GetProduction(loadingBay.GetProductions(), curProduct, false).Quantity > 0)
 					{
-						int productSuccessful = loadingBay.TryToInteract(curProduct, productQuantity - vehicleData.maxProductTransport);
+						int productSuccessful = loadingBay.TryToInteract(curProduct,
+							productQuantity - vehicleControler.vehicleData.maxProductTransport);
 						productQuantity -= productSuccessful;
 						productCurTransport = curProduct;
 						timeStop += 2f;

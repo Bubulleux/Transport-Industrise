@@ -19,7 +19,7 @@ namespace Script.Mapping
 		[JsonProperty]
 		public List<City> citys = new List<City>();
 		[JsonProperty]
-		public List<Industrise> industrises =  new List<Industrise>();
+		public List<FactoryParcel> factories =  new List<FactoryParcel>();
 
 		public  const int ChuckSize = 50;
 
@@ -41,7 +41,7 @@ namespace Script.Mapping
 			parcels = new Parcel[1000, 1000];
 			await Task.Delay(10);
 			citys = new List<City>();
-			industrises = new List<Industrise>();
+			factories = new List<FactoryParcel>();
 			var mapNoise = NoiseGenerator.GenerNoise(1001, 1001, 60, 3, 6, 0.1f, Random.Range(1, 10000), mapSetting.heightCurv, mapSetting.limitWaterCurv);
 
 			var biomesNoise = new Dictionary<BiomeData, float[,]>();
@@ -84,15 +84,15 @@ namespace Script.Mapping
 				}
 			}
 			await Task.Delay(10);
-			while (citys.Count < 1)
+			while (citys.Count < 20)
 			{
-				await Task.Delay(10);;
+				await Task.Delay(1);;
 				CreatCity(Random.Range(100, 900), Random.Range(100, 900));
 			}
 			DebugManager.GetCounter("d");
 			for (var i = 0; i < 50; i++)
 			{
-				CreatIndustrise(new Vector2Int(Random.Range(100, 900), Random.Range(100, 900)));
+				CreatFactory(new Vector2Int(Random.Range(100, 900), Random.Range(100, 900)));
 				await Task.Delay(10);
 			}
 		}
@@ -150,29 +150,28 @@ namespace Script.Mapping
 			return true;
 		}
 
-		public Industrise CreatIndustrise(Vector2Int pos)
+		public FactoryParcel CreatFactory(Vector2Int pos)
 		{
-			foreach (var _city in citys)
+			foreach (var city in citys)
 			{
-				if (Vector2Int.Distance(pos, _city.masterPos) < 50f)
+				if (Vector2Int.Distance(pos, city.masterPos) < 50f)
 				{
 					return null;
 				}
 			}
-			foreach (var _industrise in industrises)
+			foreach (var factory in factories)
 			{
-				if (Vector2Int.Distance(pos, _industrise.MasterPos) < 10f)
+				if (Vector2Int.Distance(pos, factory.pos) < 10f)
 				{
 					return null;
 				}
 			}
-			//Transform _go = new GameObject().transform;
-			//_go.position = new Vector3(x, 0f, y);
-			//_go.parent = GameObject.Find("Instrises").transform;
-			//_go.name = "Industrise " + industrises.Count;
-			var Industrise = new Industrise(pos, this);
-			industrises.Add(Industrise);
-			return Industrise;
+
+			var allData = FIleSys.GetAllInstances<IndustriseData>();
+			IndustriseData data = allData[Random.Range(0, allData.Length)];
+			parcels[pos.x, pos.y] = Parcel.CopyClass(GetParcel(pos), new FactoryParcel(data));
+			factories.Add(GetParcel<FactoryParcel>(pos));
+			return GetParcel<FactoryParcel>(pos);
 		}
 
 		public bool AddRoad(Vector2Int pos)

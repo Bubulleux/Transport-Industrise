@@ -14,30 +14,31 @@ namespace Script.Mapping
 			//Vector2Int origine = new Vector2Int(200, 200);
 			for (int i = -30; i <= 0; i++)
 			{
-				MapManager.map.AddConstruction(origine + new Vector2Int(i, 1), new Road());
+				MapManager.map.AddRoad(origine + new Vector2Int(i, 1));
 			}
 			for (int i = 0; i <= 30; i++)
 			{
-				MapManager.map.AddConstruction(origine + new Vector2Int(0, i), new Road());
+				MapManager.map.AddRoad(origine + new Vector2Int(0, i));
 			}
-			for (int i = -15; i <= 15; i+= 15)
-			{
 
-				Industrise indus = MapManager.map.CreatIndustrise(origine + new Vector2Int(-35, i));
-				indus.industriseData = FIleSys.GetAllInstances<IndustriseData>()[0];
-				indus.materialProductionRatio = 200;
-				indus.SetInputeOutpure();
-			}
-			for (int i = -15; i <= 15; i+= 15)
+			for (var i = 0; i < 2; i+= 1)
 			{
-				Industrise indus = MapManager.map.CreatIndustrise(origine + new Vector2Int(i, 35));
-				indus.industriseData = FIleSys.GetAllInstances<IndustriseData>()[1];
-				indus.materialProductionRatio = 200;
-				indus.SetInputeOutpure();
+				FactoryParcel factory =
+					MapManager.map.CreatFactory(origine + (i == 0 ? new Vector2Int(i, 35) : new Vector2Int(-35, i)));
+				if (factory == null)
+					return;
+				factory.data =
+					Resources.Load<IndustriseData>(
+						"ScriptableObject/Factories/" + (i == 0 ? "GodInput" : "GodOutput"));
+
+				foreach (var production in factory.productions)
+					production.production = 200f;
+				
+				factory.InitializationSecondary();
 			}
 		
 			MapManager.map.AddConstruction(origine + new Vector2Int(-31, 1), new LoadingBay());
-			MapManager.map.AddConstruction(origine + new Vector2Int(0, 31), new LoadingBay());
+			MapManager.map.AddConstruction(origine + new Vector2Int(0, 31), new LoadingBay(), Parcel.Orientation.Down);
 
 			MapManager.map.AddConstruction(origine, new Depot());
 			Depot depot = MapManager.map.GetParcel<Depot>(origine);
@@ -45,12 +46,12 @@ namespace Script.Mapping
 			Debug.Log(FIleSys.GetAllInstances<VehicleData>()[1]);
 			Group group = new Group()
 			{
-				name = "Auto Generate Groupe"
+				name = "Auto Generate Group"
 			};
 			List<VehicleContoler> vehicles = new List<VehicleContoler>();
-			for (int i = 0; i < 3; i++)
+			for (int i = 0; i < 5; i++)
 			{
-				vehicles.Add(depot.BuyVehicle(FIleSys.GetAllInstances<VehicleData>()[1]));
+				vehicles.Add(depot.BuyVehicle(Resources.Load<VehicleData>("ScriptableObject/Vehicles/GodTruck")));
 				vehicles[i].MyGroup = Group.groups[0];
 			}
 			group.forceRoute = true;

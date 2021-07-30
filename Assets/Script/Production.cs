@@ -70,6 +70,17 @@ public class Production
 			};
 		return productionInfo;
 	}
+
+	public void Add(Production add)
+	{
+		if (data != add.data || isInput != add.isInput)
+			throw new ArgumentException("Production is different");
+
+		quantity += add.quantity;
+		maxQuantity += add.maxQuantity;
+		production += add.production;
+
+	}
 	
 	public static Production GetProduction(List<Production> list, ProductData data, bool isInput)
 	{

@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: CoalMine
   m_EditorClassIdentifier: 
   name: CoalMine
-  materialInpute: []
-  materialOutpute:
+  productIn: []
+  productOut:
   - {fileID: 11400000, guid: f2d162b20451b4948839ba9dc8659539, type: 2}
-  color: {r: 0, g: 0, b: 0, a: 0}
+  color:
+    serializedVersion: 2
+    rgba: 0
   height: 1

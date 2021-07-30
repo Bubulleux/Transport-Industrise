@@ -16,6 +16,6 @@ MonoBehaviour:
   description: Vroum
   speed: 30
   price: 1000
-  maxMaterialTransport: 50
-  materialCanTransport:
-  - {fileID: 11400000, guid: 1396c99beb58b9e48943bd398e3aeeb9, type: 2}
+  maxProductTransport: 0
+  ProductIsPeople: 1
+  productCanTransport: []

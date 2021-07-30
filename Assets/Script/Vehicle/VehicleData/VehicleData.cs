@@ -10,6 +10,9 @@ namespace Script.Vehicle.VehicleData
         public float speed;
         public int price;
         public int maxProductTransport;
+        public bool ProductIsPeople;
         public ProductData[] productCanTransport;
     }
+    
+    
 }

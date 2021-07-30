@@ -15,8 +15,6 @@ namespace Script.Mapping.ParcelType
 			dwell = Random.Range(2, 30);
 			productions = new List<Production>
 			{
-				new Production(Resources.Load<ProductData>("ScriptableObject/Products/People"), dwell,
-					false, dwell * 0.01f),
 				new Production(Resources.Load<ProductData>("ScriptableObject/Products/Waste"), dwell * 5,
 					false, dwell * 0.05f),
 				new Production(Resources.Load<ProductData>("ScriptableObject/Products/Food"), dwell * 5,

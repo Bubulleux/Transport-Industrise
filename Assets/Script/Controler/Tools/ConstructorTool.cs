@@ -57,7 +57,7 @@ public class ConstructorTool : Tool
 		
 		if (modeUsed == 2)
 		{
-			foreach (var posArea in Helper.GetCircleArea(pos, BusStop.busStopActionRadius))
+			foreach (var posArea in Helper.GetCircleArea(pos, BusStop.BusStopActionRadius))
 			{
 				if (MapManager.map.ParcelIs<Dwelling>(posArea))
 				{

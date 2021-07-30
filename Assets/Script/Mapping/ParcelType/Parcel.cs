@@ -57,9 +57,6 @@ namespace Script.Mapping.ParcelType
 		public virtual void DebugParcel()
 		{
 			Debug.Log($"{pos} {corner[0]}, {corner[1]}, {corner[2]}, {corner[3]}");
-			
-			//string parcelJson = Save.Save.GetJson(MapManager.map.GetParcel(pos));
-			//Debug.Log(parcelJson);
 		}
 
 		public static Parcel CopyClass(Parcel copyClass, Parcel pastClass)

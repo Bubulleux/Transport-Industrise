@@ -8,15 +8,17 @@ using UnityEngine;
 namespace Script.Mapping.ParcelType
 {
 	[JsonObject(MemberSerialization.OptOut)]
-	public partial class LoadingBay : Road
+	public partial class LoadingBay : Road, ITradeProduct
 	{
-		[JsonIgnore]
-		public List<ParcelProducer> ProductionLink
+
+		protected int radiusAction = 15;
+		
+		public List<ParcelProducer> ProducerLink
 		{
 			get
 			{
 				List<ParcelProducer> returnList = new List<ParcelProducer>();
-				foreach (Vector2Int circlePos in Helper.GetCircleArea(pos, 30))
+				foreach (Vector2Int circlePos in Helper.GetCircleArea(pos, radiusAction))
 				{
 					if (MapManager.map.ParcelIs<ParcelProducer>(circlePos))
 					{
@@ -39,18 +41,18 @@ namespace Script.Mapping.ParcelType
 		public override void DebugParcel()
 		{
 			base.DebugParcel();
-			Debug.Log($"Production Linked: {ProductionLink.Count}");
+			Debug.Log($"Production Linked: {ProducerLink.Count}");
 			string result = "Inpute:";
-			foreach (KeyValuePair<ProductData, Production> curProduction in GetProductions(true))
+			foreach (var curProduction in GetProductions(true))
 			{
-				result += $"\n{curProduction.Key}: {curProduction.Value.Quantity} {curProduction.Value.quantity} " + 
-						  $"{curProduction.Value.maxQuantity} {curProduction.Value.Filling}";
+				result += $"\n{curProduction.data}: {curProduction.Quantity} {curProduction.quantity} " + 
+						  $"{curProduction.maxQuantity} {curProduction.Filling}";
 			}
 			result += "\nOutpute: ";
-			foreach (KeyValuePair<ProductData, Production> curProduction in GetProductions(false))
+			foreach (var curProduction in GetProductions(false))
 			{
-				result += $"\n{curProduction.Key}: {curProduction.Value.Quantity} {curProduction.Value.quantity} " +
-						  $"{curProduction.Value.maxQuantity} {curProduction.Value.Filling}";
+				result += $"\n{curProduction.data}: {curProduction.Quantity} {curProduction.quantity} " +
+						  $"{curProduction.maxQuantity} {curProduction.Filling}";
 			}
 			Debug.Log(result);
 
@@ -62,37 +64,40 @@ namespace Script.Mapping.ParcelType
 			WindowsOpener.OpenLoadingBay(this);
 		}
 
-		public virtual Dictionary<ProductData, Production> GetProductions(bool getInput)
+		public List<Production> GetProductions(bool getInput)
 		{
-			Dictionary<ProductData, Production> resulte = new Dictionary<ProductData, Production>();
-			foreach (ParcelProducer curIndustrise in ProductionLink)
+			List<Production> productions = new List<Production>();
+			foreach (var curProduction in GetProductions())
 			{
-				foreach (var curProduction in curIndustrise.productions)
+				if (curProduction.isInput == getInput)
+					productions.Add(curProduction);
+			}
+			return productions;
+		}
+
+		public List<Production> GetProductions()
+		{
+			List<Production> productions = new List<Production>();
+			foreach (ParcelProducer curProducer in ProducerLink)
+			{
+				foreach (var curProduction in curProducer.productions)
 				{
-					if (curProduction.isInput != getInput)
-						continue;
-					if (resulte.ContainsKey(curProduction.data))
+					if (Production.GetProduction(productions, curProduction.data, curProduction.isInput) == null)
 					{
-						resulte[curProduction.data] += curProduction;
-					}
-					else
-					{
-						resulte.Add(curProduction.data, curProduction);
+						productions.Add(new Production(curProduction.data, 0, curProduction.isInput, 0));
 					}
 
-					if (curProduction.quantity != 0 && curProduction.quantity != curProduction.maxQuantity)
-					{
-						Debug.Log($"Error {curIndustrise.pos} {curProduction.data} {curProduction.quantity} {curProduction.maxQuantity}");
-					}
+					Production.GetProduction(productions, curProduction.data, curProduction.isInput).Add(curProduction);
 				}
 			}
 
-			return resulte;
+			return productions;
 		}
+
 		
-		public virtual bool CanUnload(ProductData product)
+		public bool CanUnload(ProductData product)
 		{
-			foreach (ParcelProducer curIndustrise in ProductionLink)
+			foreach (ParcelProducer curIndustrise in ProducerLink)
 			{
 				foreach (var curMaterial in curIndustrise.productions)
 				{
@@ -105,11 +110,11 @@ namespace Script.Mapping.ParcelType
 			return false;
 		}
 
-		public virtual int TryToInteract(ProductData product, int materialQuantityGive)
+		public int TryToInteract(ProductData product, int materialQuantityGive)
 		{
 			int materialHasNotGiven = materialQuantityGive;
 			//Debug.Log("material has no Given" + materialHasNotGiven);
-			foreach (ParcelProducer curIndustrise in ProductionLink)
+			foreach (ParcelProducer curIndustrise in ProducerLink)
 			{
 				if (materialHasNotGiven == 0)
 				{

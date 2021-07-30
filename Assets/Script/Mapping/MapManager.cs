@@ -98,9 +98,9 @@ namespace Script.Mapping
             if (GameLoader.load == GameLoader.LoadStatus.Done)
             {
                 UpdateMap(); 
-                foreach (Industrise curIndustrise in map.industrises)
+                foreach (FactoryParcel factory in map.factories)
                 {
-                    curIndustrise.Update(Time.deltaTime);
+                    factory.UpdateProduction(Time.deltaTime);
                 }
                 
                 foreach (var city in map.citys)
