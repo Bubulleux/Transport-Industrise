@@ -48,4 +48,46 @@ public static class Helper
 		}
 		return area;
 	}
+	
+	public static int ArrayProduct(int[] array)
+	{
+		int product = 1;
+		for (int i = 0; i < array.Length; i++)
+		{
+			product *= array[i];
+		}
+
+		return product;
+	}
+
+	public static T[] Remove<T>(T[] array, int index)
+	{
+		T[] result = new T [array.Length - 1];
+		int resultIndex = 0;
+		for (int i = 0; i < array.Length; i++)
+		{
+			if (i != index)
+			{
+				result[resultIndex] = array[i];
+				resultIndex += 1;
+			}
+		}
+
+		return result;
+	}
+
+
+	public static T[] AddElemente<T>(T[] array, T elemente)
+	{
+		T[] result = new T [array.Length + 1];
+			
+		for (int i = 0; i < array.Length; i++)
+		{
+			result[i] = array[i];
+		}
+
+		result[array.Length] = elemente;
+			
+		return result;
+	}  
 }

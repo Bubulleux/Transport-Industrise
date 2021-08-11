@@ -20,12 +20,12 @@ namespace Script.MapGeneration
         public static Mesh GetChunkMesh(Vector2Int chunk, Map map)
         {
             var meshData = new MeshData();
-            for (var _y = 0; _y < 50; _y++)
+            for (var _y = 0; _y < Map.ChuckSize; _y++)
             {
-                for (var _x = 0; _x < 50; _x++)
+                for (var _x = 0; _x < Map.ChuckSize; _x++)
                 {
-                    var x = chunk.x * 50 + _x;
-                    var y = chunk.y * 50 + _y;
+                    var x = chunk.x * Map.ChuckSize + _x;
+                    var y = chunk.y * Map.ChuckSize + _y;
 
                     if (map.parcels[x, y].seeTerrain)
                     {
@@ -61,7 +61,8 @@ namespace Script.MapGeneration
             for (var i = 0; i < 3; i++)
             {
                 verticies.Add(corner[i]);
-                uvs.Add(new Vector2((corner[i].x - chunk.x * 50f) / 50f, (corner[i].z - chunk.y * 50f) / 50f));
+                uvs.Add(new Vector2((corner[i].x - chunk.x * Map.ChuckSize) / Map.ChuckSize,
+                    (corner[i].z - chunk.y * Map.ChuckSize) / Map.ChuckSize));
                 triangles.Add(verticies.Count - 1);
             }
         }

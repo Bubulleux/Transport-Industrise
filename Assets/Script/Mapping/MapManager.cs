@@ -14,7 +14,7 @@ namespace Script.Mapping
         //public float[,] mapHeight;
 
     
-        public Chuck[,] ChuckObjects = new Chuck[20, 20];
+        public Chuck[,] ChuckObjects = new Chuck[map.Size.x / Map.ChuckSize, map.Size.y / Map.ChuckSize];
         public GameObject gfxMapPrefab;
         
 
@@ -65,7 +65,7 @@ namespace Script.Mapping
         public void CreateChunck(Mesh[,] meshs, Texture2D[,] texrures)
         {
             map.Manager = this;
-            for (int y = 0; y < ChuckObjects.GetLength(0); y++)
+            for (int y = 0; y < ChuckObjects.GetLength(1); y++)
             {
                 for (int x = 0; x < ChuckObjects.GetLength(0); x++)
                 { 
@@ -73,6 +73,7 @@ namespace Script.Mapping
                     ChuckObjects[x, y].Initialize(new Vector2Int(x, y), meshs[x, y], texrures[x, y]);
                 }
             }
+            Debug.Log($"{ChuckObjects.Length} Chuck Instentiate");
             InstanceAllGFX();
         }
 

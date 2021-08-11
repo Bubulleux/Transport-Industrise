@@ -174,7 +174,7 @@ namespace Script.Save
             int[] mapForme = FIleSys.OpenFile<int[]>(Path + "/mapForme.bin");
             string[] parcelsJson = FIleSys.OpenFile<string[]>(Path + "/mapConstruction.bin");
             timer.DebugTime("Load File");
-            map = new Map(new Vector2Int(20, 20));
+            map = new Map(new Vector2Int(1000, 1000));
             await Task.Delay(1);
             for (int i = 0; i < mapForme.Length; i += 4)
             {

@@ -21,7 +21,7 @@ namespace Script.Mapping
 		[JsonProperty]
 		public List<FactoryParcel> factories =  new List<FactoryParcel>();
 
-		public  const int ChuckSize = 50;
+		public  const int ChuckSize = 16;
 
 
 	
@@ -30,24 +30,25 @@ namespace Script.Mapping
 
 		public MapManager Manager;
 
-		public Map(Vector2Int chunkSize)
+		public Map(Vector2Int mapSize)
 		{
-			parcels = new Parcel[chunkSize.x * 50, chunkSize.y * 50];
+			parcels = new Parcel[Mathf.FloorToInt(mapSize.x / ChuckSize) * ChuckSize,
+				Mathf.FloorToInt(mapSize.y / ChuckSize) * ChuckSize];
 		}
 
 	
 		public async Task GenerateMap(MapSettingData mapSetting)
 		{
-			parcels = new Parcel[1000, 1000];
+			parcels = new Parcel[Size.x, Size.y];
 			await Task.Delay(10);
 			citys = new List<City>();
 			factories = new List<FactoryParcel>();
-			var mapNoise = NoiseGenerator.GenerNoise(1001, 1001, 60, 3, 6, 0.1f, Random.Range(1, 10000), mapSetting.heightCurv, mapSetting.limitWaterCurv);
+			var mapNoise = NoiseGenerator.GenerateComplexNoise(1001, 1001, 60, 3, 6, 0.1f, Random.Range(1, 10000), mapSetting.heightCurv, mapSetting.limitWaterCurv);
 
 			var biomesNoise = new Dictionary<BiomeData, float[,]>();
 			foreach (var biome in FIleSys.GetAllInstances<BiomeData>())
 			{
-				var noiseBiome = NoiseGenerator.GenerNoise(1000, 1000, 100, 2, 6, 0.1f, Random.Range(1, 99999));
+				var noiseBiome = NoiseGenerator.GenerateComplexNoise(Size.x, Size.y, 100, 2, 6, 0.1f, Random.Range(1, 99999));
 				biomesNoise.Add(biome, noiseBiome);
 			}
 		

@@ -14,8 +14,8 @@ namespace Script.Game
 
         public string LoadingIndicator { set { GameObject.Find("OperationState").GetComponent<Text>().text = value; } }
 
-        public int Width { get =>  MapManager.map.parcels.GetLength(0) / 50;  }
-        public int Height { get =>  MapManager.map.parcels.GetLength(1) / 50;  }
+        public int Width { get =>  MapManager.map.parcels.GetLength(0) / Map.ChuckSize;  }
+        public int Height { get =>  MapManager.map.parcels.GetLength(1) / Map.ChuckSize;  }
 
 
         private void Awake()
@@ -38,7 +38,7 @@ namespace Script.Game
             await AsyncLoadScene(1);
 
             LoadingIndicator = "Generate Map";
-            Map _mapdata = new Map(new Vector2Int(20, 20));
+            Map _mapdata = new Map(new Vector2Int(1000, 1000));
             await _mapdata.GenerateMap(FIleSys.GetAllInstances<MapSettingData>()[0]);
             MapManager.map = _mapdata;
             GameManager.saveName = saveName;
@@ -104,7 +104,7 @@ namespace Script.Game
                 {
                     LoadingIndicator = $"Loading Mesh {y * Height + x}/{Height * Width}";
                     chunks[x, y] = MeshGenerator.GetChunkMesh(new Vector2Int(x, y), MapManager.map);
-                    if ((y * Height + x) % 50 == 0)
+                    if ((y * Height + x) % Map.ChuckSize == 0)
                     {
                         await Task.Delay(1);
                     }

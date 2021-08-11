@@ -46,7 +46,7 @@ namespace Script.Mapping.ParcelType
 
 		public virtual void InitializationSecondary()
 		{
-			color = biome.color;
+			color = biome.color * new Color(1f, 1f, 1f, 0.5f);
 		}
 
 		public virtual void Interact()
