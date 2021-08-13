@@ -15,7 +15,7 @@ MonoBehaviour:
   model: Bus MK1
   description: Vroum
   speed: 30
-  price: 1000
-  maxProductTransport: 0
+  price: 15000
+  maxProductTransport: 30
   ProductIsPeople: 1
   productCanTransport: []

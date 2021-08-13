@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 150b16354cf690c4784a009fdacad9b7, type: 3}
   m_Name: IronMine
   m_EditorClassIdentifier: 
-  industriseName: 
+  industriseName: Iron Mine
   productIn: []
-  productOut: []
+  productOut:
+  - {fileID: 11400000, guid: babdeb91a1ea2aa4da548633f498d91b, type: 2}
   color:
     serializedVersion: 2
     rgba: 4283124555

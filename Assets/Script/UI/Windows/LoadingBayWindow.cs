@@ -9,9 +9,25 @@ namespace Script.UI.Windows
     {
         public Transform inputList, outputList;
         public LoadingBay loadingBay;
+        private List<StockBar> stockBars = new List<StockBar>();
         void Start()
-        {
-            UpdateWindow();
+        { 
+            for (int i = 0; i < 2; i++)
+            {
+                foreach (var curProduction in loadingBay.GetProductions(i != 0))
+                {
+                    Transform gameObject = Instantiate(outputList.GetChild(0), i == 0 ? outputList : inputList);
+                    
+                    stockBars.Add(new StockBar()
+                    {
+                        production = curProduction,
+                        productionName = gameObject.GetChild(1).GetComponent<Text>(),
+                        quantity = gameObject.GetChild(2).GetComponent<Text>(),
+                        quantityBar = gameObject.GetChild(0).GetComponent<RectTransform>(),
+                    });
+                    gameObject.gameObject.SetActive(true);
+                }
+            }
         }
 
         void Update()
@@ -20,34 +36,21 @@ namespace Script.UI.Windows
         }
         private void UpdateWindow()
         {
-            foreach(Transform curInput in inputList)
+            foreach (var stockBar in stockBars)
             {
-                if (curInput.gameObject.activeSelf == true)
-                {
-                    Destroy(curInput.gameObject);
-                }
+                stockBar.productionName.text = stockBar.production.data.productionName;
+                stockBar.quantity.text =  $"{stockBar.production.Quantity}/{stockBar.production.maxQuantity}";
+                stockBar.quantityBar.sizeDelta = new Vector2(stockBar.production.Filling * 200, stockBar.quantityBar.sizeDelta.y);
             }
-            foreach(Transform curOutput in outputList)
-            {
-                if (curOutput.gameObject.activeSelf == true)
-                {
-                    Destroy(curOutput.gameObject);
-                }
-            }
-
-            for (int i = 0; i < 2; i++)
-            {
-                foreach (var curProduction in loadingBay.GetProductions(i != 0))
-                {
-                    Transform _go = Instantiate(outputList.GetChild(0));
-                    _go.SetParent(i == 0 ? outputList : inputList);
-                    _go.GetChild(1).GetComponent<Text>().text = curProduction.data.productionName;
-                    _go.GetChild(2).GetComponent<Text>().text =  $"{curProduction.Quantity}/{curProduction.maxQuantity}";
-                    _go.GetChild(0).GetComponent<RectTransform>().sizeDelta = new Vector2(curProduction.Filling * 200, _go.Find("ProgressBar").GetComponent<RectTransform>().sizeDelta.y);
-                    _go.gameObject.SetActive(true);
-                }
-            }
+        }
         
+        private struct StockBar
+        {
+            public Production production;
+            public Text productionName;
+            public Text quantity;
+            public RectTransform quantityBar;
+
         }
     }
 }

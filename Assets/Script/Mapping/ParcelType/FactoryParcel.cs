@@ -27,6 +27,14 @@ namespace Script.Mapping.ParcelType
 			if (data.productOut != null)
 				foreach (var product in data.productOut)
 					productions.Add(new Production(product, maxMaterialCanStock, false, Random.Range(2f, 30f)));
+
+			orientation = (Orientation)Random.Range(0, 4);
+			prefab = Resources.Load<GameObject>("ParcelGFX/Factory");
+		}
+
+		public override void GFXUpdated(GameObject gfx)
+		{
+			gfx.GetComponent<Renderer>().materials[1].color = data.color;
 		}
 	}
 }

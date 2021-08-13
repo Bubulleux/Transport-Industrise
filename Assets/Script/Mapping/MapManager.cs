@@ -158,6 +158,7 @@ namespace Script.Mapping
                 go.transform.parent = ChuckObjects[pos.x, pos.y].transform;
                 gfxScript.UpdateGFX();
             }
+            parcel.GFXUpdated(go);
         }
 
         

@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   model: Garbage Truck MK1
   description: The best wast transporter
-  speed: 0
-  price: 0
-  maxProductTransport: 0
+  speed: 2
+  price: 32000
+  maxProductTransport: 300
   ProductIsPeople: 0
   productCanTransport:
   - {fileID: 11400000, guid: 23dcaf12cc198384ba5e8fb9a8dec421, type: 2}

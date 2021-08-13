@@ -14,9 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   model: Cold Truck MK1
   description: Good for the food
-  speed: 0
-  price: 0
-  maxProductTransport: 0
+  speed: 4
+  price: 10000
+  maxProductTransport: 70
   ProductIsPeople: 0
   productCanTransport:
   - {fileID: 11400000, guid: 7527fc339474dc34ca3b191b006ff89a, type: 2}
+  - {fileID: 11400000, guid: 0c201c401e5e5b344ae2e42f0ccc4fb9, type: 2}

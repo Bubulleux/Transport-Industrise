@@ -12,9 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 150b16354cf690c4784a009fdacad9b7, type: 3}
   m_Name: Metalwork
   m_EditorClassIdentifier: 
-  industriseName: 
-  productIn: []
-  productOut: []
+  industriseName: Metalwork
+  productIn:
+  - {fileID: 11400000, guid: dca8559ab5a9e6847be4079ab9c20d6d, type: 2}
+  productOut:
+  - {fileID: 11400000, guid: 0c201c401e5e5b344ae2e42f0ccc4fb9, type: 2}
   color:
     serializedVersion: 2
     rgba: 4292018066

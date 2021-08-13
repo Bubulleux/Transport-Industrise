@@ -18,7 +18,9 @@ namespace Script.Mapping.ParcelType
 				new Production(Resources.Load<ProductData>("ScriptableObject/Products/Waste"), dwell * 5,
 					false, dwell * 0.05f),
 				new Production(Resources.Load<ProductData>("ScriptableObject/Products/Food"), dwell * 5,
-					true, dwell * 0.025f)
+					true, dwell * 0.025f),
+				new Production(Resources.Load<ProductData>("ScriptableObject/Products/Thing"), dwell * 5,
+					true, dwell * 0.01f),
 			};
 		}
 

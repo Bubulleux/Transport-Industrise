@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cae3f57c7363fd4ab9371e80bc77764, type: 3}
   m_Name: People
   m_EditorClassIdentifier: 
-  name: People
+  productionName: People
   buyPrice: -3
   sellPrice: 0

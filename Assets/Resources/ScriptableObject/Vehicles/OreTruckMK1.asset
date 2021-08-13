@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   model: Ore Truck MK1
   description: Best truck ever.
-  speed: 3
-  price: 3000
+  speed: 2
+  price: 25000
   maxProductTransport: 50
   ProductIsPeople: 0
   productCanTransport:

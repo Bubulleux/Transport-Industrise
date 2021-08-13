@@ -12,9 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 150b16354cf690c4784a009fdacad9b7, type: 3}
   m_Name: Woodwork
   m_EditorClassIdentifier: 
-  industriseName: 
-  productIn: []
-  productOut: []
+  industriseName: Woodwork
+  productIn:
+  - {fileID: 11400000, guid: cead8f4cfe12cda4d9563dff6e236b9d, type: 2}
+  productOut:
+  - {fileID: 11400000, guid: 0c201c401e5e5b344ae2e42f0ccc4fb9, type: 2}
   color:
     serializedVersion: 2
     rgba: 4278220236

@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 150b16354cf690c4784a009fdacad9b7, type: 3}
   m_Name: Stokehole
   m_EditorClassIdentifier: 
-  industriseName: 
+  industriseName: Stokehole
   productIn:
   - {fileID: 11400000, guid: cead8f4cfe12cda4d9563dff6e236b9d, type: 2}
   - {fileID: 11400000, guid: f2d162b20451b4948839ba9dc8659539, type: 2}
+  - {fileID: 11400000, guid: 23dcaf12cc198384ba5e8fb9a8dec421, type: 2}
   productOut: []
   color:
     serializedVersion: 2

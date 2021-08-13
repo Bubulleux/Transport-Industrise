@@ -85,6 +85,7 @@ namespace Script.Mapping.ParcelType
 		}
 
 		public virtual void Update() { }
+		public virtual void GFXUpdated(GameObject gfx) { }
 		
 	}
 }
