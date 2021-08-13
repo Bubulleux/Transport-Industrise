@@ -8,17 +8,17 @@ namespace Script.UI.Windows
     {
         public bool pointerOverMe = false;
         public bool fixWindow;
-        public Text name;
+        public Text nameText;
         public Transform Contente { get => transform.Find("WindowContent"); }
         public string WindowName
         {
             get
             {
-                return name.text;
+                return nameText.text;
             }
             set
             {
-                name.text = value;
+                nameText.text = value;
             }
         }
 

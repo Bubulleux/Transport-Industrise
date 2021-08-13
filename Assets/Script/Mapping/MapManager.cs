@@ -1,4 +1,5 @@
-﻿using Script.Game;
+﻿using System.Collections.Generic;
+using Script.Game;
 using Script.Mapping.ParcelType;
 using UnityEngine;
 
@@ -16,7 +17,9 @@ namespace Script.Mapping
     
         public Chuck[,] ChuckObjects = new Chuck[map.Size.x / Map.ChuckSize, map.Size.y / Map.ChuckSize];
         public GameObject gfxMapPrefab;
-        
+
+        private Dictionary<City, float> cityDeltaTime = new Dictionary<City, float>();
+        private Dictionary<FactoryParcel, float> factoryDeltaTime = new Dictionary<FactoryParcel, float>();
 
 
         public static Map map;
@@ -98,24 +101,41 @@ namespace Script.Mapping
                 curParcel.Update();
             if (GameLoader.load == GameLoader.LoadStatus.Done)
             {
-                UpdateMap(); 
-                foreach (FactoryParcel factory in map.factories)
-                {
-                    factory.UpdateProduction(Time.deltaTime);
-                }
+                float deltaTime = TimeManager.DeltaTime;
                 
+                City cityUpdate = map.citys[0];
                 foreach (var city in map.citys)
                 {
-                    city.Update(Time.deltaTime);
+                    if (!cityDeltaTime.ContainsKey(city))
+                        cityDeltaTime.Add(city, 0f);
+                    
+                    cityDeltaTime[city] += deltaTime;
+                    if (cityDeltaTime[city] > cityDeltaTime[cityUpdate])
+                        cityUpdate = city;
                 }
-                //DebugManager.GetCounter("D");
+                
+                FactoryParcel factoryUpdate = map.factories[0];
+                foreach (var factory in map.factories)
+                {
+                    if (!factoryDeltaTime.ContainsKey(factory))
+                        factoryDeltaTime.Add(factory, 0f);
+                    
+                    factoryDeltaTime[factory] += deltaTime;
+                    if (factoryDeltaTime[factory] > factoryDeltaTime[factoryUpdate])
+                        factoryUpdate = factory;
+                }
+                
+                cityUpdate.Update(cityDeltaTime[cityUpdate]);
+                cityDeltaTime[cityUpdate] = 0f;
+                
+                factoryUpdate.UpdateProduction(factoryDeltaTime[factoryUpdate]);
+                factoryDeltaTime[factoryUpdate] = 0f;
             }
         }
 
-        void FixedUpdate()
+        void OnPreRender()
         {
             UpdateMap();
-            
         }
 
         public void ResetGFX(Parcel parcel)
@@ -171,17 +191,12 @@ namespace Script.Mapping
 
         public void UpdateMap()
         {
-            bool mapHasBeenUpdate = false;
             for (int y = 0; y < 20; y++)
             {
                 for (int x = 0; x < 20; x++)
                 {
                     ChuckObjects[x, y].UpdateChuck(false);
                 }
-            }
-            if (mapHasBeenUpdate)
-            {
-                MapUpdateEvent?.Invoke();
             }
         }
 

@@ -6,8 +6,6 @@ namespace Script.Controler
 {
     public class CamControler : MonoBehaviour
     {
-        [SerializeField]
-        private float upSpeed = 1f;
 
         private Vector3 futurPos;
 

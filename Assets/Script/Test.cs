@@ -7,10 +7,12 @@ namespace Script
 {
 	public class Test : MonoBehaviour
 	{
-		public Renderer renderer;
+		public Renderer planeRenderer;
 		public Vector2Int size = new Vector2Int(100, 100);
-		public float InputFreq = 1;
+		public float inputFreq = 1;
 		public int seed = 4269;
+		public Vector2Int offset;
+		public bool loop = true;
 		public bool PrintTest(bool value, string text)
 		{
 			Debug.Log(text);
@@ -32,33 +34,33 @@ namespace Script
 
 		public void Update()
 		{
-			// if (renderer == null)
-			// 	return;
-			//
-			// //var noise = NoiseGenerator.GenerNoise(1001, 1001, 100, 3, 6, 0.1f, 100000);
-			// var noise = NoiseGenerator.GenerateNoise2D(size, InputFreq, seed);
-			// //var normalNoise = NoiseGenerator.GetNormal(noise);
-			// Texture2D texture = new Texture2D(size.x , size.y);
-			// Color[] colors = new Color[size.x * size.y];
-			// float sum = 0;
-			// for (int _y = 0; _y < size.y; _y++)
-			// {
-			// 	for (int _x = 0; _x < size.x; _x++)
-			// 	{
-			// 		colors[_y  * size.x + _x] = Color.white * noise[_x, _y];
-			// 		sum += noise[_x, _y];
-			// 		//Vector3 vector = normalNoise[_x, _y];
-			// 		//Debug.Log($"pos {_x},{_y}, {vector.x} {vector.y} {vector.z}");
-			// 		//colors[_y * 10 + _x] = new Color(vector.x, vector.y, vector.z) * noise[_x, _y];
-			// 	}
-			// }
-			//
-			// Debug.Log($"Mean {sum / (size.x * size.y)}");
-			// texture.SetPixels(colors);
-			// texture.filterMode = FilterMode.Point;
-			// texture.wrapMode = TextureWrapMode.Clamp;
-			// texture.Apply();
-			// renderer.material.mainTexture = texture;
+			if (planeRenderer == null)
+				return;
+			
+			//var noise = NoiseGenerator.GenerNoise(1001, 1001, 100, 3, 6, 0.1f, 100000);
+			var noise = NoiseGenerator.GenerateNoise2D(size, inputFreq, seed, loop);
+			//var normalNoise = NoiseGenerator.GetNormal(noise);
+			Texture2D texture = new Texture2D(size.x , size.y);
+			Color[] colors = new Color[size.x * size.y];
+			float sum = 0;
+			for (int _y = 0; _y < size.y; _y++)
+			{
+				for (int _x = 0; _x < size.x; _x++)
+				{
+					colors[_y  * size.x + _x] = Color.white * noise[(_x + offset.x) % size.x, (_y + offset.y) % size.y];
+					sum += noise[_x, _y];
+					//Vector3 vector = normalNoise[_x, _y];
+					//Debug.Log($"pos {_x},{_y}, {vector.x} {vector.y} {vector.z}");
+					//colors[_y * 10 + _x] = new Color(vector.x, vector.y, vector.z) * noise[_x, _y];
+				}
+			}
+			
+			Debug.Log($"Mean {sum / (size.x * size.y)}");
+			texture.SetPixels(colors);
+			texture.filterMode = FilterMode.Point;
+			texture.wrapMode = TextureWrapMode.Clamp;
+			texture.Apply();
+			planeRenderer.material.mainTexture = texture;
 		}
 
 		

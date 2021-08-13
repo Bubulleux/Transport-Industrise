@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3cae3f57c7363fd4ab9371e80bc77764, type: 3}
-  m_Name: Fer
+  m_Name: Thing
   m_EditorClassIdentifier: 
-  name: Fer
-  buyPrice: 10
-  sellPrice: 15
+  productionName: 
+  buyPrice: 0
+  sellPrice: 0

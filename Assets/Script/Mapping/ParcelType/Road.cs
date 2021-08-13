@@ -10,7 +10,12 @@ namespace Script.Mapping.ParcelType
 	[JsonObject(MemberSerialization.OptOut)]
 	public class Road : Parcel
 	{
-
+		
+		public int Height
+		{
+			get => corner.Max();
+		}
+		
 		public override void Initialaze()
 		{
 			base.Initialaze();

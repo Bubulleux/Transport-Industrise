@@ -89,6 +89,7 @@ namespace Script.Game
                     LoadingIndicator = $"Loading Texture {y * Height + x}/{Height*Width}";
                     chunks[x, y] = TextureGenerator.GetChunkTexture(new Vector2Int(x, y), MapManager.map);
                 }
+                await AsyncTask.DelayIfNeed(1);
             }
             return chunks;
         }
@@ -104,11 +105,9 @@ namespace Script.Game
                 {
                     LoadingIndicator = $"Loading Mesh {y * Height + x}/{Height * Width}";
                     chunks[x, y] = MeshGenerator.GetChunkMesh(new Vector2Int(x, y), MapManager.map);
-                    if ((y * Height + x) % Map.ChuckSize == 0)
-                    {
-                        await Task.Delay(1);
-                    }
                 }
+
+                AsyncTask.DelayIfNeed(1);
             }
             await Task.Delay(1);
             return chunks;
@@ -121,11 +120,6 @@ namespace Script.Game
             {
                 await AsyncTask.DelayIfNeed(1);
             }
-        }
-
-        private void Update()
-        {
-
         }
 
         public enum LoadStatus

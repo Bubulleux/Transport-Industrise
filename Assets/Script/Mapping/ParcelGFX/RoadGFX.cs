@@ -27,13 +27,14 @@ public class RoadGFX : ParcelGFX
 		var minCorner = parcel.corner.Min();
 		var maxCorner = parcel.corner.Max();
 		var connections = new bool[4];
-
+		var heights = new float[4];
 		for (int i = 0; i < 4; i ++)
 		{
 			var neightbour = MapManager.parcelAround[i];
 			connections[i] = parcel.map.ParcelIs<Road>(parcel.pos + neightbour) &&
 			                 parcel.map.GetParcel<Road>(parcel.pos + neightbour).CanConnect(parcel.pos);
-
+			
+			heights[i] = (parcel.corner[i] + parcel.corner[(i + 1) % 4]) / 2f;
 		}
 		
 		var connectionCount = 0;
@@ -66,8 +67,22 @@ public class RoadGFX : ParcelGFX
 			case 2 when (connections[0] && !connections[1] && connections[2] && !connections[3]) || 
 			            (!connections[0] && connections[1] && !connections[2] && connections[3]):
 			{
-				transform.rotation = Quaternion.Euler(0, connections[1] ? 0 : 90, 0);
-				mesh = meshs[2];
+				if ((connections[0] && heights[0] != heights[2]) ||
+				    (connections[1] && heights[1] != heights[3]))
+				{
+					mesh = meshs[5];
+					transform.position -= new Vector3(0, 1, 0);
+					for (int i = 0; i < 4; i++)
+					{
+						if (connections[i] && heights[i] > heights[(i + 2) % 4])
+							transform.rotation = Quaternion.Euler(0, i * 90 - 90, 0);
+					}
+				}
+				else
+				{
+					transform.rotation = Quaternion.Euler(0, connections[1] ? 0 : 90, 0);
+					mesh = meshs[2];
+				}
 				break;
 			}
 			case 2:

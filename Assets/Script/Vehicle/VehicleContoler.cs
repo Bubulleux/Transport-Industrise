@@ -100,7 +100,7 @@ namespace Script.Vehicle
 				DriveAlong();
 			}
 			if (restartCooldown > 0f)
-				restartCooldown -= Time.deltaTime;
+				restartCooldown -= TimeManager.DeltaTime;
 			else if (vehicleNeedRestar)
 			{
 				engineEnable = true;
@@ -123,7 +123,7 @@ namespace Script.Vehicle
 		{
 			if (driveCooldown > 0f)
 			{
-				driveCooldown -= Time.deltaTime;
+				driveCooldown -= TimeManager.DeltaTime;
 				return;
 			}
 

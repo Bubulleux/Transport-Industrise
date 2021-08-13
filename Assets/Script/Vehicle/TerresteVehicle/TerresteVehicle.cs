@@ -136,7 +136,7 @@ namespace Script.Vehicle.TerresteVehicle
 			}
 			vehicleAnimation.Play(animation, 0, 0f);
 			//vehicleAnimation.SetInteger("Direction", dirAnime);
-			vehicleAnimation.SetFloat("Speed", vehicleData.speed);
+			vehicleAnimation.SetFloat("Speed", vehicleData.speed * TimeManager.TimeScale);
 		}
 	}
 }

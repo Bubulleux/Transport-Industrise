@@ -60,7 +60,6 @@ namespace Script.Mapping.ParcelType
 
 		public override void Interact()
 		{
-			base.Interact();
 			WindowsOpener.OpenLoadingBay(this);
 		}
 

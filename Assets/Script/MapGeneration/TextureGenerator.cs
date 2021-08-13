@@ -6,11 +6,6 @@ namespace Script.MapGeneration
 {
     public static class TextureGenerator
     {
-        public static async void GenerateTextureChunk(Vector2Int chunk, Map map, GameObject chunkGo)
-        {
-            chunkGo.GetComponent<Renderer>().sharedMaterial = new Material(Shader.Find("Standard")) { mainTexture = GetChunkTexture(chunk, map) };
-        }
-
         public static Texture2D GetChunkTexture(Vector2Int chunk, Map map)
         {
             Texture2D texture = new Texture2D(Map.ChuckSize , Map.ChuckSize);

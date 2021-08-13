@@ -9,14 +9,6 @@ namespace Script.MapGeneration
 {
     public static class MeshGenerator
     {
-    
-        public static async Task GenerateChunk(Vector2Int chunk, Map map, GameObject chunkGo)
-        {
-            var mesh = GetChunkMesh(chunk, map);
-            chunkGo.GetComponent<MeshFilter>().mesh = mesh;
-            chunkGo.GetComponent<MeshCollider>().sharedMesh = mesh;
-        }
-
         public static Mesh GetChunkMesh(Vector2Int chunk, Map map)
         {
             var meshData = new MeshData();

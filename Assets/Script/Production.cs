@@ -30,8 +30,10 @@ public class Production
 	public float maxQuantity;
 	public bool isInput;
 		
-	public bool IsOutput { get { return !isInput; } set { isInput = !value; } }
-	public float Filling { get { return quantity / (float)maxQuantity; } }
+	public bool IsOutput { get => !isInput;
+		set => isInput = !value;
+	}
+	public float Filling => quantity / maxQuantity;
 
 	public float AddQuantity(float value)
 	{

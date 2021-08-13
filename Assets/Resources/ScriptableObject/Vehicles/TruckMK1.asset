@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 060e4c1d823fb6a4ba3a0add33161e87, type: 3}
-  m_Name: TrukCoalMK2
+  m_Name: TruckMK1
   m_EditorClassIdentifier: 
-  model: Coaler MK2
-  description: Best truck ever.
-  speed: 3
-  price: 1000
+  model: Cold Truck MK1
+  description: Good for the food
+  speed: 0
+  price: 0
   maxProductTransport: 0
   ProductIsPeople: 0
   productCanTransport:
-  - {fileID: 11400000, guid: f2d162b20451b4948839ba9dc8659539, type: 2}
+  - {fileID: 11400000, guid: 7527fc339474dc34ca3b191b006ff89a, type: 2}

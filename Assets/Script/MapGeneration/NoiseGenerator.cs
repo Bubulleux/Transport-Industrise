@@ -114,11 +114,11 @@ namespace Script.MapGeneration
             
             return normalMap;
         }
-        
-        public static float[,] GenerateNoise2D(Vector2Int size, float frequancie, int seed)
+
+        public static float[,] GenerateNoise2D(Vector2Int size, float frequancie, int seed, bool loop = false)
 		{
-			Vector2[,] gradients = new Vector2[Mathf.FloorToInt(size.x * frequancie) + 1,
-				Mathf.FloorToInt(size.y * frequancie + 1)];
+			Vector2[,] gradients = new Vector2[Mathf.FloorToInt(size.x * frequancie) + (loop ? 0 : 1),
+				Mathf.FloorToInt(size.y * frequancie + (loop ? 0 : 1))];
 			
 			System.Random prng = new System.Random(seed);
 			for (int x = 0; x < gradients.GetLength(0); x++)
@@ -136,16 +136,17 @@ namespace Script.MapGeneration
 			{
 				for (int y = 0; y < size.y; y++)
 				{
-					Vector2 point = new Vector2(x * (gradients.GetLength(0) - 1) / (float)size.x,
-						y * (gradients.GetLength(1) - 1) / (float)size.y);
+					Vector2 point = new Vector2(x * (gradients.GetLength(0) - (loop ? 0 : 1)) / (float)size.x,
+						y * (gradients.GetLength(1) - (loop ? 0 : 1)) / (float)size.y);
 					Vector2Int pointFloor = new Vector2Int(Mathf.FloorToInt(point.x), Mathf.FloorToInt(point.y));
 					//Debug.Log($"{point}   {pointFloor} {x} {y} {gradients.GetLength(0)} {gradients.GetLength(1)}");
+					Vector2Int gradientLenght = new Vector2Int(gradients.GetLength(0), gradients.GetLength(1));
 					Vector2[] gradientPoint = new[]
 					{
 						gradients[pointFloor.x, pointFloor.y],
-						gradients[pointFloor.x + 1, pointFloor.y],
-						gradients[pointFloor.x + 1, pointFloor.y + 1],
-						gradients[pointFloor.x, pointFloor.y + 1],
+						gradients[(pointFloor.x + 1) % gradientLenght.x, pointFloor.y],
+						gradients[(pointFloor.x + 1) % gradientLenght.x, (pointFloor.y + 1) % gradientLenght.x],
+						gradients[pointFloor.x, (pointFloor.y + 1) % gradientLenght.x],
 					};
 
 					Vector2[] vectorDiff = new[]
