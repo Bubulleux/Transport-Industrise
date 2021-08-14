@@ -12,21 +12,18 @@ namespace Script.UI.Windows
         private List<StockBar> stockBars = new List<StockBar>();
         void Start()
         { 
-            for (int i = 0; i < 2; i++)
+            foreach (var curProduction in loadingBay.productionCumulates)
             {
-                foreach (var curProduction in loadingBay.GetProductions(i != 0))
+                Transform gameObject = Instantiate(outputList.GetChild(0), curProduction.isInput ? inputList : outputList);
+                
+                stockBars.Add(new StockBar()
                 {
-                    Transform gameObject = Instantiate(outputList.GetChild(0), i == 0 ? outputList : inputList);
-                    
-                    stockBars.Add(new StockBar()
-                    {
-                        production = curProduction,
-                        productionName = gameObject.GetChild(1).GetComponent<Text>(),
-                        quantity = gameObject.GetChild(2).GetComponent<Text>(),
-                        quantityBar = gameObject.GetChild(0).GetComponent<RectTransform>(),
-                    });
-                    gameObject.gameObject.SetActive(true);
-                }
+                    production = curProduction,
+                    productionName = gameObject.GetChild(1).GetComponent<Text>(),
+                    quantity = gameObject.GetChild(2).GetComponent<Text>(),
+                    quantityBar = gameObject.GetChild(0).GetComponent<RectTransform>(),
+                });
+                gameObject.gameObject.SetActive(true);
             }
         }
 
@@ -39,14 +36,14 @@ namespace Script.UI.Windows
             foreach (var stockBar in stockBars)
             {
                 stockBar.productionName.text = stockBar.production.data.productionName;
-                stockBar.quantity.text =  $"{stockBar.production.Quantity}/{stockBar.production.maxQuantity}";
+                stockBar.quantity.text =  $"{stockBar.production.Quantity}/{stockBar.production.MaxQuantity}";
                 stockBar.quantityBar.sizeDelta = new Vector2(stockBar.production.Filling * 200, stockBar.quantityBar.sizeDelta.y);
             }
         }
         
         private struct StockBar
         {
-            public Production production;
+            public ProductionCumulate production;
             public Text productionName;
             public Text quantity;
             public RectTransform quantityBar;

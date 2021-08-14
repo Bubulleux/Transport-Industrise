@@ -29,11 +29,39 @@ namespace Script.Mapping.ParcelType
 			}
 		}
 
+		public List<ProductionCumulate> productionCumulates = new List<ProductionCumulate>();
+
 		
 		public override void InitializationSecondary()
 		{
 			color = Color.white;
 			prefab = Resources.Load<GameObject>("ParcelGFX/LoadingBay");
+
+			foreach (var producer in ProducerLink)
+			{
+				foreach (var production in producer.productions)
+				{
+					bool productionFind = false;
+					foreach (var productionCumulate in productionCumulates)
+					{
+						if (productionCumulate.data == production.data &&
+						    productionCumulate.isInput == production.isInput)
+						{
+							productionCumulate.AddProduction(production);
+							productionFind = true;
+							break;
+						}
+					}
+
+					if (!productionFind)
+					{
+						var newProduction = new ProductionCumulate(production.data, production.isInput);
+						productionCumulates.Add(newProduction);
+						newProduction.AddProduction(production);
+						
+					}
+				}
+			}
 		}
 
 		public override void UpdateRoadObject(bool debug = false)  {  }
@@ -73,6 +101,7 @@ namespace Script.Mapping.ParcelType
 			}
 			return productions;
 		}
+		
 
 		public List<Production> GetProductions()
 		{
@@ -116,24 +145,22 @@ namespace Script.Mapping.ParcelType
 			foreach (ParcelProducer curIndustrise in ProducerLink)
 			{
 				if (materialHasNotGiven == 0)
-				{
 					break;
-				}
 
 				for (int i = 0; i < curIndustrise.productions.Count; i ++)
 				{
-					var curMaterial = curIndustrise.productions[i];
-					if (((curMaterial.isInput && materialHasNotGiven > 0) ||
-						 (curMaterial.IsOutput && materialHasNotGiven < 0)) &&
-						curMaterial.data == product)
+					var curProduction = curIndustrise.productions[i];
+					if (((curProduction.isInput && materialHasNotGiven > 0) ||
+						 (curProduction.IsOutput && materialHasNotGiven < 0)) &&
+						curProduction.data == product)
 					{
-						materialQuantityGive = Mathf.FloorToInt(-curMaterial.AddQuantity(materialHasNotGiven));
+						materialQuantityGive = Mathf.FloorToInt(-curProduction.AddQuantity(materialHasNotGiven));
 					}
 
-					curIndustrise.productions[i] = curMaterial;
+					curIndustrise.productions[i] = curProduction;
 				}
 			}
-			int materialGive = materialQuantityGive - materialHasNotGiven;
+			int materialGive = materialHasNotGiven - materialQuantityGive;
 			GameManager.Money += materialGive * (materialGive < 0 ? product.buyPrice : product.sellPrice);
 			//Debug.Log("Materal Return " + materialGive);
 			return materialGive;

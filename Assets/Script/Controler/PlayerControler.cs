@@ -15,7 +15,7 @@ namespace Script.Controler
 		
 		public Tool CurTool
 		{
-			get => toolRedirection ?? tools[curToolIndex];
+			get => toolRedirection != null ? toolRedirection : tools[curToolIndex];
 			set
 			{
 				if (Array.IndexOf(tools, value) != -1)
@@ -51,7 +51,6 @@ namespace Script.Controler
 		{
 			var moussePos = GetMoussePos().ToVec2Int();
 			var mousseValid = moussePos != Vector2Int.one * -1;
-			
 			
 			if (Input.GetKeyDown(KeyCode.Escape))
 			{

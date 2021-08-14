@@ -30,11 +30,19 @@ namespace Script.MapGeneration
                         float sampleX = (x + octaveOffset[i].x) / scale * frequency;
                         float sampleY = (y + octaveOffset[i].y) / scale * frequency;
                         float perlinValue = Mathf.PerlinNoise(sampleX, sampleY);
-                        noiseHeight += perlinValue * amplitude;
+                        noiseHeight += (perlinValue - 0.5f) * amplitude;
                         //Debug.LogFormat("Heaight: {0}, amplitude: {1}, frequancy {2}, perlin : {3}, x {4}", noiseHeight, amplitude, frequency, perlinValue, sampleX);
                         frequency *= lacunarity;
                         amplitude *= persistance;
                     }
+
+                    noiseHeight += 0.5f;
+                    if (noiseHeight > 1f)
+	                    noiseHeight = 1f;
+                    
+                    if (noiseHeight < 0f)
+	                    noiseHeight = 0f;
+                    
                     if (noiseHeight > maxNoiseHeight)
                     {
                         maxNoiseHeight = noiseHeight;
@@ -46,6 +54,7 @@ namespace Script.MapGeneration
                     noise[x, y] = noiseHeight;
                 }
             }
+            Debug.Log($"Min: {minNoiseHeight}, Max {maxNoiseHeight}");
             for (int y = 0; y < mapHeight; y++)
             {
                 for (int x = 0; x < mapWidth; x++)

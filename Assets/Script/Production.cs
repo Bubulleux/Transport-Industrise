@@ -8,19 +8,10 @@ using Random = UnityEngine.Random;
 
 public class Production
 {
-	public Production(ProductData _data, float _max, bool _isInput, float _production)
-	{
-		data = _data;
-		quantity = 0;
-		maxQuantity = _max;
-		isInput = _isInput;
-		production = _production;
-	}
-
 	public ProductData data;
 
 	public float quantity;
-	public int Quantity
+	public virtual int Quantity
 	{
 		get => Mathf.FloorToInt(quantity);
 		set => quantity = value;
@@ -29,7 +20,16 @@ public class Production
 	public float production;
 	public float maxQuantity;
 	public bool isInput;
-		
+	
+	public Production(ProductData _data, float _max, bool _isInput, float _production)
+	{
+		data = _data;
+		quantity = 0;
+		maxQuantity = _max;
+		isInput = _isInput;
+		production = _production;
+	}
+	
 	public bool IsOutput { get => !isInput;
 		set => isInput = !value;
 	}
@@ -94,7 +94,62 @@ public class Production
 
 		return null;
 	}
+}
+
+public class ProductionCumulate
+{
+	private List<Production> productions;
+	public bool isInput;
+	public ProductData data;
+	public int Quantity
+	{
+		get
+		{
+			int result = 0;
+			foreach (var curProduction in productions)
+				result += curProduction.Quantity;
+			return result;
+		}
+	}
+	public float MaxQuantity
+	{
+		get
+		{
+			float result = 0;
+			foreach (var curProduction in productions)
+				result += curProduction.maxQuantity;
+			return result;
+		}
+	}
 	
+	public float Production
+	{
+		get
+		{
+			float result = 0;
+			foreach (var curProduction in productions)
+				result += curProduction.production;
+			return result;
+		}
+	}
 	
-	
+	public float Filling => Quantity / MaxQuantity;
+
+	public ProductionCumulate(ProductData _data, bool _isInput)
+	{
+		isInput = _isInput;
+		data = _data;
+		productions = new List<Production>();
+	}
+
+	public void AddProduction(Production production)
+	{
+		if (production.data == data && production.isInput == isInput)
+		{
+			productions.Add(production);
+			return;
+		}
+
+		throw new Exception("Type of prodution isn't equal");
+	}
 }

@@ -42,21 +42,20 @@ namespace Script.Mapping
 		}
 
 
-		private void Update()
-		{
-			camDist = Vector3.Distance(new Vector3((Pos.x + 0.5f) * Map.ChuckSize, 0f, (Pos.y + 0.5f) * Map.ChuckSize),
-				CamControler.camPos);
-			
-			if (camDist > 250 && _chuckActive)
-			{
-				
-				SetChuckActive(false);
-			}
-			if (camDist < 250 && !_chuckActive)
-			{
-				SetChuckActive(true);
-			}
-		}
+		// private void Update()
+		// {
+		// 	camDist = Vector3.Distance(new Vector3((Pos.x + 0.5f) * Map.ChuckSize, 0f, (Pos.y + 0.5f) * Map.ChuckSize),
+		// 		CamControler.camPos);
+		// 	
+		// 	if (camDist > 250 && _chuckActive)
+		// 	{
+		// 		SetChuckActive(false);
+		// 	}
+		// 	if (camDist < 250 && !_chuckActive)
+		// 	{
+		// 		SetChuckActive(true);
+		// 	}
+		// }
 
 		private void SetChuckActive(bool enable)
 		{
